@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Investor</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Magic Investor</h1>
+    </header>
+
+    <main>
+        <section class="search-section">
+            <input type="text" id="searchInput" placeholder="Buscar carta...">
+            <button id="searchButton">Buscar</button>
+        </section>
+
+        <section id="cardsContainer" class="cards-container">
+            <!-- Aquí se renderizarán las cartas -->
+        </section>
+        
+    </main>
+
+    <div class="pagination">
+        <button id="prevPage">Anterior</button>
+        <span id="currentPage">1</span>
+        <button id="nextPage">Siguiente</button>
+    </div>
+
+    <footer>
+        <p>© 2026 Magic Investor</p>
+    </footer>
+
+    <script src="/js/app.js" type="module"></script>
+</body>
+</html>
