@@ -21,7 +21,7 @@ export function renderCards(cards, container, cardClickCallback) {
             <p>${card.lang}</p>
             <p>${card.collectorNumber}</p>
             <p>${card.low ?? "N/A"}€</p>
-            <p>${card.trend ?? "N/A"}€</p>
+            <p>${card.avg ?? "N/A"}€</p>
         `;
 
         // Listener directo con acceso al id del objeto
