@@ -20,7 +20,7 @@ export function renderCards(cards, container, cardClickCallback) {
             <p>${card.setName}</p>
             <p>${card.lang}</p>
             <p>${card.collectorNumber}</p>
-            <p>${card.low ?? "N/A"}€</p>
+            <p>${card.price ? formatPrice(card.price) : "N/A"}</p>
 
         `;
 
@@ -31,4 +31,13 @@ export function renderCards(cards, container, cardClickCallback) {
 
         container.appendChild(cardEl);
     });
+
+
+    // Formatear precio a moneda local
+    function formatPrice(price) {
+    return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR'
+    }).format(price);
+}
 }

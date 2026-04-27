@@ -10,4 +10,3 @@ export async function fetchCards(name, page, size) {
     if (!response.ok) throw new Error("Error al obtener cartas");
     return await response.json(); // devuelve CardPageDTO
 }
-
