@@ -1,0 +1,54 @@
+<!-- NAVBAR — copiar en todas las páginas -->
+<nav class="navbar">
+    <div class="navbar-left">
+        <a href="/index.html" class="nav-logo">⬡ Magic Investor</a>
+    </div>
+
+    <div class="navbar-center">
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="Buscar carta...">
+            <button id="searchButton">Buscar</button>
+        </div>
+
+        <div class="nav-filters">
+            <select id="filterRarity" class="nav-select">
+                <option value="">Rareza</option>
+                <option value="common">Common</option>
+                <option value="uncommon">Uncommon</option>
+                <option value="rare">Rare</option>
+                <option value="mythic">Mythic</option>
+            </select>
+
+            <select id="filterLang" class="nav-select">
+                <option value="">Idioma</option>
+                <option value="en">Inglés</option>
+                <option value="es">Español</option>
+                <option value="fr">Francés</option>
+                <option value="de">Alemán</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Portugués</option>
+                <option value="ja">Japonés</option>
+                <option value="ko">Coreano</option>
+                <option value="ru">Ruso</option>
+                <option value="zhs">Chino simplificado</option>
+            </select>
+
+            <select id="filterType" class="nav-select">
+                <option value="">Tipo</option>
+                <option value="Creature">Criatura</option>
+                <option value="Instant">Instantáneo</option>
+                <option value="Sorcery">Conjuro</option>
+                <option value="Enchantment">Encantamiento</option>
+                <option value="Artifact">Artefacto</option>
+                <option value="Land">Tierra</option>
+                <option value="Planeswalker">Planeswalker</option>
+            </select>
+
+            <button id="clearFilters" class="nav-clear">✕ Limpiar</button>
+        </div>
+    </div>
+
+    <div class="navbar-right">
+        <button class="nav-login">Iniciar sesión</button>
+    </div>
+</nav>

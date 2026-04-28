@@ -1,0 +1,214 @@
+/* ===========================
+   NAVBAR
+=========================== */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+
+:root {
+    --bg-deep:        #0c0c10;
+    --bg-card:        #1a1a24;
+    --border:         #2a2a38;
+    --gold:           #c9a84c;
+    --gold-light:     #e8cc7a;
+    --gold-dim:       #7a6230;
+    --text-primary:   #f0ead8;
+    --text-secondary: #9a9070;
+    --text-muted:     #5a5448;
+    --font-display:   'Cinzel', serif;
+    --font-body:      'Crimson Pro', Georgia, serif;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.85rem 2rem;
+    background: linear-gradient(135deg, #0f0f16 0%, #1a1620 100%);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+}
+
+/* Línea dorada inferior */
+.navbar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ===========================
+   LOGO / INICIO
+=========================== */
+.navbar-left {
+    flex-shrink: 0;
+}
+
+.nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-decoration: none;
+    transition: color 0.2s;
+    white-space: nowrap;
+}
+
+.nav-logo:hover {
+    color: var(--gold-light);
+}
+
+/* ===========================
+   CENTRO — BÚSQUEDA Y FILTROS
+=========================== */
+.navbar-center {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+    max-width: 800px;
+}
+
+/* Barra de búsqueda */
+.nav-search {
+    display: flex;
+}
+
+.nav-search input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+    outline: none;
+    transition: border-color 0.25s;
+}
+
+.nav-search input::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.nav-search input:focus {
+    border-color: var(--gold-dim);
+}
+
+.nav-search button {
+    padding: 0.5rem 1.2rem;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: var(--bg-deep);
+    border: none;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    transition: background 0.25s, box-shadow 0.25s;
+    white-space: nowrap;
+}
+
+.nav-search button:hover {
+    background: var(--gold-light);
+    box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
+}
+
+/* Fila de filtros */
+.nav-filters {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.nav-select {
+    padding: 0.3rem 0.6rem;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 1.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a6230'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+}
+
+.nav-select:focus,
+.nav-select:hover {
+    border-color: var(--gold-dim);
+    color: var(--text-primary);
+}
+
+.nav-select option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/* Botón limpiar filtros */
+.nav-clear {
+    padding: 0.3rem 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.nav-clear:hover {
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+}
+
+/* ===========================
+   DERECHA — LOGIN
+=========================== */
+.navbar-right {
+    flex-shrink: 0;
+}
+
+.nav-login {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.1rem;
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.nav-login:hover {
+    background: var(--gold);
+    color: var(--bg-deep);
+    box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
+}

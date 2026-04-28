@@ -2,11 +2,12 @@
 
 const BASE_URL = "http://localhost:8081/cards";
 
-export async function fetchCards(name, page, size) {
-    const url = `${BASE_URL}/search?name=${encodeURIComponent(name)}&page=${page}&size=${size}`;
+export async function fetchCards(name, page, size, rarity, lang, typeLine) {
+    let url = `${BASE_URL}/search?name=${encodeURIComponent(name)}&page=${page}&size=${size}`;
+    if (rarity)   url += `&rarity=${encodeURIComponent(rarity)}`;
+    if (lang)     url += `&lang=${encodeURIComponent(lang)}`;
+    if (typeLine) url += `&typeLine=${encodeURIComponent(typeLine)}`;
     const response = await fetch(url);
-    console.log("Buscando:", name);
-    console.log("URL:", url);
     if (!response.ok) throw new Error("Error al obtener cartas");
-    return await response.json(); // devuelve CardPageDTO
+    return await response.json();
 }

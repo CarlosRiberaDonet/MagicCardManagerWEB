@@ -1,5 +1,13 @@
 // cardsRenderer.js
 
+    // Formatear precio a moneda local
+    function formatPrice(price) {
+    return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR'
+    }).format(price);
+}
+
 // cardClickCallback: función que recibe el id de la carta cuando se hace click
 export function renderCards(cards, container, cardClickCallback) {
     container.innerHTML = "";
@@ -32,12 +40,4 @@ export function renderCards(cards, container, cardClickCallback) {
         container.appendChild(cardEl);
     });
 
-
-    // Formatear precio a moneda local
-    function formatPrice(price) {
-    return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR'
-    }).format(price);
-}
 }

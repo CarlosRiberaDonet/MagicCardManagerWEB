@@ -1,97 +1,299 @@
-/* Reset básico */
-* {
+/* ===========================
+   IMPORTS
+=========================== */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+
+/* ===========================
+   VARIABLES
+=========================== */
+:root {
+    --bg-deep:        #0c0c10;
+    --bg-surface:     #13131a;
+    --bg-card:        #1a1a24;
+    --border:         #2a2a38;
+    --gold:           #c9a84c;
+    --gold-light:     #e8cc7a;
+    --gold-dim:       #7a6230;
+    --text-primary:   #f0ead8;
+    --text-secondary: #9a9070;
+    --text-muted:     #5a5448;
+    --accent:         #3a7bd5;
+    --shadow-card:    0 8px 40px rgba(0, 0, 0, 0.6);
+    --shadow-glow:    0 0 30px rgba(201, 168, 76, 0.12);
+    --radius:         10px;
+    --font-display:   'Cinzel', serif;
+    --font-body:      'Crimson Pro', Georgia, serif;
+}
+
+/* ===========================
+   RESET & BASE
+=========================== */
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
 }
 
-/* Layout general */
 body {
-    background-color: #f4f4f4;
-    color: #333;
+    font-family: var(--font-body);
+    background-color: var(--bg-deep);
+    color: var(--text-primary);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-image:
+        radial-gradient(ellipse at 15% 15%, rgba(201,168,76,0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 85%, rgba(58,123,213,0.04) 0%, transparent 50%);
 }
 
+/* ===========================
+   HEADER
+=========================== */
 header {
-    background-color: #222;
-    color: #fff;
-    padding: 1rem;
+    background: linear-gradient(135deg, #0f0f16 0%, #1a1620 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 2rem;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
+header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+header h1 {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-primary);
+    animation: fadeInDown 0.6s ease both;
+}
+
+/* ===========================
+   MAIN
+=========================== */
 main {
     flex: 1;
-    padding: 2rem;
+    padding: 2.5rem 2rem;
+    animation: fadeInUp 0.6s ease 0.1s both;
 }
 
-footer {
-    background-color: #222;
-    color: #fff;
-    text-align: center;
-    padding: 1rem;
-}
-
-/* Sección de búsqueda */
+/* ===========================
+   BÚSQUEDA
+=========================== */
 .search-section {
     display: flex;
     justify-content: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 #searchInput {
-    width: 300px;
-    padding: 0.5rem;
+    width: 340px;
+    padding: 0.65rem 1rem;
+    font-family: var(--font-body);
     font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: var(--radius) 0 0 var(--radius);
+    outline: none;
+    transition: border-color 0.25s;
+}
+
+#searchInput::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+#searchInput:focus {
+    border-color: var(--gold-dim);
 }
 
 #searchButton {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
+    padding: 0.65rem 1.4rem;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: var(--bg-deep);
     border: none;
-    background-color: #0077cc;
-    color: #fff;
+    border-radius: 0 var(--radius) var(--radius) 0;
     cursor: pointer;
-    border-radius: 0 4px 4px 0;
+    transition: background 0.25s, box-shadow 0.25s;
 }
 
 #searchButton:hover {
-    background-color: #005fa3;
+    background: var(--gold-light);
+    box-shadow: 0 0 20px rgba(201, 168, 76, 0.35);
 }
 
-/* Contenedor de cartas */
+/* ===========================
+   GRID DE CARTAS
+=========================== */
 .cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
 }
 
 /* Cada carta */
 .card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    padding: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.85rem;
     text-align: center;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+    border-color: var(--gold-dim);
+}
+
+.card:hover::before {
+    opacity: 1;
 }
 
 .card img {
     width: 100%;
     height: auto;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    margin-bottom: 0.65rem;
+    display: block;
 }
 
 .card h3 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card p {
     font-size: 0.85rem;
-    margin-bottom: 0.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
+}
+
+/* Precio destacado — última p de cada carta */
+.card p:last-child {
+    color: var(--gold-light);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
+}
+
+/* ===========================
+   PAGINACIÓN
+=========================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 2rem 1.5rem;
+}
+
+.pagination button {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.2rem;
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: var(--gold);
+    color: var(--bg-deep);
+    box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
+}
+
+.pagination button:disabled {
+    color: var(--text-muted);
+    border-color: var(--border);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+#currentPage {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    min-width: 1.5rem;
+    text-align: center;
+}
+
+#totalPages {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+footer {
+    background: linear-gradient(135deg, #0f0f16 0%, #1a1620 100%);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    text-align: center;
+    padding: 1.2rem;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+/* ===========================
+   ANIMACIONES
+=========================== */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
 }

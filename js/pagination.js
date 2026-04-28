@@ -1,6 +1,6 @@
 // pagination.js
 
-export function setupPagination(prevBtn, nextBtn, pageDisplay, getPageCallback) {
+export function setupPagination(prevBtn, nextBtn, pageDisplay, totalPagesDisplay, getPageCallback) {
     prevBtn.addEventListener("click", () => {
         getPageCallback("prev");
     });
@@ -10,8 +10,12 @@ export function setupPagination(prevBtn, nextBtn, pageDisplay, getPageCallback) 
     });
 
     return function updatePagination(currentPage, totalCards, size) {
+        const totalPages = Math.ceil(totalCards / size);
+
         pageDisplay.textContent = currentPage;
+        totalPagesDisplay.textContent = `de ${totalPages}`;
+
         prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = currentPage * size >= totalCards;
+        nextBtn.disabled = currentPage >= totalPages;
     }
 }
