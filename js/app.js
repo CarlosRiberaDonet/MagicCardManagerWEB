@@ -51,10 +51,19 @@ const updatePagination = setupPagination(prevBtn, nextBtn, pageDisplay, totalPag
 function initSearch() {
     const searchInput = document.getElementById("searchInput");
     const searchButton = document.getElementById("searchButton");
-    if (!searchInput || !searchButton) return;
+    const clearFilters = document.getElementById("clearFilters");
+
+    if (!searchInput || !searchButton || !clearFilters) return; // ← protege todos
+
     searchButton.addEventListener("click", search);
     searchInput.addEventListener("keypress", e => {
         if (e.key === "Enter") search();
+    });
+
+    clearFilters.addEventListener("click", () => {
+        document.getElementById("filterRarity").value = "";
+        document.getElementById("filterLang").value = "";
+        document.getElementById("filterType").value = "";
     });
 }
 
@@ -65,10 +74,3 @@ document.addEventListener('navbarLoaded', initSearch);
 function abrirCarta(cardId) {
     window.open(`cardDetail.html?id=${cardId}`, "_blank");
 }
-
-const clearFilters = document.getElementById("clearFilters");
-clearFilters.addEventListener("click", () => {
-    document.getElementById("filterRarity").value = "";
-    document.getElementById("filterLang").value = "";
-    document.getElementById("filterType").value = "";
-});
