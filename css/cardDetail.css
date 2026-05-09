@@ -263,6 +263,64 @@ body {
     box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
 }
 
+/* Botones de acción (añadir a colección, watchlist, etc.) */
+.card-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.25rem 1.75rem;
+    border-top: 1px solid var(--border);
+    justify-content: center; 
+}
+
+/* Botones de acción (añadir a colección, watchlist, etc.) */
+.card-actions button {
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.4rem 0.8rem;
+    white-space: nowrap;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Botones de añadir — dorado */
+#addToCollection,
+#addToWatchlist {
+    background: var(--gold);
+    color: var(--bg-deep);
+}
+
+#addToCollection:hover,
+#addToWatchlist:hover {
+    background: var(--gold-light);
+    box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
+}
+
+/* Botones de eliminar — rojo oscuro */
+#removeFromCollection,
+#removeFromWatchlist {
+    background: #5a1a1a;
+    color: #e88a8a;
+    border: 1px solid #7a2a2a;
+}
+
+#removeFromCollection:hover,
+#removeFromWatchlist:hover {
+    background: #7a2020;
+    box-shadow: 0 0 16px rgba(200, 50, 50, 0.2);
+}
+
+/* Deshabilitado */
+.card-actions button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
 /* ===========================
    ANIMACIONES
 =========================== */

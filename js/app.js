@@ -56,6 +56,11 @@ function initSearch() {
     searchInput.addEventListener("keypress", e => {
         if (e.key === "Enter") search();
     });
+    clearFilters.addEventListener("click", () => {
+        document.getElementById("filterRarity").value = "";
+        document.getElementById("filterLang").value = "";
+        document.getElementById("filterType").value = "";
+    });
 }
 
 // Cubrir ambos casos de timing
@@ -65,10 +70,3 @@ document.addEventListener('navbarLoaded', initSearch);
 function abrirCarta(cardId) {
     window.open(`cardDetail.html?id=${cardId}`, "_blank");
 }
-
-const clearFilters = document.getElementById("clearFilters");
-clearFilters.addEventListener("click", () => {
-    document.getElementById("filterRarity").value = "";
-    document.getElementById("filterLang").value = "";
-    document.getElementById("filterType").value = "";
-});

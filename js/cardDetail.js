@@ -1,5 +1,7 @@
 // cardDetail.js
 
+import { addCardToCollection , removeCardFromCollection} from "./userActions.js";
+
 const BASE_URL = "http://localhost:8081/cards";
 
 // 1. Leer el parámetro "id" de la URL
@@ -7,10 +9,11 @@ const BASE_URL = "http://localhost:8081/cards";
 //    URLSearchParams nos permite extraer ese valor fácilmente.
 const params = new URLSearchParams(window.location.search);
 const cardId = params.get("id");
+let card;
 
 // 2. Si no hay id en la URL, no hacemos nada
 if (!cardId) {
-    document.getElementById("cardName").textContent = "Carta no encontrada";
+    document.getElementById("cardName").textContent = "Nombre de cºarta no encontrada";
 } else {
     loadCardDetail(cardId);
 }
@@ -24,7 +27,7 @@ async function loadCardDetail(id) {
             throw new Error(`Error del servidor: ${response.status}`);
         }
 
-        const card = await response.json();
+        card = await response.json();
         fillCardDetail(card);
 
     } catch (error) {
@@ -91,3 +94,14 @@ function formatPrice(price) {
         currency: 'EUR'
     }).format(price);
 }
+
+// Botón para añadir carta a la colección
+document.getElementById("addToCollection").addEventListener("click", () => {
+    addCardToCollection(card);
+});
+
+// Botón para eliminar carta de la colección
+document.getElementById("removeFromCollection").addEventListener("click", () => {   
+    removeCardFromCollection(card);
+});
+
