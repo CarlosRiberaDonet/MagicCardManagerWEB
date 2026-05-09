@@ -57,6 +57,7 @@ function initSearch() {
         if (e.key === "Enter") search();
     });
     clearFilters.addEventListener("click", () => {
+        document
         document.getElementById("filterRarity").value = "";
         document.getElementById("filterLang").value = "";
         document.getElementById("filterType").value = "";

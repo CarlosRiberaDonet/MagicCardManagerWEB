@@ -1,5 +1,5 @@
 
-import { loginUser } from './api.js';
+import { loginUser } from './apiLogin.js';
 
 export function setupAuthListeners() {
 
@@ -74,7 +74,7 @@ export function setupAuthListeners() {
         document.getElementById('userMenu').classList.remove('active');
     }
 
-    // Menú de usuario logueado
+     // Menú de usuario logueado
     export function usersMenuListeners() {
 
         const goProfile = document.getElementById('goProfile');

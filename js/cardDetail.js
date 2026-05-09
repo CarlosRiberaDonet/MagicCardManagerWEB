@@ -1,6 +1,7 @@
 // cardDetail.js
 
-import { addCardToCollection , removeCardFromCollection} from "./userActions.js";
+import { addCardToCollection , removeCardFromCollection, addCardToWatchlist, removeCardFromWatchlist } from "./userActions.js";
+import { isCardInCollection } from "./userActions.js";
 
 const BASE_URL = "http://localhost:8081/cards";
 
@@ -96,12 +97,104 @@ function formatPrice(price) {
 }
 
 // Botón para añadir carta a la colección
-document.getElementById("addToCollection").addEventListener("click", () => {
-    addCardToCollection(card);
-});
+document.getElementById("addToCollection").addEventListener("click", (event) => {
+    const btn = event.target;
+    addCardToCollection(card).then(() => {
+        // Cambiar el texto del botón
+        btn.textContent = "Carta añadida";
+        // cambiar color del botón
+        btn.style.backgroundColor = "#4CAF50";
+        // Desactivar el botón para evitar múltiples clics
+        btn.disabled = true;
+
+        // Volver al estado original después de 0.5 segundos
+        setTimeout(() => {
+            btn.textContent = "📦 Añadir a colección";
+            btn.style.backgroundColor = "";
+            btn.disabled = false;
+        }, 500);
+        }).catch(error => {
+            console.error("Error al añadir carta a la colección:", error);
+            alert("Error al añadir carta a la colección");
+        });
+    });
 
 // Botón para eliminar carta de la colección
-document.getElementById("removeFromCollection").addEventListener("click", () => {   
-    removeCardFromCollection(card);
+document.getElementById("removeFromCollection").addEventListener("click", (event) => {   
+    const btn = event.target;
+    removeCardFromCollection(card).then(() => {
+        // Cambiar el texto del botón
+        btn.textContent = "Carta eliminada";
+        // cambiar color del botón
+        btn.style.backgroundColor = "#f44336";
+        // Desactivar el botón para evitar múltiples clics
+        btn.disabled = true;
+
+        // Volver al estado original después de 0.5 segundos
+        setTimeout(() => {
+        btn.textContent = "🗑️ Eliminar de colección";
+        btn.style.backgroundColor = "";
+        btn.disabled = false;
+    }, 500);
+
+    }).catch(error => {
+        console.error("Error al eliminar carta de la colección:", error);
+        alert("Error al eliminar carta de la colección");
+    });
 });
 
+// Botón para añadir carta a la lista de seguimiento (watchlist)
+document.getElementById("addToWatchlist").addEventListener("click", (event) => {
+    const btn = event.target;
+    addCardToWatchlist(card).then(() => {
+        // Cambiar el texto del botón
+        btn.textContent = "Carta añadida a la lista de seguimiento";
+        // cambiar color del botón
+        btn.style.backgroundColor = "#4CAF50";
+        // Desactivar el botón para evitar múltiples clics
+        btn.disabled = true;
+
+        // Volver al estado original después de 0.5 segundos
+        setTimeout(() => {
+            btn.textContent = "⭐ Añadir a lista de seguimiento";
+            btn.style.backgroundColor = "";
+            btn.disabled = false;
+        }, 500);
+    }).catch(error => {
+        console.error("Error al añadir carta a la lista de seguimiento:", error);
+        alert("Error al añadir carta a la lista de seguimiento");
+    });
+});
+
+// Botón para eliminar carta de la lista de seguimiento (watchlist)
+document.getElementById("removeFromWatchlist").addEventListener("click", (event) => {
+    const btn = event.target;
+    removeCardFromWatchlist(card).then(() => {
+        // Cambiar el texto del botón
+        btn.textContent = "Carta eliminada de la lista de seguimiento";
+        // cambiar color del botón
+        btn.style.backgroundColor = "#f44336";
+        // Desactivar el botón para evitar múltiples clics
+        btn.disabled = true;
+
+         // Volver al estado original después de 0.5 segundos
+        setTimeout(() => {
+            btn.textContent = "⭐ Añadir a lista de seguimiento";
+            btn.style.backgroundColor = "";
+            btn.disabled = false;
+        }, 500);
+    }).catch(error => {
+        console.error("Error al eliminar carta de la lista de seguimiento:", error);
+        alert("Error al eliminar carta de la lista de seguimiento");
+    });
+});
+
+// Comprueba si la carta ya está en la colección del usuario
+const inCollection = await isCardInCollection(card.id);
+if (inCollection) {
+    document.getElementById("removeFromCollection").style.display = "block";
+    document.getElementById("addToCollection").style.display = "none";
+} else {
+    document.getElementById("addToCollection").style.display = "block";
+    document.getElementById("removeFromCollection").style.display = "none";
+}
