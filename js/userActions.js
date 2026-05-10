@@ -1,4 +1,4 @@
-import {addToCollection, removeFromCollection, addToWatchlist, removeFromWatchlist, isInCollection} from "./apiUser.js";
+import * as apiUser from "./apiUser.js";
    
 // Token de autenticación
 function getToken() {
@@ -9,7 +9,7 @@ function getToken() {
     export function addCardToCollection(card) {
         const token = getToken();
         if(token){
-            return addToCollection(card, token);
+            return apiUser.addToCollection(card, token);
         }
     }
 
@@ -17,7 +17,7 @@ function getToken() {
     export function removeCardFromCollection(card) {
         const token = getToken();
         if(token){
-            return removeFromCollection(card, token);
+            return apiUser.removeFromCollection(card, token);
         }
     }
 
@@ -25,7 +25,7 @@ function getToken() {
     export function addCardToWatchlist(card) {
         const token = getToken();
         if(token){
-            return addToWatchlist(card, token);
+            return apiUser.addToWatchlist(card, token);
         }
     }
 
@@ -33,7 +33,7 @@ function getToken() {
     export function removeCardFromWatchlist(card) {
         const token = getToken();
         if(token){
-            return removeFromWatchlist(card, token);
+            return apiUser.removeFromWatchlist(card, token);
         }
     }
 
@@ -41,6 +41,13 @@ function getToken() {
     export function isCardInCollection(cardId) {
         const token = getToken();
         if(token){
-            return isInCollection(cardId, token);
+            return apiUser.isInCollection(cardId, token);
+        }
+    }
+
+    export function isCardInWatchlist(cardId) {
+        const token = getToken();
+        if(token){
+            return apiUser.isInWatchlist(cardId, token);
         }
     }

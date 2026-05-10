@@ -43,7 +43,7 @@ export async function addToWatchlist(card, token) {
     return await response.text();
 }
 
-// ELIMINAR CARTA DE addToWatchlist (lista de seguimiento)
+// ELIMINAR CARTA DE WATCHLIST (lista de seguimiento)
 export async function removeFromWatchlist(card, token) {
     const response = await fetch(`${BASE_URL}/watchlist/del`, {
         method: "DELETE",
@@ -66,5 +66,17 @@ export async function isInCollection(cardId, token) {
         }
     });
     if (!response.ok) throw new Error("Error al comprobar si la carta está en la colección");
+    return await response.json(); // devuelve true o false directamente;
+}
+
+// Comprobar si una carta está en la lista de seguimiento del usuario
+export async function isInWatchlist(cardId, token) {
+    const response = await fetch(`${BASE_URL}/watchlist/contains?cardId=${cardId}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+    if (!response.ok) throw new Error("Error al comprobar si la carta está en la lista de seguimiento");
     return await response.json(); // devuelve true o false directamente;
 }

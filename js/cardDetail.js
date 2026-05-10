@@ -1,7 +1,6 @@
 // cardDetail.js
 
-import { addCardToCollection , removeCardFromCollection, addCardToWatchlist, removeCardFromWatchlist } from "./userActions.js";
-import { isCardInCollection } from "./userActions.js";
+import * as userActions from "./userActions.js";
 
 const BASE_URL = "http://localhost:8081/cards";
 
@@ -14,7 +13,7 @@ let card;
 
 // 2. Si no hay id en la URL, no hacemos nada
 if (!cardId) {
-    document.getElementById("cardName").textContent = "Nombre de cºarta no encontrada";
+    document.getElementById("cardName").textContent = "Nombre de carta no encontrada";
 } else {
     loadCardDetail(cardId);
 }
@@ -30,6 +29,8 @@ async function loadCardDetail(id) {
 
         card = await response.json();
         fillCardDetail(card);
+        await checkCardInCollection();
+        await checkCardInWatchlist();
 
     } catch (error) {
         console.error("Error al cargar la carta:", error);
@@ -96,23 +97,41 @@ function formatPrice(price) {
     }).format(price);
 }
 
+// 6. Comprueba si la carta ya está en la colección del usuario y muestra/oculta botones
+async function checkCardInCollection() {
+    const quantity = await userActions.isCardInCollection(card.id);
+     console.log("Quantity:", quantity);
+    document.getElementById("cardQuantity").textContent = quantity > 0 ? `x${quantity}` : "";
+    document.getElementById("removeFromCollection").style.display = quantity > 0 ? "block" : "none";
+}
+
+// 6b. Comprueba watchlist
+async function checkCardInWatchlist() {
+    const inWatchlist = await userActions.isCardInWatchlist(card.id);
+    document.getElementById("removeFromWatchlist").style.display = inWatchlist ? "block" : "none";
+    document.getElementById("addToWatchlist").style.display = inWatchlist ? "none" : "block";
+}
+
 // Botón para añadir carta a la colección
 document.getElementById("addToCollection").addEventListener("click", (event) => {
     const btn = event.target;
-    addCardToCollection(card).then(() => {
+    userActions.addCardToCollection(card).then(() => {
         // Cambiar el texto del botón
         btn.textContent = "Carta añadida";
         // cambiar color del botón
         btn.style.backgroundColor = "#4CAF50";
         // Desactivar el botón para evitar múltiples clics
         btn.disabled = true;
-
+        checkCardInCollection();
         // Volver al estado original después de 0.5 segundos
         setTimeout(() => {
             btn.textContent = "📦 Añadir a colección";
             btn.style.backgroundColor = "";
             btn.disabled = false;
         }, 500);
+
+        
+
         }).catch(error => {
             console.error("Error al añadir carta a la colección:", error);
             alert("Error al añadir carta a la colección");
@@ -122,7 +141,7 @@ document.getElementById("addToCollection").addEventListener("click", (event) => 
 // Botón para eliminar carta de la colección
 document.getElementById("removeFromCollection").addEventListener("click", (event) => {   
     const btn = event.target;
-    removeCardFromCollection(card).then(() => {
+    userActions.removeCardFromCollection(card).then(() => {
         // Cambiar el texto del botón
         btn.textContent = "Carta eliminada";
         // cambiar color del botón
@@ -137,6 +156,8 @@ document.getElementById("removeFromCollection").addEventListener("click", (event
         btn.disabled = false;
     }, 500);
 
+    checkCardInCollection();
+
     }).catch(error => {
         console.error("Error al eliminar carta de la colección:", error);
         alert("Error al eliminar carta de la colección");
@@ -146,7 +167,7 @@ document.getElementById("removeFromCollection").addEventListener("click", (event
 // Botón para añadir carta a la lista de seguimiento (watchlist)
 document.getElementById("addToWatchlist").addEventListener("click", (event) => {
     const btn = event.target;
-    addCardToWatchlist(card).then(() => {
+    userActions.addCardToWatchlist(card).then(() => {
         // Cambiar el texto del botón
         btn.textContent = "Carta añadida a la lista de seguimiento";
         // cambiar color del botón
@@ -156,10 +177,13 @@ document.getElementById("addToWatchlist").addEventListener("click", (event) => {
 
         // Volver al estado original después de 0.5 segundos
         setTimeout(() => {
-            btn.textContent = "⭐ Añadir a lista de seguimiento";
+            btn.textContent = "⭐ Añadir a watchlist";
             btn.style.backgroundColor = "";
             btn.disabled = false;
         }, 500);
+
+        checkCardInWatchlist();
+
     }).catch(error => {
         console.error("Error al añadir carta a la lista de seguimiento:", error);
         alert("Error al añadir carta a la lista de seguimiento");
@@ -169,7 +193,7 @@ document.getElementById("addToWatchlist").addEventListener("click", (event) => {
 // Botón para eliminar carta de la lista de seguimiento (watchlist)
 document.getElementById("removeFromWatchlist").addEventListener("click", (event) => {
     const btn = event.target;
-    removeCardFromWatchlist(card).then(() => {
+    userActions.removeCardFromWatchlist(card).then(() => {
         // Cambiar el texto del botón
         btn.textContent = "Carta eliminada de la lista de seguimiento";
         // cambiar color del botón
@@ -179,22 +203,15 @@ document.getElementById("removeFromWatchlist").addEventListener("click", (event)
 
          // Volver al estado original después de 0.5 segundos
         setTimeout(() => {
-            btn.textContent = "⭐ Añadir a lista de seguimiento";
+            btn.textContent = "⭐ Eliminar de watchlist";
             btn.style.backgroundColor = "";
             btn.disabled = false;
         }, 500);
+
+        checkCardInWatchlist();
+
     }).catch(error => {
         console.error("Error al eliminar carta de la lista de seguimiento:", error);
         alert("Error al eliminar carta de la lista de seguimiento");
     });
 });
-
-// Comprueba si la carta ya está en la colección del usuario
-const inCollection = await isCardInCollection(card.id);
-if (inCollection) {
-    document.getElementById("removeFromCollection").style.display = "block";
-    document.getElementById("addToCollection").style.display = "none";
-} else {
-    document.getElementById("addToCollection").style.display = "block";
-    document.getElementById("removeFromCollection").style.display = "none";
-}
