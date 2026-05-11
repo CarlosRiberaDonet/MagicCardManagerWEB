@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Colección — Magic Investor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/collection.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
+</head>
+<body>
+
+    <!-- Navbar cargado dinámicamente -->
+
+    <main>
+
+        <!-- HEADER — título y estadísticas rápidas -->
+        <section class="collection-header">
+            <h1 class="collection-title">Mi Colección</h1>
+            <div class="collection-stats">
+                <div class="stat">
+                    <span class="stat-label">Total cartas</span>
+                    <span class="stat-value" id="totalCards">—</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Valor actual</span>
+                    <span class="stat-value" id="totalValue">—</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Invertido</span>
+                    <span class="stat-value" id="totalInvested">—</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Ganancia</span>
+                    <span class="stat-value" id="totalProfit">—</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- BARRA DE FILTROS RÁPIDOS -->
+        <section class="collection-filters">
+            <select id="colFilterSet" class="col-select">
+                <option value="">Set</option>
+            </select>
+            <select id="colFilterRarity" class="col-select">
+                <option value="">Rareza</option>
+                <option value="common">Common</option>
+                <option value="uncommon">Uncommon</option>
+                <option value="rare">Rare</option>
+                <option value="mythic">Mythic</option>
+            </select>
+            <select id="colFilterLang" class="col-select">
+                <option value="">Idioma</option>
+                <option value="en">Inglés</option>
+                <option value="es">Español</option>
+                <option value="fr">Francés</option>
+                <option value="de">Alemán</option>
+                <option value="it">Italiano</option>
+                <option value="ja">Japonés</option>
+            </select>
+            <select id="colFilterSort" class="col-select">
+                <option value="">Ordenar por</option>
+                <option value="name_asc">Nombre (A-Z)</option>
+                <option value="name_desc">Nombre (Z-A)</option>
+                <option value="price_asc">Precio (menor a mayor)</option>
+                <option value="price_desc">Precio (mayor a menor)</option>
+                <option value="profit_desc">Mayor ganancia</option>
+                <option value="profit_asc">Mayor pérdida</option>
+            </select>
+            <input type="text" id="colSearch" class="col-search" placeholder="Buscar en mi colección...">
+            <button id="colClearFilters" class="col-clear">✕ Limpiar</button>
+
+            <!-- Toggle vista lista / cuadrícula -->
+            <div class="view-toggle">
+                <button id="viewGrid" class="toggle-btn active" title="Vista cuadrícula">⊞</button>
+                <button id="viewList" class="toggle-btn" title="Vista lista">☰</button>
+            </div>
+        </section>
+
+        <!-- CONTENEDOR DE CARTAS -->
+        <section id="collectionContainer" class="collection-grid">
+            <!-- Las cartas se renderizan aquí -->
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 Magic Investor</p>
+    </footer>
+
+    <script src="/js/navbar.js" type="module"></script>
+    <script src="/js/collection.js" type="module"></script>
+
+</body>
+</html>

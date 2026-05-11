@@ -87,57 +87,6 @@ main {
     animation: fadeInUp 0.6s ease 0.1s both;
 }
 
-/* ===========================
-   BÚSQUEDA
-=========================== */
-.search-section {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2.5rem;
-}
-
-#searchInput {
-    width: 340px;
-    padding: 0.65rem 1rem;
-    font-family: var(--font-body);
-    font-size: 1rem;
-    background: var(--bg-card);
-    color: var(--text-primary);
-    border: 1px solid var(--border);
-    border-right: none;
-    border-radius: var(--radius) 0 0 var(--radius);
-    outline: none;
-    transition: border-color 0.25s;
-}
-
-#searchInput::placeholder {
-    color: var(--text-muted);
-    font-style: italic;
-}
-
-#searchInput:focus {
-    border-color: var(--gold-dim);
-}
-
-#searchButton {
-    padding: 0.65rem 1.4rem;
-    font-family: var(--font-display);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    background: var(--gold);
-    color: var(--bg-deep);
-    border: none;
-    border-radius: 0 var(--radius) var(--radius) 0;
-    cursor: pointer;
-    transition: background 0.25s, box-shadow 0.25s;
-}
-
-#searchButton:hover {
-    background: var(--gold-light);
-    box-shadow: 0 0 20px rgba(201, 168, 76, 0.35);
-}
 
 /* ===========================
    GRID DE CARTAS
@@ -186,6 +135,15 @@ main {
     height: auto;
     border-radius: 6px;
     margin-bottom: 0.65rem;
+    display: block;
+}
+
+/* Icono pequeñito de set centrado debajo de la imagen y antes del nombre de la carta de color dorado */
+.card .set-icon {
+    filter: invert(68%) sepia(35%) saturate(600%) hue-rotate(5deg) brightness(95%);
+    width: 20px;
+    height: 20px;
+    margin: 0 auto 0.4rem;
     display: block;
 }
 
@@ -296,4 +254,36 @@ footer {
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(24px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+/* VERSION MÓVIL */
+@media (max-width: 768px) {
+    .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Ajustes para el navbar en móvil */
+    .nav-filters {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    .nav-filters select,
+    .nav-filters input {
+        width: 100%;
+    }
+    .nav-price-filter {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    #priceSlider {
+        flex: 1;
+    }
+
+    /* Inputs de precio más anchos en móvil */
+    #minPrice,
+    #maxPrice {
+        width: 70px;
+    }
+    
 }

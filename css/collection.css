@@ -1,0 +1,372 @@
+/* ===========================
+   IMPORTS — reutilizamos el estilo global
+=========================== */
+@import url('/css/style.css');
+
+/* ===========================
+   HEADER DE COLECCIÓN
+=========================== */
+.collection-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.collection-title {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-primary);
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.collection-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+/* Estadísticas rápidas */
+.collection-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 140px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.stat-label {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--gold-light);
+}
+
+/* ===========================
+   BARRA DE FILTROS DE COLECCIÓN
+=========================== */
+.collection-filters {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+/* Selects de filtro — mismo estilo que el navbar */
+.col-select {
+    padding: 0.3rem 1.5rem 0.3rem 0.6rem;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    background: var(--bg-deep);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a6230'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-color: var(--bg-deep);
+}
+
+.col-select:focus,
+.col-select:hover {
+    border-color: var(--gold-dim);
+    color: var(--text-primary);
+}
+
+.col-select option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/* Input de búsqueda dentro de la colección */
+.col-search {
+    flex: 1;
+    min-width: 180px;
+    padding: 0.3rem 0.75rem;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.25s;
+}
+
+.col-search::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.col-search:focus {
+    border-color: var(--gold-dim);
+}
+
+/* Botón limpiar filtros */
+.col-clear {
+    padding: 0.3rem 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.col-clear:hover {
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+}
+
+/* ===========================
+   TOGGLE VISTA LISTA / CUADRÍCULA
+=========================== */
+.view-toggle {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: auto;
+}
+
+.toggle-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 1rem;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.toggle-btn.active {
+    background: var(--gold);
+    color: var(--bg-deep);
+    border-color: var(--gold);
+}
+
+.toggle-btn:hover:not(.active) {
+    border-color: var(--gold-dim);
+    color: var(--text-primary);
+}
+
+/* ===========================
+   VISTA CUADRÍCULA
+=========================== */
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
+}
+
+/* ===========================
+   VISTA LISTA
+=========================== */
+.collection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Fila de carta en vista lista */
+.collection-list-item {
+    display: grid;
+    grid-template-columns: 28px 1fr 120px 60px 80px 60px 90px 90px 90px;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.collection-list-item:hover {
+    border-color: var(--gold-dim);
+    background: rgba(201, 168, 76, 0.03);
+}
+
+/* Icono del set */
+.collection-list-item .set-icon {
+    filter: invert(68%) sepia(35%) saturate(600%) hue-rotate(5deg) brightness(95%);
+    width: 20px;
+    height: 20px;
+}
+
+/* Nombre de la carta */
+.list-name {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Campos secundarios */
+.list-set,
+.list-lang,
+.list-rarity,
+.list-qty {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Precio compra */
+.list-purchase {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+/* Precio actual */
+.list-current {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    text-align: right;
+}
+
+/* Ganancia/pérdida */
+.list-profit {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: right;
+}
+
+.list-profit.positive { color: #4caf50; }
+.list-profit.negative { color: #e88a8a; }
+
+/* Cabecera de la lista */
+.collection-list-header {
+    display: grid;
+    grid-template-columns: 28px 1fr 120px 60px 80px 60px 90px 90px 90px;
+    gap: 1rem;
+    padding: 0.5rem 1.25rem;
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+/* ===========================
+   RESPONSIVE — TABLET
+=========================== */
+@media (max-width: 1024px) {
+
+    .collection-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .collection-list-item,
+    .collection-list-header {
+        grid-template-columns: 28px 1fr 100px 60px 80px 80px 80px;
+    }
+
+    /* Ocultar columnas menos importantes en tablet */
+    .list-purchase,
+    .collection-list-header span:nth-child(7) {
+        display: none;
+    }
+}
+
+/* ===========================
+   RESPONSIVE — MÓVIL
+=========================== */
+@media (max-width: 768px) {
+
+    .collection-stats {
+        gap: 0.75rem;
+    }
+
+    .stat {
+        min-width: 120px;
+        padding: 0.75rem 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+    }
+
+    .collection-filters {
+        gap: 0.4rem;
+    }
+
+    .collection-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    /* Lista simplificada en móvil */
+    .collection-list-item,
+    .collection-list-header {
+        grid-template-columns: 28px 1fr 60px 80px;
+    }
+
+    .list-set,
+    .list-lang,
+    .list-rarity,
+    .list-purchase,
+    .collection-list-header span:nth-child(3),
+    .collection-list-header span:nth-child(4),
+    .collection-list-header span:nth-child(5),
+    .collection-list-header span:nth-child(7) {
+        display: none;
+    }
+}
