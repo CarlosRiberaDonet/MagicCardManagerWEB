@@ -25,7 +25,9 @@ export function renderCards(cards, container, cardClickCallback) {
         cardEl.innerHTML = `
             <img src="${card.imageUrl}" alt="${card.name}">
             <h3>${card.name}</h3>
+            <img src="${card.iconSvgUri}" alt="${card.setName}" class="set-icon">
             <p>${card.setName}</p>
+            <p>${card.rarity}</p>
             <p>${card.lang}</p>
             <p>${card.collectorNumber}</p>
             <p>${card.price ? formatPrice(card.price) : "N/A"}</p>

@@ -80,3 +80,13 @@ export async function isInWatchlist(cardId, token) {
     if (!response.ok) throw new Error("Error al comprobar si la carta está en la lista de seguimiento");
     return await response.json(); // devuelve true o false directamente;
 }
+
+// Cargar la colección completa del usuario
+export async function loadCollection(token) {
+    const response = await fetch(`${BASE_URL}/mycollection`, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error("Error al cargar la colección");
+    return await response.json();
+}

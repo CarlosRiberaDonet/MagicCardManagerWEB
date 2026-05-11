@@ -34,11 +34,19 @@ async function loadCards(name) {
     const lang     = document.getElementById("filterLang")?.value     || null;
     const typeLine = document.getElementById("filterType")?.value     || null;
 
+    // Obtener valores del slider de precio
+    const priceSlider = document.getElementById("priceSlider");
+    const priceValues = priceSlider?.noUiSlider?.get();
+    const minPrice = priceValues ? priceValues[0] : null;
+    const maxPrice = priceValues ? priceValues[1] : null;
+    // Ordenar precios ASC/DESC
+    const orderBy = document.getElementById("filterSort")?.value || null;
+
     // Si no hay ningún criterio de búsqueda, no hacemos nada
-    if (!name && !set && !rarity && !lang && !typeLine) return;
+    if (!name && !set && !rarity && !lang && !typeLine && !minPrice && !maxPrice) return;
 
     try {
-        const data = await fetchCards(name, set, page, size, rarity, lang, typeLine);
+        const data = await fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy);
         renderCards(data.cardDTOList, cardsContainer, abrirCarta);
         updatePagination(page, data.totalCards, size);
     } catch (error) {
@@ -65,6 +73,8 @@ function initSearch() {
 
     // Cargamos las ediciones en el combobox solo una vez
     loadSets();
+    initPriceSlider();
+    
 
     // Buscar al pulsar el botón o al presionar Enter
     searchButton.addEventListener("click", search);
@@ -78,6 +88,10 @@ function initSearch() {
         document.getElementById("filterRarity").value = "";
         document.getElementById("filterLang").value   = "";
         document.getElementById("filterType").value   = "";
+        document.getElementById("priceSlider").noUiSlider.set(["", ""]);
+        document.getElementById("minPrice").value = "";
+        document.getElementById("maxPrice").value = "";
+        document.getElementById("filterSort").value = "";
     });
 }
 
@@ -97,17 +111,55 @@ async function loadSets() {
         const setFilter = document.getElementById("filterSet");
 
         // Vaciamos el select para evitar duplicados si se llama varias veces
-        setFilter.innerHTML = '<option value="">Set</option>';
+        setFilter.innerHTML = '<option value="">Edición</option>';
 
         // Añadimos una opción por cada edición
         sets.forEach(set => {
             const option = document.createElement("option");
-            option.value = set;
-            option.textContent = set;
+            option.value = set.code; // Usamos el código interno como valor
+            option.textContent = set.name; // Mostramos el nombre de la edición
             setFilter.appendChild(option);
         });
 
     } catch (error) {
         console.error("Error al cargar sets:", error);
-    }
+    } 
+}
+
+// Cargar slider de precio
+function initPriceSlider() {
+    const priceSlider = document.getElementById("priceSlider");
+    noUiSlider.create(priceSlider, {
+        start: [0, 57750],
+        connect: true,
+        range: { min: 0, max: 57750 },
+        step: 1,
+        format: {
+            to: value => Math.round(value),
+            from: value => Number(value)
+        }
+    });
+
+    // Slider → inputs
+    priceSlider.noUiSlider.on("update", (values) => {
+        document.getElementById("minPrice").value = values[0];
+        document.getElementById("maxPrice").value = values[1];
+    });
+
+    // Inputs → slider
+    document.getElementById("minPrice").addEventListener("change", (e) => {
+        priceSlider.noUiSlider.set([e.target.value, null]);
+    });
+
+    document.getElementById("maxPrice").addEventListener("change", (e) => {
+        priceSlider.noUiSlider.set([null, e.target.value]);
+    });
+
+// Si hay una búsqueda pendiente desde otra página, ejecutarla
+const pendingSearch = localStorage.getItem('pendingSearch');
+if (pendingSearch) {
+    localStorage.removeItem('pendingSearch');
+    lastSearch = pendingSearch;
+    loadCards(pendingSearch);
+}
 }

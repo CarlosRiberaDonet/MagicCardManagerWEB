@@ -215,3 +215,12 @@ document.getElementById("removeFromWatchlist").addEventListener("click", (event)
         alert("Error al eliminar carta de la lista de seguimiento");
     });
 });
+
+// Al buscar
+searchButton.addEventListener("click", () => {
+    const name = searchInput.value.trim();
+    if (name) {
+        localStorage.setItem('pendingSearch', name);
+        window.location.href = '/index.html';
+    }
+});
