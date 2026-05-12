@@ -4,7 +4,7 @@ const BASE_URL = "http://localhost:8081/cards";
 const FILTER_URL = ""; // Filtro de cartas
 
 //BUSCAR CARTAS
-export async function fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy) {
+export async function fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy, hideNA) {
     let url = `${BASE_URL}/search?page=${page}&size=${size}`;
     if (name)     url += `&name=${encodeURIComponent(name)}`;
     if (set)      url += `&setCode=${encodeURIComponent(set)}`;
@@ -14,6 +14,7 @@ export async function fetchCards(name, set, page, size, rarity, lang, typeLine, 
     if (minPrice !== null) url += `&minPrice=${minPrice}`;
     if (maxPrice !== null) url += `&maxPrice=${maxPrice}`;
     if (orderBy) url += `&orderBy=${encodeURIComponent(orderBy)}`;
+    if (hideNA) url += `&hideNA=true`;
 
     const response = await fetch(url);
     if (!response.ok) throw new Error("Error al obtener cartas");

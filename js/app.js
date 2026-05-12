@@ -42,14 +42,17 @@ async function loadCards(name) {
     // Ordenar precios ASC/DESC
     const orderBy = document.getElementById("filterSort")?.value || null;
 
+    // 
+    const hideNA = hideNAButton?.classList.contains("active") || false; 
+    
+
     // Si no hay ningún criterio de búsqueda, no hacemos nada
     if (!name && !set && !rarity && !lang && !typeLine && !minPrice && !maxPrice) return;
 
     try {
-        const data = await fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy);
+        const data = await fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy, hideNA);
         renderCards(data.cardDTOList, cardsContainer, abrirCarta);
         updatePagination(page, data.totalCards, size);
-        initHideNAButton();
     } catch (error) {
         cardsContainer.innerHTML = "<p>Error al cargar cartas.</p>";
         console.error(error);
@@ -68,6 +71,7 @@ function initSearch() {
     const searchInput  = document.getElementById("searchInput");
     const searchButton = document.getElementById("searchButton");
     const clearFilters = document.getElementById("clearFilters");
+    
 
     // Si alguno de los elementos no existe aún, salimos
     if (!searchInput || !searchButton || !clearFilters) return;
@@ -77,7 +81,6 @@ function initSearch() {
     initPriceSlider();
     initHideNAButton(true);
     
-
     // Buscar al pulsar el botón o al presionar Enter
     searchButton.addEventListener("click", search);
     searchInput.addEventListener("keypress", e => {
@@ -90,11 +93,10 @@ function initSearch() {
         document.getElementById("filterRarity").value = "";
         document.getElementById("filterLang").value   = "";
         document.getElementById("filterType").value   = "";
-        document.getElementById("priceSlider").noUiSlider.set(["0", "57750"]);
-        document.getElementById("minPrice").value = "0";
-        document.getElementById("maxPrice").value = "57750";
+        document.getElementById("priceSlider").noUiSlider.set(["", ""]);
+        document.getElementById("minPrice").value = "";
+        document.getElementById("maxPrice").value = "";
         document.getElementById("filterSort").value = "";
-        hideNAButton?.classList.remove("active");
     });
 }
 
@@ -167,21 +169,14 @@ function initPriceSlider() {
     }
 }
 
-// Botón para ocultar cartas sin precio
+// initHideNAButton simplemente relanza la búsqueda
 function initHideNAButton(init = false) {
     if (init) {
         hideNAButton?.addEventListener("click", () => {
             hideNAButton.classList.toggle("active");
-            initHideNAButton();
+            page = 1;
+            loadCards(lastSearch); // 👈 relanza con hideNA actualizado
         });
         return;
     }
-
-    const isActive = hideNAButton?.classList.contains("active");
-    document.querySelectorAll(".card").forEach(card => {
-        const priceText = card.querySelector("p:nth-child(8)")?.textContent;
-        if (priceText?.includes("N/A")) {
-            card.style.display = isActive ? "none" : "block";
-        }
-    });
 }
