@@ -49,6 +49,7 @@ async function loadCards(name) {
         const data = await fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy);
         renderCards(data.cardDTOList, cardsContainer, abrirCarta);
         updatePagination(page, data.totalCards, size);
+        initHideNAButton();
     } catch (error) {
         cardsContainer.innerHTML = "<p>Error al cargar cartas.</p>";
         console.error(error);
@@ -74,6 +75,7 @@ function initSearch() {
     // Cargamos las ediciones en el combobox solo una vez
     loadSets();
     initPriceSlider();
+    initHideNAButton(true);
     
 
     // Buscar al pulsar el botón o al presionar Enter
@@ -88,10 +90,11 @@ function initSearch() {
         document.getElementById("filterRarity").value = "";
         document.getElementById("filterLang").value   = "";
         document.getElementById("filterType").value   = "";
-        document.getElementById("priceSlider").noUiSlider.set(["", ""]);
-        document.getElementById("minPrice").value = "";
-        document.getElementById("maxPrice").value = "";
+        document.getElementById("priceSlider").noUiSlider.set(["0", "57750"]);
+        document.getElementById("minPrice").value = "0";
+        document.getElementById("maxPrice").value = "57750";
         document.getElementById("filterSort").value = "";
+        hideNAButton?.classList.remove("active");
     });
 }
 
@@ -155,11 +158,30 @@ function initPriceSlider() {
         priceSlider.noUiSlider.set([null, e.target.value]);
     });
 
-// Si hay una búsqueda pendiente desde otra página, ejecutarla
-const pendingSearch = localStorage.getItem('pendingSearch');
-if (pendingSearch) {
-    localStorage.removeItem('pendingSearch');
-    lastSearch = pendingSearch;
-    loadCards(pendingSearch);
+    // Si hay una búsqueda pendiente desde otra página, ejecutarla
+    const pendingSearch = localStorage.getItem('pendingSearch');
+    if (pendingSearch) {
+        localStorage.removeItem('pendingSearch');
+        lastSearch = pendingSearch;
+        loadCards(pendingSearch);
+    }
 }
+
+// Botón para ocultar cartas sin precio
+function initHideNAButton(init = false) {
+    if (init) {
+        hideNAButton?.addEventListener("click", () => {
+            hideNAButton.classList.toggle("active");
+            initHideNAButton();
+        });
+        return;
+    }
+
+    const isActive = hideNAButton?.classList.contains("active");
+    document.querySelectorAll(".card").forEach(card => {
+        const priceText = card.querySelector("p:nth-child(8)")?.textContent;
+        if (priceText?.includes("N/A")) {
+            card.style.display = isActive ? "none" : "block";
+        }
+    });
 }
