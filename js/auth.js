@@ -100,3 +100,17 @@ export function setupAuthListeners() {
             userMenu.classList.remove('active');
         });
     }
+
+// Abre el modal de login y bloquea el scroll del body
+export function openModal() {
+    const loginModal = document.getElementById('loginModal');
+    loginModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Cierra el modal de login y restaura el scroll del body
+export function closeModal() {
+    const loginModal = document.getElementById('loginModal');
+    loginModal.classList.remove('active');
+    document.body.style.overflow = '';
+}

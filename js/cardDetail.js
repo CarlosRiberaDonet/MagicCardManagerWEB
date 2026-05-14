@@ -2,6 +2,7 @@
 
 import * as userActions from "./userActions.js";
 
+
 const BASE_URL = "http://localhost:8081/cards";
 
 // 1. Leer el parámetro "id" de la URL
@@ -214,13 +215,4 @@ document.getElementById("removeFromWatchlist").addEventListener("click", (event)
         console.error("Error al eliminar carta de la lista de seguimiento:", error);
         alert("Error al eliminar carta de la lista de seguimiento");
     });
-});
-
-// Al buscar
-searchButton.addEventListener("click", () => {
-    const name = searchInput.value.trim();
-    if (name) {
-        localStorage.setItem('pendingSearch', name);
-        window.location.href = '/index.html';
-    }
 });

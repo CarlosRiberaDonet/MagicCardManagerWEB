@@ -1,4 +1,5 @@
 import * as apiUser from "./apiUser.js";
+import * as auth from "./auth.js";
    
 // Token de autenticación
 function getToken() {
@@ -8,9 +9,11 @@ function getToken() {
     // Llamada a la api para añadir carta de la colección
     export function addCardToCollection(card) {
         const token = getToken();
-        if(token){
-            return apiUser.addToCollection(card, token);
+        if(!token){
+            auth.openModal();
+            return;
         }
+        return apiUser.addToCollection(card, token);
     }
 
     // Llamada a la api para eliminar carta de la colección
@@ -24,9 +27,11 @@ function getToken() {
     // Llamada a la api para añadir a la lista de seguimiento (watchlist)
     export function addCardToWatchlist(card) {
         const token = getToken();
-        if(token){
-            return apiUser.addToWatchlist(card, token);
+        if(!token){
+            auth.openModal();
+            return;
         }
+        return apiUser.addToWatchlist(card, token);
     }
 
     // Llamada a la api para eliminar carta de la lista de seguimiento (watchlist)

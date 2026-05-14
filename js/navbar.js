@@ -7,6 +7,9 @@ fetch('/navbar.html')
     .then(res => res.text())
     .then(html => {
         document.body.insertAdjacentHTML('afterbegin', html);
+        // Mover el modal fuera del navbar
+        const modal = document.getElementById('loginModal');
+        if (modal) document.body.appendChild(modal);
         document.dispatchEvent(new Event('navbarLoaded'));
         setupAuthListeners();
 
