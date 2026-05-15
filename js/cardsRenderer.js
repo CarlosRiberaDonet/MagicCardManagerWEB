@@ -1,4 +1,6 @@
 // cardsRenderer.js
+import { getFlag } from './utils.js';
+
 
     // Formatear precio a moneda local
     function formatPrice(price) {
@@ -25,13 +27,11 @@ export function renderCards(cards, container, cardClickCallback) {
         cardEl.innerHTML = `
             <img src="${card.imageUrl}" alt="${card.name}">
             <h3>${card.name}</h3>
-            <img src="${card.iconSvgUri}" alt="${card.setName}" class="set-icon">
-            <p>${card.setName}</p>
+            <img src="${card.iconSvgUri}" alt="${card.setName}" title="${card.setName}" class="set-icon">
             <p>${card.rarity}</p>
-            <p>${card.lang}</p>
             <p>${card.collectorNumber}</p>
+            <p>${getFlag(card.lang)}</p>
             <p>${card.price ? formatPrice(card.price) : "N/A"}</p>
-
         `;
 
         // Listener directo con acceso al id del objeto
@@ -41,5 +41,4 @@ export function renderCards(cards, container, cardClickCallback) {
 
         container.appendChild(cardEl);
     });
-
 }

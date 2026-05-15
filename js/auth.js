@@ -84,20 +84,19 @@ export function setupAuthListeners() {
         const logOut = document.getElementById('logOut');
 
         goProfile.addEventListener('click', () => {
-            alert('Ir a Mi Perfil (pendiente de implementación)');
+            window.location.href = 'profile.html'; // Redirige a la página de perfil
         });
         goCollection.addEventListener('click', () => {
-            alert('Ir a Mi Colección (pendiente de implementación)');
+            window.location.href = 'collection.html'; // Redirige a la página de colección
         });
         goInvestor.addEventListener('click', () => {
-            alert('Ir a Mi Inversión (pendiente de implementación)');
+            window.location.href = 'investor.html'; // Redirige a la página de inversión
         });
         goWatchlist.addEventListener('click', () => {
-            alert('Ir a Mi Watchlist (pendiente de implementación)');
+            window.location.href = 'watchlist.html'; // Redirige a la página de watchlist
         });
         logOut.addEventListener('click', () => {
             logout();
-            userMenu.classList.remove('active');
         });
     }
 

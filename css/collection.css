@@ -216,6 +216,27 @@
     gap: 0.5rem;
 }
 
+.card-thumb {
+    position: relative;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.card-tooltip-img {
+    display: none;
+    position: absolute;
+    left: 30px;
+    bottom: 0;
+    width: 200px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-card);
+    z-index: 100;
+}
+
+.card-thumb:hover .card-tooltip-img {
+    display: block;
+}
+
 /* Fila de carta en vista lista */
 .collection-list-item {
     display: grid;

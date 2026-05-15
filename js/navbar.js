@@ -53,11 +53,3 @@ function initSearchRedirect() {
         if (e.key === "Enter") redirect();
     });
 }
-
-// Listeners de los botones del menú
-function initMenuButtons() {
-    // Navega a la página de colección del usuario
-    document.getElementById("collectionBtn")?.addEventListener("click", () => {
-        window.location.href = '/collection.html';
-    });
-}

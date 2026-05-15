@@ -1,11 +1,13 @@
 // collection.js
 
 import { loadCollection } from "./apiUser.js";
+import { getFlag } from './utils.js';
+
 
 // ===========================
 // ESTADO
 // ===========================
-let allCards = [];         // todas las cartas de la colección
+let allCards = [];
 let currentView = 'list';  // vista activa: 'list' o 'grid'
 
 // ===========================
@@ -24,9 +26,10 @@ async function init() {
     try {
         const token = getToken();
         allCards = await loadCollection(token);
-        renderStats(allCards);
-        renderList(allCards);
+        renderStats();
+        renderCollectionList();
         setupFilters();
+        loadEditions();
         setupViewToggle();
     } catch (error) {
         console.error("Error al cargar la colección:", error);
@@ -38,10 +41,10 @@ async function init() {
 // ===========================
 // ESTADÍSTICAS
 // ===========================
-function renderStats(cards) {
-    const totalCards   = cards.reduce((sum, c) => sum + (c.quantity || 1), 0);
-    const totalValue   = cards.reduce((sum, c) => sum + (c.cardPrice?.trend || 0) * (c.quantity || 1), 0);
-    const totalInvested = cards.reduce((sum, c) => sum + (c.purchasePrice || 0) * (c.quantity || 1), 0);
+function renderStats() {
+    const totalCards = allCards.reduce((sum, c) => sum + (c.quantity || 1), 0); // Total de cartas (sumando cantidades)
+    const totalValue   = allCards.reduce((sum, c) => sum + (c.scryfallCard.cardPrice?.trend || 0) * (c.quantity || 1), 0);
+    const totalInvested = allCards.reduce((sum, c) => sum + (c.purchasePrice || 0) * (c.quantity || 1), 0);
     const totalProfit  = totalValue - totalInvested;
 
     document.getElementById("totalCards").textContent    = totalCards;
@@ -53,14 +56,29 @@ function renderStats(cards) {
     profitEl.style.color = totalProfit >= 0 ? '#4caf50' : '#e88a8a';
 }
 
+// Cargar lista de ediciones de las cartas del usuario
+function loadEditions() {
+    const selectElement = document.getElementById("colFilterSet");
+    selectElement.innerHTML = '<option value="">Set</option>'; // opción por defecto
+
+    const setsUnicos = new Set(allCards.map(card => card.scryfallCard.setName)); // sets únicos
+
+    setsUnicos.forEach(set => {
+        const option = document.createElement("option");
+        option.value = set;
+        option.textContent = set;
+        selectElement.appendChild(option);
+    });
+}
+
 // ===========================
 // VISTA LISTA
 // ===========================
-function renderList(cards) {
+function renderCollectionList() {
     const container = document.getElementById("collectionContainer");
     container.className = 'collection-list';
 
-    if (!cards || cards.length === 0) {
+    if (allCards.length === 0) {
         container.innerHTML = "<p>No tienes cartas en tu colección.</p>";
         return;
     }
@@ -70,43 +88,48 @@ function renderList(cards) {
     header.className = "collection-list-header";
     header.innerHTML = `
         <span></span>
-        <span>Carta</span>
-        <span>Set</span>
+        <span>Nombre</span>
+        <span>Edición</span>
         <span>Idioma</span>
         <span>Rareza</span>
-        <span>Qty</span>
+        <span>Cant.</span>
         <span>Compra</span>
-        <span>Actual</span>
+        <span>V.Actual</span>
         <span>Ganancia</span>
     `;
     container.innerHTML = '';
     container.appendChild(header);
 
     // Filas de cartas
-    cards.forEach(card => {
-        const currentPrice  = card.cardPrice?.trend || 0;
-        const purchasePrice = card.purchasePrice || 0;
-        const quantity      = card.quantity || 1;
-        const profit        = (currentPrice - purchasePrice) * quantity;
-        const profitClass   = profit >= 0 ? 'positive' : 'negative';
-
+    allCards.forEach(card => {
+        const currentPrice  = card.scryfallCard.cardPrice?.trend || 0; // Precio actual
+        const purchasePrice = card.purchasePrice || 0; // Precio de compra
+        const quantity      = card.quantity || 1; // Cantidad de esa carta en la colección
+        const profit        = (currentPrice - purchasePrice) * quantity; // Ganancia total por esa carta
+        const profitClass   = profit >= 0 ? 'positive' : 'negative';    // Clase para color de ganancia
         const row = document.createElement("div");
         row.className = "collection-list-item";
         row.innerHTML = `
-            <img src="${card.iconSvgUri || ''}" alt="${card.setName}" class="set-icon">
-            <span class="list-name">${card.name}</span>
-            <span class="list-set">${card.setName || '—'}</span>
-            <span class="list-lang">${card.lang || '—'}</span>
-            <span class="list-rarity">${card.rarity || '—'}</span>
+        <div class="card-thumb">
+            📷
+            <img src="${card.scryfallCard.imageUrl}" class="card-tooltip-img">
+        </div>
+            <span class="list-name">${card.scryfallCard.name}</span>
+            <div class="set-name">
+                <img src="${card.scryfallCard.iconSvgUri}" alt="${card.scryfallCard.setName}" title="${card.scryfallCard.setName}" class="set-icon">
+            </div>
+            <span class="list-lang">${getFlag(card.scryfallCard.lang) || '—'}</span>
+            <span class="list-rarity">${card.scryfallCard.rarity || '—'}</span>
             <span class="list-qty">${quantity}</span>
             <span class="list-purchase">${purchasePrice > 0 ? formatPrice(purchasePrice) : '—'}</span>
             <span class="list-current">${currentPrice > 0 ? formatPrice(currentPrice) : 'N/A'}</span>
+            
             <span class="list-profit ${profitClass}">${purchasePrice > 0 ? formatPrice(profit) : '—'}</span>
         `;
 
         // Abrir detalle al hacer clic
         row.addEventListener('click', () => {
-            window.open(`/cardDetail.html?id=${card.id}`, '_blank');
+            window.open(`/cardDetail.html?id=${card.scryfallCard.id}`, '_blank');
         });
 
         container.appendChild(row);
@@ -114,32 +137,32 @@ function renderList(cards) {
 }
 
 // ===========================
-// VISTA CUADRÍCULA
+// CARGAR INFORMACIÓN DE CARTAS EN VISTA CUADRÍCULA
 // ===========================
-function renderGrid(cards) {
+function renderCollectionGrid() {
     const container = document.getElementById("collectionContainer");
     container.className = 'collection-grid';
     container.innerHTML = '';
 
-    if (!cards || cards.length === 0) {
+    if (allCards.length === 0) {
         container.innerHTML = "<p>No tienes cartas en tu colección.</p>";
         return;
     }
 
-    cards.forEach(card => {
+    allCards.forEach(card => {
         const cardEl = document.createElement("div");
         cardEl.className = "card";
         cardEl.innerHTML = `
-            <img src="${card.imageUrl}" alt="${card.name}">
-            <img src="${card.iconSvgUri || ''}" alt="${card.setName}" class="set-icon">
-            <h3>${card.name}</h3>
-            <p>${card.setName || '—'}</p>
-            <p>${card.lang || '—'}</p>
+            <img src="${card.scryfallCard.imageUrl}" alt="${card.scryfallCard.name}">
+            <h3>${card.scryfallCard.name}</h3>
+            <img src="${card.scryfallCard.iconSvgUri || ''}" alt="${card.scryfallCard.setName}" class="set-icon">
+            <p>${getFlag(card.scryfallCard.lang) || '—'}</p>
+
+            <p>${card.scryfallCard.cardPrice?.trend ? formatPrice(card.scryfallCard.cardPrice.trend) : 'N/A'}</p>
             <p>${card.quantity || 1}x</p>
-            <p>${card.cardPrice?.trend ? formatPrice(card.cardPrice.trend) : 'N/A'}</p>
         `;
         cardEl.addEventListener('click', () => {
-            window.open(`/cardDetail.html?id=${card.id}`, '_blank');
+            window.open(`/cardDetail.html?id=${card.scryfallCard.id}`, '_blank');
         });
         container.appendChild(cardEl);
     });
@@ -153,15 +176,18 @@ function setupViewToggle() {
         currentView = 'grid';
         document.getElementById("viewGrid").classList.add('active');
         document.getElementById("viewList").classList.remove('active');
-        renderGrid(applyFilters());
+        renderCollectionGrid(applyFilters());
     });
 
     document.getElementById("viewList").addEventListener("click", () => {
         currentView = 'list';
         document.getElementById("viewList").classList.add('active');
         document.getElementById("viewGrid").classList.remove('active');
-        renderList(applyFilters());
+        renderCollectionList(applyFilters());
     });
+    // Vista lista por defecto
+    document.getElementById("viewList").classList.add('active');
+    document.getElementById("viewGrid").classList.remove('active');
 }
 
 // ===========================
@@ -173,7 +199,8 @@ function setupFilters() {
         const el = document.getElementById(id);
         if (el) el.addEventListener("input", () => {
             const filtered = applyFilters();
-            currentView === 'list' ? renderList(filtered) : renderGrid(filtered);
+            currentView === 'list' ? renderCollectionList(filtered) : renderCollectionGrid(filtered);
+
         });
     });
 
@@ -183,7 +210,7 @@ function setupFilters() {
         document.getElementById("colFilterLang").value   = "";
         document.getElementById("colFilterSort").value   = "";
         document.getElementById("colSearch").value       = "";
-        currentView === 'list' ? renderList(allCards) : renderGrid(allCards);
+        currentView === 'list' ? renderCollectionList(allCards) : renderCollectionGrid(allCards);
     });
 }
 

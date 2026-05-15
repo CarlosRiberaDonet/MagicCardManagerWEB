@@ -169,7 +169,7 @@ function initPriceSlider() {
     }
 }
 
-// initHideNAButton simplemente relanza la búsqueda
+// initHideNAButton relanza la búsqueda
 function initHideNAButton(init = false) {
     if (init) {
         hideNAButton?.addEventListener("click", () => {

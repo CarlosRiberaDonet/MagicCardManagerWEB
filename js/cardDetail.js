@@ -44,6 +44,8 @@ function fillCardDetail(card) {
     document.getElementById("cardName").textContent = card.name;
     document.getElementById("cardImage").src = card.imageUrl;
     document.getElementById("cardImage").alt = card.name;
+    // Cargar icono del set
+    //document.getElementById("setIcon").src = card.iconSvgUri;
     document.getElementById("cardSet").textContent = card.setName;
     document.getElementById("cardLang").textContent = card.lang;
     document.getElementById("cardCollector").textContent = card.collectorNumber;
@@ -101,7 +103,7 @@ function formatPrice(price) {
 // 6. Comprueba si la carta ya está en la colección del usuario y muestra/oculta botones
 async function checkCardInCollection() {
     const quantity = await userActions.isCardInCollection(card.id);
-     console.log("Quantity:", quantity);
+    console.log("Quantity:", quantity);
     document.getElementById("cardQuantity").textContent = quantity > 0 ? `x${quantity}` : "";
     document.getElementById("removeFromCollection").style.display = quantity > 0 ? "block" : "none";
 }
@@ -130,7 +132,6 @@ document.getElementById("addToCollection").addEventListener("click", (event) => 
             btn.style.backgroundColor = "";
             btn.disabled = false;
         }, 500);
-
         
 
         }).catch(error => {
@@ -216,3 +217,18 @@ document.getElementById("removeFromWatchlist").addEventListener("click", (event)
         alert("Error al eliminar carta de la lista de seguimiento");
     });
 });
+
+// INTRODUCIR PRECIO MANUALMENTE
+// Abre el modal del input del precio y bloquea el scroll del body
+export function openModal() {
+    const priceModal = document.getElementById('priceModal');
+    priceModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Cierra el modal del input del precio y restaura el scroll del body
+export function closeModal() {
+    const priceModal = document.getElementById('priceModal');
+    priceModal.classList.remove('active');
+    document.body.style.overflow = '';
+}
