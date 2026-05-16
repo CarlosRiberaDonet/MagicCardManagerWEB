@@ -103,7 +103,6 @@ function formatPrice(price) {
 // 6. Comprueba si la carta ya está en la colección del usuario y muestra/oculta botones
 async function checkCardInCollection() {
     const quantity = await userActions.isCardInCollection(card.id);
-    console.log("Quantity:", quantity);
     document.getElementById("cardQuantity").textContent = quantity > 0 ? `x${quantity}` : "";
     document.getElementById("removeFromCollection").style.display = quantity > 0 ? "block" : "none";
 }
@@ -116,29 +115,33 @@ async function checkCardInWatchlist() {
 }
 
 // Botón para añadir carta a la colección
-document.getElementById("addToCollection").addEventListener("click", (event) => {
-    const btn = event.target;
+document.getElementById("addToCollection").addEventListener("click", () => {
+    userActions.openPriceModal(card);
+});
+
+
+document.getElementById("confirmPriceBtn").addEventListener("click", () => {
+    const price = parseFloat(document.getElementById("priceInput").value) || 0;
+    const quantity = parseInt(document.getElementById("quantityInput").value || 1)
+    const btn = document.getElementById("addToCollection");
+    card.price = price;
+    card.quantity = quantity;
     userActions.addCardToCollection(card).then(() => {
-        // Cambiar el texto del botón
+        userActions.closePriceModal();
         btn.textContent = "Carta añadida";
-        // cambiar color del botón
         btn.style.backgroundColor = "#4CAF50";
-        // Desactivar el botón para evitar múltiples clics
         btn.disabled = true;
         checkCardInCollection();
-        // Volver al estado original después de 0.5 segundos
         setTimeout(() => {
             btn.textContent = "📦 Añadir a colección";
             btn.style.backgroundColor = "";
             btn.disabled = false;
         }, 500);
-        
-
-        }).catch(error => {
-            console.error("Error al añadir carta a la colección:", error);
-            alert("Error al añadir carta a la colección");
-        });
+    }).catch(error => {
+        console.error("Error:", error);
     });
+});
+
 
 // Botón para eliminar carta de la colección
 document.getElementById("removeFromCollection").addEventListener("click", (event) => {   

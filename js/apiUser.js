@@ -9,7 +9,11 @@ export async function addToCollection(card, token) {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ cardId: card.id, purchasePrice: card.cardPrice ? card.cardPrice.trend : null })
+        body: JSON.stringify(
+            { cardId: card.id,
+                purchasePrice: card.price,
+                quantity: card.quantity
+            })
     });
     if (!response.ok) throw new Error("Error al añadir carta a la colección");
     return await response.text();
