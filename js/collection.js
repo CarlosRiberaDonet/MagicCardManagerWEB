@@ -90,8 +90,9 @@ function renderCollectionList() {
         <span></span>
         <span>Nombre</span>
         <span>Edición</span>
-        <span>Idioma</span>
         <span>Rareza</span>
+        <span>#</span>
+        <span>Idioma</span>
         <span>Cant.</span>
         <span>Compra</span>
         <span>V.Actual</span>
@@ -110,16 +111,17 @@ function renderCollectionList() {
         const row = document.createElement("div");
         row.className = "collection-list-item";
         row.innerHTML = `
-        <div class="card-thumb">
-            📷
-            <img src="${card.scryfallCard.imageUrl}" class="card-tooltip-img">
-        </div>
+            <div class="card-thumb">
+                📷
+                <img src="${card.scryfallCard.imageUrl}" class="card-tooltip-img">
+            </div>
             <span class="list-name">${card.scryfallCard.name}</span>
             <div class="set-name">
                 <img src="${card.scryfallCard.iconSvgUri}" alt="${card.scryfallCard.setName}" title="${card.scryfallCard.setName}" class="set-icon">
             </div>
-            <span class="list-lang">${getFlag(card.scryfallCard.lang) || '—'}</span>
             <span class="list-rarity">${card.scryfallCard.rarity || '—'}</span>
+            <span class="collector-number">${card.scryfallCard.collectorNumber}</span>
+            <span class="list-lang">${getFlag(card.scryfallCard.lang) || '—'}</span>
             <span class="list-qty">${quantity}</span>
             <span class="list-purchase">${purchasePrice > 0 ? formatPrice(purchasePrice) : '—'}</span>
             <span class="list-current">${currentPrice > 0 ? formatPrice(currentPrice) : 'N/A'}</span>

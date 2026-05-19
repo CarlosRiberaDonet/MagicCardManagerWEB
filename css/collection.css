@@ -1,5 +1,5 @@
 /* ===========================
-   IMPORTS — reutilizamos el estilo global
+   IMPORTS
 =========================== */
 @import url('/css/style.css');
 
@@ -23,6 +23,7 @@
     padding-bottom: 1rem;
 }
 
+/* Línea dorada bajo el título */
 .collection-title::after {
     content: '';
     position: absolute;
@@ -33,7 +34,9 @@
     background: linear-gradient(90deg, var(--gold), transparent);
 }
 
-/* Estadísticas rápidas */
+/* ===========================
+   ESTADÍSTICAS RÁPIDAS
+=========================== */
 .collection-stats {
     display: flex;
     gap: 1.5rem;
@@ -53,6 +56,7 @@
     overflow: hidden;
 }
 
+/* Línea dorada en la parte superior de cada stat */
 .stat::before {
     content: '';
     position: absolute;
@@ -77,7 +81,7 @@
 }
 
 /* ===========================
-   BARRA DE FILTROS DE COLECCIÓN
+   BARRA DE FILTROS
 =========================== */
 .collection-filters {
     display: flex;
@@ -91,7 +95,6 @@
     border-radius: var(--radius);
 }
 
-/* Selects de filtro — mismo estilo que el navbar */
 .col-select {
     padding: 0.3rem 1.5rem 0.3rem 0.6rem;
     font-family: var(--font-body);
@@ -122,7 +125,6 @@
     color: var(--text-primary);
 }
 
-/* Input de búsqueda dentro de la colección */
 .col-search {
     flex: 1;
     min-width: 180px;
@@ -146,7 +148,6 @@
     border-color: var(--gold-dim);
 }
 
-/* Botón limpiar filtros */
 .col-clear {
     padding: 0.3rem 0.75rem;
     font-family: var(--font-display);
@@ -168,7 +169,7 @@
 }
 
 /* ===========================
-   TOGGLE VISTA LISTA / CUADRÍCULA
+   TOGGLE LISTA / CUADRÍCULA
 =========================== */
 .view-toggle {
     display: flex;
@@ -208,42 +209,63 @@
 }
 
 /* ===========================
-   VISTA LISTA
+   VISTA LISTA — ESTRUCTURA
+   Columnas: foto | nombre | edición | rareza | # | idioma | cant. | compra | actual | ganancia
 =========================== */
+
+/*
+   Definición de columnas compartida entre cabecera y filas:
+   28px  → foto tooltip
+   2fr   → nombre de la carta (más espacio)
+   28px  → icono de edición
+   80px  → rareza
+   55px  → número de coleccionista
+   40px  → bandera de idioma
+   50px  → cantidad
+   80px  → precio de compra
+   80px  → valor actual
+   85px  → ganancia
+*/
 .collection-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
+    overflow: visible;
 }
 
-.card-thumb {
-    position: relative;
-    cursor: pointer;
-    font-size: 1rem;
+/* Cabecera de la tabla */
+.collection-list-header {
+    display: grid;
+    grid-template-columns: 28px 2fr 28px 80px 55px 40px 50px 80px 80px 85px;
+    gap: 0.75rem;
+    padding: 0.4rem 1.25rem;
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: white;
+    border-bottom: 1px solid var(--border);
 }
 
-.card-tooltip-img {
-    display: none;
-    position: absolute;
-    left: 30px;
-    bottom: 0;
-    width: 200px;
-    border-radius: 8px;
-    box-shadow: var(--shadow-card);
-    z-index: 100;
-}
+/* Cabecera — alineación de cada columna */
+.collection-list-header span:nth-child(1) { text-align: center; }  /* foto */
+.collection-list-header span:nth-child(2) { text-align: left; }    /* nombre */
+.collection-list-header span:nth-child(3) { text-align: center; }  /* edición */
+.collection-list-header span:nth-child(4) { text-align: center; }  /* rareza */
+.collection-list-header span:nth-child(5) { text-align: center; }  /* # */
+.collection-list-header span:nth-child(6) { text-align: center; }  /* idioma */
+.collection-list-header span:nth-child(7) { text-align: center; }  /* cant. */
+.collection-list-header span:nth-child(8) { text-align: right; }   /* compra */
+.collection-list-header span:nth-child(9) { text-align: right; }   /* actual */
+.collection-list-header span:nth-child(10){ text-align: right; }   /* ganancia */
 
-.card-thumb:hover .card-tooltip-img {
-    display: block;
-}
-
-/* Fila de carta en vista lista */
+/* Fila de carta */
 .collection-list-item {
     display: grid;
-    grid-template-columns: 28px 1fr 120px 60px 80px 60px 90px 90px 90px;
+    grid-template-columns: 28px 2fr 28px 80px 55px 40px 50px 80px 80px 85px;
     align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 1.25rem;
+    gap: 0.75rem;
+    padding: 0.65rem 1.25rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -256,17 +278,41 @@
     background: rgba(201, 168, 76, 0.03);
 }
 
-/* Icono del set */
-.collection-list-item .set-icon {
-    filter: invert(68%) sepia(35%) saturate(600%) hue-rotate(5deg) brightness(95%);
-    width: 20px;
-    height: 20px;
+/* ===========================
+   TOOLTIP DE IMAGEN DE CARTA
+=========================== */
+.card-thumb {
+    position: relative;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+.card-tooltip-img {
+    display: none;
+    position: absolute;
+    left: 30px;
+    bottom: 0;
+    width: 200px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-card);
+    z-index: 500;
+}
+
+.card-thumb:hover .card-tooltip-img {
+    display: block;
+}
+
+/* ===========================
+   CONTENIDO DE CADA CELDA
+=========================== */
 
 /* Nombre de la carta */
 .list-name {
     font-family: var(--font-display);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
     color: var(--text-primary);
     white-space: nowrap;
@@ -274,10 +320,49 @@
     text-overflow: ellipsis;
 }
 
-/* Campos secundarios */
-.list-set,
-.list-lang,
-.list-rarity,
+/* Icono del set */
+.set-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.collection-list-item .set-icon {
+    filter: invert(68%) sepia(35%) saturate(600%) hue-rotate(5deg) brightness(95%);
+    width: 20px;
+    height: 20px;
+}
+
+/* Rareza */
+.list-rarity {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Número de coleccionista */
+.collector-number {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Bandera de idioma */
+.list-lang {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-lang img {
+    width: 20px;
+    height: 15px;
+    border-radius: 2px;
+}
+
+/* Cantidad */
 .list-qty {
     font-family: var(--font-body);
     font-size: 0.85rem;
@@ -285,18 +370,18 @@
     text-align: center;
 }
 
-/* Precio compra */
+/* Precio de compra */
 .list-purchase {
     font-family: var(--font-body);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--text-secondary);
     text-align: right;
 }
 
-/* Precio actual */
+/* Valor actual */
 .list-current {
     font-family: var(--font-body);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 600;
     color: var(--gold-light);
     text-align: right;
@@ -313,21 +398,9 @@
 .list-profit.positive { color: #4caf50; }
 .list-profit.negative { color: #e88a8a; }
 
-/* Cabecera de la lista */
-.collection-list-header {
-    display: grid;
-    grid-template-columns: 28px 1fr 120px 60px 80px 60px 90px 90px 90px;
-    gap: 1rem;
-    padding: 0.5rem 1.25rem;
-    font-family: var(--font-display);
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-
 /* ===========================
-   RESPONSIVE — TABLET
+   RESPONSIVE — TABLET (max 1024px)
+   Ocultamos número de coleccionista y precio de compra
 =========================== */
 @media (max-width: 1024px) {
 
@@ -335,20 +408,23 @@
         grid-template-columns: repeat(4, 1fr);
     }
 
-    .collection-list-item,
-    .collection-list-header {
-        grid-template-columns: 28px 1fr 100px 60px 80px 80px 80px;
+    /* 8 columnas: sin # ni compra */
+    .collection-list-header,
+    .collection-list-item {
+        grid-template-columns: 28px 2fr 28px 80px 40px 50px 80px 85px;
     }
 
-    /* Ocultar columnas menos importantes en tablet */
+    .collector-number,
     .list-purchase,
-    .collection-list-header span:nth-child(7) {
+    .collection-list-header span:nth-child(5),
+    .collection-list-header span:nth-child(8) {
         display: none;
     }
 }
 
 /* ===========================
-   RESPONSIVE — MÓVIL
+   RESPONSIVE — MÓVIL (max 768px)
+   Solo foto, nombre, idioma, actual y ganancia
 =========================== */
 @media (max-width: 768px) {
 
@@ -357,7 +433,7 @@
     }
 
     .stat {
-        min-width: 120px;
+        min-width: 110px;
         padding: 0.75rem 1rem;
     }
 
@@ -365,29 +441,32 @@
         font-size: 1.1rem;
     }
 
-    .collection-filters {
-        gap: 0.4rem;
-    }
-
     .collection-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
     }
 
-    /* Lista simplificada en móvil */
-    .collection-list-item,
-    .collection-list-header {
-        grid-template-columns: 28px 1fr 60px 80px;
+    /* 4 columnas en móvil: foto | nombre | actual | ganancia */
+    .collection-list-header,
+    .collection-list-item {
+        grid-template-columns: 28px 1fr 80px 80px;
+        gap: 0.5rem;
+        padding: 0.6rem 0.75rem;
     }
 
-    .list-set,
-    .list-lang,
+    /* Ocultar columnas en móvil */
+    .set-name,
     .list-rarity,
+    .collector-number,
+    .list-lang,
+    .list-qty,
     .list-purchase,
     .collection-list-header span:nth-child(3),
     .collection-list-header span:nth-child(4),
     .collection-list-header span:nth-child(5),
-    .collection-list-header span:nth-child(7) {
+    .collection-list-header span:nth-child(6),
+    .collection-list-header span:nth-child(7),
+    .collection-list-header span:nth-child(8) {
         display: none;
     }
 }

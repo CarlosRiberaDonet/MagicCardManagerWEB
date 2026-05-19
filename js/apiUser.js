@@ -27,7 +27,10 @@ export async function removeFromCollection(card, token) {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ cardId: card.id })
+        body: JSON.stringify({ 
+            cardId: card.id,
+            purchasePrice: card.purchasePrice
+        })
     });
     if (!response.ok) throw new Error("Error al eliminar carta de la colección");
     return await response.text();
@@ -70,7 +73,7 @@ export async function isInCollection(cardId, token) {
         }
     });
     if (!response.ok) throw new Error("Error al comprobar si la carta está en la colección");
-    return await response.json(); // devuelve true o false directamente;
+    return await response.json(); // devuelve true si la carta está en la colección del usuario, false si no lo está.
 }
 
 // Comprobar si una carta está en la lista de seguimiento del usuario
