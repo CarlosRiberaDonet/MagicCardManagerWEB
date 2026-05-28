@@ -23,7 +23,7 @@ export async function fetchCards(name, set, page, size, rarity, lang, typeLine, 
 
 // Obtener ediciones para llenar el filtro de ediciones
 export async function fetchSets() {
-    const response = await fetch("http://localhost:8081/sets/scryfall");
+    const response = await fetch("http://localhost:8081/scryfall/sets");
     if (!response.ok) throw new Error("Error al obtener sets");
     return await response.json();
 }

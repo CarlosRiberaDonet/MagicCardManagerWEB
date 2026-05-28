@@ -15,7 +15,6 @@ fetch('/navbar.html')
 
         initScrollBehavior();
         initSearchRedirect();
-        initMenuButtons();
     })
     .catch(err => console.error('Error al cargar el navbar:', err));
 

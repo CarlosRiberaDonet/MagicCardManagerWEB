@@ -114,14 +114,14 @@ async function loadSets() {
     try {
         const sets = await fetchSets();
         const setFilter = document.getElementById("filterSet");
-
+             console.log("Sets recibidos:", sets.length, sets[0]);
         // Vaciamos el select para evitar duplicados si se llama varias veces
         setFilter.innerHTML = '<option value="">Edición</option>';
 
         // Añadimos una opción por cada edición
         sets.forEach(set => {
             const option = document.createElement("option");
-            option.value = set.code; // Usamos el código interno como valor
+            option.value = set.setCode; // Usamos el código interno como valor
             option.textContent = set.name; // Mostramos el nombre de la edición
             setFilter.appendChild(option);
         });
