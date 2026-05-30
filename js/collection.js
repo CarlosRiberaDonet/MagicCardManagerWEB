@@ -56,6 +56,7 @@ function renderStats() {
     profitEl.style.color = totalProfit >= 0 ? '#4caf50' : '#e88a8a';
 }
 
+/////////////////////////////// REVISAR ////////////////////////////////////////////////////////////
 // Cargar lista de ediciones de las cartas del usuario
 function loadEditions() {
     const selectElement = document.getElementById("colFilterSet");

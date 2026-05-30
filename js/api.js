@@ -27,3 +27,15 @@ export async function fetchSets() {
     if (!response.ok) throw new Error("Error al obtener sets");
     return await response.json();
 }
+
+// Actualizar precios desde cardtrader
+export async function updatePricesFromCardtrader() {
+    const response = await fetch("http://localhost:8081/cardtrader/card", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    if (!response.ok) throw new Error("Error al actualizar precios");
+    return await response.json();
+}

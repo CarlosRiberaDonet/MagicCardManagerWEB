@@ -18,7 +18,7 @@ if (!cardId) {
     document.getElementById("cardName").textContent = "Nombre de carta no encontrada";
 } else {
     loadCardDetail(cardId);
-}
+}    
 
 // 3. Función principal: llama al backend y rellena el HTML
 async function loadCardDetail(id) {
@@ -61,7 +61,7 @@ function fillCardDetail(card) {
     document.getElementById("released_at").textContent = card.releasedAt
     ? new Date(card.releasedAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
     : "N/A";
-
+    
     // Precio bajo (campo "low" dentro del objeto cardPrice)
     document.getElementById("cardLow").textContent =
         card.cardPrice && card.cardPrice.low
@@ -121,6 +121,8 @@ async function checkCardInWatchlist() {
     document.getElementById("addToWatchlist").style.display = inWatchlist ? "none" : "block";
 }
 
+
+// Botón para confirmar precio y cantidad al añadir carta a la colección
 function buttonEvents(card){
     document.getElementById("confirmPriceBtn").addEventListener("click", () => {
     const price = parseFloat(document.getElementById("priceInput").value) || 0;
@@ -220,7 +222,30 @@ document.getElementById("removeFromWatchlist").addEventListener("click", (event)
 
     }).catch(error => {
         console.error("Error al eliminar carta de la lista de seguimiento:", error);
-        alert("Error al eliminar carta de la lista de seguimiento");
+        alert("Error al eliminar carta de la lista de seguimiento");});
     });
-});
+}
+
+ // Boton para actualizar precios
+    function updatePricesButton (){
+        document.getElementById("updatePrices").hidden = true; // Oculta el botón por defecto
+         if(card.cardPrice.low == null || card.cardPrice.trend == null){
+        const btn = document.getElementById("updatePrices");
+        btn.hidden = false; // Muestra el botón si falta información de precios
+        btn.addEventListener("click", async () =>{
+            btn.textContent = "Actualizando...";
+            btn.disabled = true;
+            
+        try {
+            await userActions.updateCollectionPrices();
+            fillCardDetail(await userActions.getCardById(cardId));
+        } catch (error) {
+            console.error("Error al actualizar precios:", error);
+            alert("Error al actualizar precios");
+        } finally {
+            btn.textContent = "Actualizar precios";
+            btn.disabled = false;
+        }
+            })
+        }
 }
