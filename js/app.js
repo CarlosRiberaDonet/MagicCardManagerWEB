@@ -175,7 +175,7 @@ function initHideNAButton(init = false) {
         hideNAButton?.addEventListener("click", () => {
             hideNAButton.classList.toggle("active");
             page = 1;
-            loadCards(lastSearch); // 👈 relanza con hideNA actualizado
+            loadCards(lastSearch); // relanza con hideNA actualizado
         });
         return;
     }
