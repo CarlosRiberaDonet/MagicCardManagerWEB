@@ -1,5 +1,6 @@
 // cardDetail.js
 
+import { updatePricesFromCardtrader } from "./api.js";
 import * as userActions from "./userActions.js";
 import { closeModal } from "./auth.js";
 import * as utils from "./utils.js";
@@ -34,6 +35,7 @@ async function loadCardDetail(id) {
         await checkCardInCollection();
         await checkCardInWatchlist();
         await buttonEvents(card);
+        await updatePricesButton(card);
 
         // Botón para añadir carta a la colección
         document.getElementById("addToCollection").addEventListener("click", () => {
@@ -227,25 +229,25 @@ document.getElementById("removeFromWatchlist").addEventListener("click", (event)
 }
 
  // Boton para actualizar precios
-    function updatePricesButton (){
-        document.getElementById("updatePrices").hidden = true; // Oculta el botón por defecto
-         if(card.cardPrice.low == null || card.cardPrice.trend == null){
+function updatePricesButton (card){
+    document.getElementById("updatePrices").hidden = true; // Oculta el botón por defecto
+    if(card.cardPrice.low == null || card.cardPrice.trend == null){
         const btn = document.getElementById("updatePrices");
         btn.hidden = false; // Muestra el botón si falta información de precios
         btn.addEventListener("click", async () =>{
             btn.textContent = "Actualizando...";
             btn.disabled = true;
             
-        try {
-            await userActions.updateCollectionPrices();
-            fillCardDetail(await userActions.getCardById(cardId));
-        } catch (error) {
-            console.error("Error al actualizar precios:", error);
-            alert("Error al actualizar precios");
-        } finally {
-            btn.textContent = "Actualizar precios";
-            btn.disabled = false;
-        }
-            })
-        }
+            try {
+                await updatePricesFromCardtrader(card.scryfallId);
+                fillCardDetail(await userActions.getCardById(cardId));
+            } catch (error) {
+                console.error("Error al actualizar precios:", error);
+                alert("Error al actualizar precios");
+            } finally {
+                btn.textContent = "Actualizar precios";
+                btn.disabled = false;
+            }
+        })
+    }
 }
