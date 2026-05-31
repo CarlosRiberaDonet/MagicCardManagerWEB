@@ -29,8 +29,8 @@ export async function fetchSets() {
 }
 
 // Actualizar precios desde cardtrader
-export async function updatePricesFromCardtrader(scryfallId) {
-    const response = await fetch(`http://localhost:8081/cardtrader/card/${scryfallId}`, {
+export async function updatePricesFromCardtrader(cardId, scryfallId) {
+    const response = await fetch(`http://localhost:8081/cardtrader/cardId/${cardId}/scryfallId/${scryfallId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
