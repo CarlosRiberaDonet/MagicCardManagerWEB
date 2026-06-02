@@ -18,7 +18,7 @@ const cardId = params.get("id");
 if (!cardId) {
     document.getElementById("cardName").textContent = "Nombre de carta no encontrada";
 } else {
-    loadCardDetail(cardId);
+    await loadCardDetail(cardId);
 }    
 
 // 3. Función principal: llama al backend y rellena el HTML
@@ -228,7 +228,7 @@ document.getElementById("removeFromWatchlist").addEventListener("click", (event)
     });
 }
 
- // Boton para actualizar precios
+// Boton para actualizar precios
 function updatePricesButton (card){
     document.getElementById("updatePrices").hidden = true; // Oculta el botón por defecto
     if(card.cardPrice.low == null || card.cardPrice.trend == null){
@@ -239,8 +239,12 @@ function updatePricesButton (card){
             btn.disabled = true;
             
             try {
-                await updatePricesFromCardtrader(card.scryfallId);
-                fillCardDetail(await userActions.getCardById(cardId));
+                const condition = "Near Mint"; 
+                const isFoil = false;
+                const data = await updatePricesFromCardtrader(card.scryfallId, card.lang, condition, isFoil);
+                console.log(data);
+                // Recargar la página para mostrar los nuevos precios
+                window.location.reload();
             } catch (error) {
                 console.error("Error al actualizar precios:", error);
                 alert("Error al actualizar precios");

@@ -1,7 +1,7 @@
 // collection.js
 
 import { loadCollection } from "./apiUser.js";
-import { getFlag } from './utils.js';
+import { getFlag, getToken } from './utils.js';
 
 
 // ===========================
@@ -10,22 +10,14 @@ import { getFlag } from './utils.js';
 let allCards = [];
 let currentView = 'list';  // vista activa: 'list' o 'grid'
 
-// ===========================
-// TOKEN
-// ===========================
-function getToken() {
-    const token = localStorage.getItem('authToken');
-    if (!token) window.location.href = '/index.html'; // sin token, al inicio
-    return token;
-}
+
 
 // ===========================
 // INICIALIZACIÓN
 // ===========================
 async function init() {
     try {
-        const token = getToken();
-        allCards = await loadCollection(token);
+        allCards = await loadCollection(getToken());
         renderStats();
         renderCollectionList();
         setupFilters();

@@ -25,3 +25,12 @@ export function closePriceModal(modal) {
     loginModal.classList.remove('active');
     document.body.style.overflow = '';
 }
+
+// ===========================
+// TOKEN
+// ===========================
+export function getToken() {
+    const token = localStorage.getItem('authToken');
+    if (!token) window.location.href = '/index.html'; // sin token, al inicio
+    return token;
+}

@@ -51,7 +51,7 @@ async function loadCards(name) {
 
     try {
         const data = await fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy, hideNA);
-        renderCards(data.cardDTOList, cardsContainer, abrirCarta);
+        renderCards(data.cardDTOList, cardsContainer);
         updatePagination(page, data.totalCards, size);
     } catch (error) {
         cardsContainer.innerHTML = "<p>Error al cargar cartas.</p>";
@@ -103,11 +103,6 @@ function initSearch() {
 // Intentamos enlazar los listeners ahora y también cuando el navbar termine de cargarse
 initSearch();
 document.addEventListener('navbarLoaded', initSearch);
-
-// Abre la página de detalle de la carta en una nueva pestaña
-function abrirCarta(cardId) {
-    window.open(`cardDetail.html?id=${cardId}`, "_blank");
-}
 
 // Rellena el combobox de ediciones con los datos del backend
 async function loadSets() {

@@ -11,7 +11,7 @@ import { getFlag } from './utils.js';
 }
 
 // cardClickCallback: función que recibe el id de la carta cuando se hace click
-export function renderCards(cards, container, cardClickCallback) {
+export function renderCards(cards, container) {
     container.innerHTML = "";
 
     if (!cards || cards.length === 0) {
@@ -36,7 +36,7 @@ export function renderCards(cards, container, cardClickCallback) {
 
         // Listener directo con acceso al id del objeto
         cardEl.addEventListener("click", () => {
-            cardClickCallback(card.id);
+            window.open(`cardDetail.html?id=${card.id}`, "_blank");
         });
 
         container.appendChild(cardEl);

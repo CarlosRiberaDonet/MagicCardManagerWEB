@@ -1,4 +1,6 @@
 // api.js
+import { getToken } from "./utils.js";
+
 const BASE_URL = "http://localhost:8081/cards";
 
 const FILTER_URL = ""; // Filtro de cartas
@@ -29,8 +31,14 @@ export async function fetchSets() {
 }
 
 // Actualizar precios desde cardtrader
-export async function updatePricesFromCardtrader(cardId, scryfallId) {
-    const response = await fetch(`http://localhost:8081/cardtrader/cardId/${cardId}/scryfallId/${scryfallId}`, {
+export async function updatePricesFromCardtrader(scryfallId, lang, condition, isFoil) {
+    //const token = getToken();
+    //if (!token) throw new Error("Usuario no autenticado");
+        const url = `http://localhost:8081/pricecache/${scryfallId}?lang=${lang}&condition=${condition}&isFoil=${isFoil}`;
+        console.log("URL:", url);
+
+    const response = await fetch(`http://localhost:8081/pricecache/${scryfallId}?lang=${lang}&condition=${condition}&isFoil=${isFoil}`, {
+        
         method: "GET",
         headers: {
             "Content-Type": "application/json"
