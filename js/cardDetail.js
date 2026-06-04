@@ -12,19 +12,19 @@ const BASE_URL = "http://localhost:8081/cards";
 //    Cuando se abre la página como cardDetail.html?id=123,
 //    URLSearchParams nos permite extraer ese valor fácilmente.
 const params = new URLSearchParams(window.location.search);
-const cardId = params.get("id");
+const scryfallId = params.get("scryfallId"); // Usamos "scryfallId" para mantener consistencia con el backend
 
 // 2. Si no hay id en la URL
-if (!cardId) {
+if (!scryfallId) {
     document.getElementById("cardName").textContent = "Nombre de carta no encontrada";
 } else {
-    await loadCardDetail(cardId);
-}    
+    await loadCardDetail(scryfallId);
+}
 
 // 3. Función principal: llama al backend y rellena el HTML
 async function loadCardDetail(id) {
     try {
-        const response = await fetch(`${BASE_URL}/id?cardId=${id}`);
+        const response = await fetch(`${BASE_URL}/id?scryfallId=${id}`);
 
         if (!response.ok) {
             throw new Error(`Error del servidor: ${response.status}`);
@@ -111,14 +111,14 @@ function formatPrice(price) {
 
 // 6. Comprueba si la carta ya está en la colección del usuario y muestra/oculta botones
 async function checkCardInCollection() {
-    const quantity = await userActions.isCardInCollection(cardId);
+    const quantity = await userActions.isCardInCollection(scryfallId);
     document.getElementById("cardQuantity").textContent = quantity > 0 ? `x${quantity}` : "";
     document.getElementById("removeFromCollection").style.display = quantity > 0 ? "block" : "none";
 }
 
 // 6b. Comprueba watchlist
 async function checkCardInWatchlist() {
-    const inWatchlist = await userActions.isCardInWatchlist(cardId);
+    const inWatchlist = await userActions.isCardInWatchlist(scryfallId);
     document.getElementById("removeFromWatchlist").style.display = inWatchlist ? "block" : "none";
     document.getElementById("addToWatchlist").style.display = inWatchlist ? "none" : "block";
 }
@@ -129,6 +129,7 @@ function buttonEvents(card){
     document.getElementById("confirmPriceBtn").addEventListener("click", () => {
     const price = parseFloat(document.getElementById("priceInput").value) || 0;
     const quantity = parseInt(document.getElementById("quantityInput").value || 1)
+    const cardCondition = document.getElementById("cardCondition").value;
     const btn = document.getElementById("addToCollection");
     card.price = price;
     card.quantity = quantity;
@@ -239,9 +240,7 @@ function updatePricesButton (card){
             btn.disabled = true;
             
             try {
-                const condition = "Near Mint"; 
-                const isFoil = false;
-                const data = await updatePricesFromCardtrader(card.scryfallId, card.lang, condition, isFoil);
+                const data = await updatePricesFromCardtrader(card.scryfallId, card.lang);
                 console.log(data);
                 // Recargar la página para mostrar los nuevos precios
                 window.location.reload();

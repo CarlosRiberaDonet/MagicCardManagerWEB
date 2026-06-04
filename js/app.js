@@ -105,7 +105,7 @@ initSearch();
 document.addEventListener('navbarLoaded', initSearch);
 
 // Rellena el combobox de ediciones con los datos del backend
-async function loadSets() {
+export async function loadSets() {
     try {
         const sets = await fetchSets();
         const setFilter = document.getElementById("filterSet");

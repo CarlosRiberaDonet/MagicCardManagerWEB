@@ -1,13 +1,13 @@
 // api.js
 import { getToken } from "./utils.js";
 
-const BASE_URL = "http://localhost:8081/cards";
+const BASE_URL = "http://localhost:8081";
 
 const FILTER_URL = ""; // Filtro de cartas
 
 //BUSCAR CARTAS
 export async function fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy, hideNA) {
-    let url = `${BASE_URL}/search?page=${page}&size=${size}`;
+    let url = `${BASE_URL}/scryfall/search?page=${page}&size=${size}`;
     if (name)     url += `&name=${encodeURIComponent(name)}`;
     if (set)      url += `&setCode=${encodeURIComponent(set)}`;
     if (rarity)   url += `&rarity=${encodeURIComponent(rarity)}`;
@@ -31,13 +31,13 @@ export async function fetchSets() {
 }
 
 // Actualizar precios desde cardtrader
-export async function updatePricesFromCardtrader(scryfallId, lang, condition, isFoil) {
+export async function updatePricesFromCardtrader(scryfallId, lang) {
     //const token = getToken();
     //if (!token) throw new Error("Usuario no autenticado");
-        const url = `http://localhost:8081/pricecache/${scryfallId}?lang=${lang}&condition=${condition}&isFoil=${isFoil}`;
+        const url = `http://localhost:8081/pricecache/${scryfallId}?lang=${lang}`;
         console.log("URL:", url);
 
-    const response = await fetch(`http://localhost:8081/pricecache/${scryfallId}?lang=${lang}&condition=${condition}&isFoil=${isFoil}`, {
+    const response = await fetch(`http://localhost:8081/pricecache/${scryfallId}?lang=${lang}`, {
         
         method: "GET",
         headers: {
