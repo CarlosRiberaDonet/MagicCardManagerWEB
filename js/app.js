@@ -42,7 +42,7 @@ async function loadCards(name) {
     // Ordenar precios ASC/DESC
     const orderBy = document.getElementById("filterSort")?.value || null;
 
-    // 
+    // Ocultar cartas sin precio si el botón está activo
     const hideNA = hideNAButton?.classList.contains("active") || false; 
     
 
@@ -50,7 +50,7 @@ async function loadCards(name) {
     if (!name && !set && !rarity && !lang && !typeLine && !minPrice && !maxPrice) return;
 
     try {
-        const data = await fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy, hideNA);
+        const data = await fetchCards(name, set, rarity, lang, typeLine, minPrice, maxPrice, orderBy, hideNA, page, size);
         renderCards(data.cardDTOList, cardsContainer);
         updatePagination(page, data.totalCards, size);
     } catch (error) {

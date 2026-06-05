@@ -6,7 +6,7 @@ const BASE_URL = "http://localhost:8081";
 const FILTER_URL = ""; // Filtro de cartas
 
 //BUSCAR CARTAS
-export async function fetchCards(name, set, page, size, rarity, lang, typeLine, minPrice, maxPrice, orderBy, hideNA) {
+export async function fetchCards(name, set, rarity, lang, typeLine, minPrice, maxPrice, orderBy, hideNA, page, size) {
     let url = `${BASE_URL}/scryfall/search?page=${page}&size=${size}`;
     if (name)     url += `&name=${encodeURIComponent(name)}`;
     if (set)      url += `&setCode=${encodeURIComponent(set)}`;
