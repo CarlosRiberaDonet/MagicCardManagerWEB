@@ -6,7 +6,7 @@ import { closeModal } from "./auth.js";
 import * as utils from "./utils.js";
 
 
-const BASE_URL = "http://localhost:8081/cards";
+const BASE_URL = "http://localhost:8081";
 
 // 1. Leer el parámetro "id" de la URL
 //    Cuando se abre la página como cardDetail.html?id=123,
@@ -14,23 +14,20 @@ const BASE_URL = "http://localhost:8081/cards";
 const params = new URLSearchParams(window.location.search);
 const scryfallId = params.get("scryfallId"); // Usamos "scryfallId" para mantener consistencia con el backend
 
-// 2. Si no hay id en la URL
-if (!scryfallId) {
-    document.getElementById("cardName").textContent = "Nombre de carta no encontrada";
-} else {
-    await loadCardDetail(scryfallId);
-}
+await loadCardDetail(scryfallId);
+
 
 // 3. Función principal: llama al backend y rellena el HTML
 async function loadCardDetail(id) {
     try {
-        const response = await fetch(`${BASE_URL}/id?scryfallId=${id}`);
+        const response = await fetch(`${BASE_URL}/scryfall/scryfallId/${id}`);
 
         if (!response.ok) {
             throw new Error(`Error del servidor: ${response.status}`);
         }
 
         const card = await response.json();
+        console.log("Carta obtenida del backend:", card);
         fillCardDetail(card);
         await checkCardInCollection();
         await checkCardInWatchlist();
