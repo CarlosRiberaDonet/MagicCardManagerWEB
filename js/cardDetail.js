@@ -22,12 +22,13 @@ async function loadCardDetail(id) {
     try {
         const response = await fetch(`${BASE_URL}/scryfall/scryfallId/${id}`);
 
+        console.log("Carta obtenida del backend:", response);
         if (!response.ok) {
             throw new Error(`Error del servidor: ${response.status}`);
         }
 
         const card = await response.json();
-        console.log("Carta obtenida del backend:", card);
+        
         fillCardDetail(card);
         await checkCardInCollection();
         await checkCardInWatchlist();
