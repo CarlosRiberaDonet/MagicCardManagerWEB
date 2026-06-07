@@ -17,12 +17,11 @@ const scryfallId = params.get("scryfallId"); // Usamos "scryfallId" para mantene
 await loadCardDetail(scryfallId);
 
 
-// 3. Función principal: llama al backend y rellena el HTML
-async function loadCardDetail(id) {
+// Función principal: llama al backend y rellena el HTML
+async function loadCardDetail(scryfallId) {
     try {
-        const response = await fetch(`${BASE_URL}/scryfall/scryfallId/${id}`);
+        const response = await fetch(`${BASE_URL}/scryfall/scryfallId/${scryfallId}`);
 
-        console.log("Carta obtenida del backend:", response);
         if (!response.ok) {
             throw new Error(`Error del servidor: ${response.status}`);
         }
@@ -30,8 +29,8 @@ async function loadCardDetail(id) {
         const card = await response.json();
         
         fillCardDetail(card);
-        await checkCardInCollection();
-        await checkCardInWatchlist();
+        await checkCardInCollection(card.id);
+        await checkCardInWatchlist(card.id);
         await buttonEvents(card);
         await updatePricesButton(card);
 
@@ -99,7 +98,7 @@ function fillCardDetail(card) {
     }
 }
 
-// 5. Formatea un número como precio en euros
+// Formatea un número como precio en euros
 function formatPrice(price) {
     return new Intl.NumberFormat('de-DE', {
         style: 'currency',
@@ -107,16 +106,15 @@ function formatPrice(price) {
     }).format(price);
 }
 
-// 6. Comprueba si la carta ya está en la colección del usuario y muestra/oculta botones
-async function checkCardInCollection() {
-    const quantity = await userActions.isCardInCollection(scryfallId);
+// Comprueba si la carta ya está en la colección del usuario y muestra/oculta botones
+async function checkCardInCollection(cardId) {
+    const quantity = await userActions.isCardInCollection(cardId);
     document.getElementById("cardQuantity").textContent = quantity > 0 ? `x${quantity}` : "";
-    document.getElementById("removeFromCollection").style.display = quantity > 0 ? "block" : "none";
 }
 
-// 6b. Comprueba watchlist
-async function checkCardInWatchlist() {
-    const inWatchlist = await userActions.isCardInWatchlist(scryfallId);
+// Comprueba watchlist
+async function checkCardInWatchlist(cardId) {
+    const inWatchlist = await userActions.isCardInWatchlist(cardId);
     document.getElementById("removeFromWatchlist").style.display = inWatchlist ? "block" : "none";
     document.getElementById("addToWatchlist").style.display = inWatchlist ? "none" : "block";
 }
@@ -136,13 +134,13 @@ function buttonEvents(card){
         btn.textContent = "Carta añadida";
         btn.style.backgroundColor = "#4CAF50";
         btn.disabled = true;
-        checkCardInCollection();
+        checkCardInCollection(card.id);
         setTimeout(() => {
             btn.textContent = "📦 Añadir a colección";
             btn.style.backgroundColor = "";
             btn.disabled = false;
         }, 500);
-        utils.closeModal(priceModal);
+        
     }).catch(error => {
         console.error("Error:", error);
     });
@@ -150,7 +148,7 @@ function buttonEvents(card){
 
 
 // Botón para eliminar carta de la colección
-document.getElementById("removeFromCollection").addEventListener("click", (event) => {   
+/*document.getElementById("removeFromCollection").addEventListener("click", (event) => {   
     const btn = event.target;
     userActions.removeCardFromCollection(card).then(() => {
         // Cambiar el texto del botón
@@ -173,7 +171,7 @@ document.getElementById("removeFromCollection").addEventListener("click", (event
         console.error("Error al eliminar carta de la colección:", error);
         alert("Error al eliminar carta de la colección");
     });
-});
+});*/
 
 // Botón para añadir carta a la lista de seguimiento (watchlist)
 document.getElementById("addToWatchlist").addEventListener("click", (event) => {
@@ -193,7 +191,7 @@ document.getElementById("addToWatchlist").addEventListener("click", (event) => {
             btn.disabled = false;
         }, 500);
 
-        checkCardInWatchlist();
+        checkCardInWatchlist(card.id);
 
     }).catch(error => {
         console.error("Error al añadir carta a la lista de seguimiento:", error);
@@ -219,7 +217,7 @@ document.getElementById("removeFromWatchlist").addEventListener("click", (event)
             btn.disabled = false;
         }, 500);
 
-        checkCardInWatchlist();
+        checkCardInWatchlist(card.id);
 
     }).catch(error => {
         console.error("Error al eliminar carta de la lista de seguimiento:", error);
