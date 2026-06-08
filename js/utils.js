@@ -1,5 +1,5 @@
 // utils.js
-
+import { fetchCards, fetchSets } from "./api.js";
 
 export function getFlag(lang) {
     const langToCountry = {
@@ -33,4 +33,26 @@ export function getToken() {
     const token = localStorage.getItem('authToken');
     if (!token) window.location.href = '/index.html'; // sin token, al inicio
     return token;
+}
+
+// Rellena el combobox de ediciones con los datos del backend
+export async function loadSets() {
+    try {
+        const sets = await fetchSets();
+        const setFilter = document.getElementById("filterSet");
+        console.log("Sets recibidos:", sets.length, sets[0]);
+        // Vaciamos el select para evitar duplicados si se llama varias veces
+        setFilter.innerHTML = '<option value="">Edición</option>';
+
+        // Añadimos una opción por cada edición
+        sets.forEach(set => {
+            const option = document.createElement("option");
+            option.value = set.setCode; // Usamos el código interno como valor
+            option.textContent = set.name; // Mostramos el nombre de la edición
+            setFilter.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Error al cargar sets:", error);
+    } 
 }
