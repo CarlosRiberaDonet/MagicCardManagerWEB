@@ -10,7 +10,7 @@ export async function isInCollection(cardId, token) {
         }
     });
     if (!response.ok) throw new Error("Error al comprobar si la carta está en la colección");
-    return await response.json(); // devuelve true si la carta está en la colección del usuario, false si no lo está.
+    return await response.json(); // Devuelve 0 si la carta no está en la colección, <1 si está en la colección
 }
 
 // Comprobar si una carta está en la lista de seguimiento del usuario
@@ -32,7 +32,10 @@ export async function loadCollection(token) {
         headers: { "Authorization": `Bearer ${token}` }
     });
     if (!response.ok) throw new Error("Error al cargar la colección");
-    return await response.json();
+    else{
+        return await response.json();
+        showToast(card.name + " añadida a la colección.");
+    }
 }
 
 
@@ -46,7 +49,7 @@ export async function addToCollection(card, token) {
         },
         body: JSON.stringify(
             { cardId: card.id,
-                purchasePrice: card.price,
+                purchasePrice: card.purchasePrice,
                 quantity: card.quantity
             })
     });

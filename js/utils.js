@@ -56,3 +56,22 @@ export async function loadSets() {
         console.error("Error al cargar sets:", error);
     } 
 }
+
+export function showToast(message) {
+    const toast = document.createElement("div");
+    toast.textContent = message;
+
+    toast.style.position = "fixed";
+    toast.style.bottom = "20px";
+    toast.style.left = "50%";
+    toast.style.transform = "translateX(-50%)";
+    toast.style.background = "#222";
+    toast.style.color = "#fff";
+    toast.style.padding = "10px 16px";
+    toast.style.borderRadius = "8px";
+    toast.style.zIndex = "9999";
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 2000);
+}

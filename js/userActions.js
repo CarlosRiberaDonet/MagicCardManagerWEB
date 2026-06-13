@@ -1,16 +1,15 @@
 import * as apiUser from "./apiUser.js";
 import * as auth from "./auth.js";
    
-// Token de autenticación
-function getToken() {
-    return localStorage.getItem('authToken');
-}
+    // Token de autenticación
+    export function getToken() {
+        return localStorage.getItem('authToken');
+    }
 
-    // Llamada a la api para añadir carta de la colección
+    // Abre modal para añadir la carta a la colección
     export function addCardToCollection(card) {
         const token = getToken();
         if(!token){
-            auth.openModal();
             return;
         }
         return apiUser.addToCollection(card, token);
@@ -28,7 +27,6 @@ function getToken() {
     export function addCardToWatchlist(card) {
         const token = getToken();
         if(!token){
-            auth.openModal();
             return;
         }
         return apiUser.addToWatchlist(card, token);
@@ -57,23 +55,13 @@ function getToken() {
         }
     }
 
-    // Abrir modal para añadir carta a la colección con precio
-    export function openPriceModal(card) {
-        const modal = document.getElementById("priceModal");
-        const priceInput = document.getElementById("priceInput");
-        const quantityInput = document.getElementById("quantityInput");
-        
-        // Precio actual como valor sugerido
-        priceInput.value = card.cardPrice?.low || card.cardPrice?.trend || '';
-        quantityInput.value = 1;
-        
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+ 
 
-    // Cierra el modal de login y restaura el scroll del body
-    export function closePriceModal() {
-        const loginModal = document.getElementById('priceModal');
-        loginModal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
+   export function closePriceModal() {
+    const modal = document.getElementById("priceModal");
+    if (!modal) return;
+
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+    modal.dataset.card = "";
+}

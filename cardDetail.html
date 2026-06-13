@@ -20,11 +20,11 @@
             <div class="info-col">
                 <p><strong>Set:</strong> <span id="cardSet"></span></p>
                 <p><strong>Idioma:</strong> <span id="cardLang"></span></p>
-                <p><strong>Número de colección:</strong> <span id="cardCollector"></span></p>
+                <p><strong>Número de colección:</strong> <span id="collectorNumber"></span></p>
                 <p><strong>Rareza:</strong> <span id="cardRarity"></span></p>
                 <p><strong>Tipo:</strong> <span id="typeLine"></span></p>
                 <p><strong>Lanzamiento:</strong> <span id="released_at"></span></p>
-                <p><strong>Cardmarket:</strong> <a id="cardMarketURL" href="#" target="_blank">Ver en Cardmarket</a></p>
+                <p><a id="cardMarketURL" href="#" target="_blank">Ver en Cardmarket</a></p>
             </div>
 
             <div class="info-col prices-col">
@@ -56,18 +56,20 @@
                 <input type="number" id="priceInput" step="0.01" min="0" placeholder="0.00">
                 <label>Cantidad</label>
                 <input type="number" id="quantityInput" step="1" min="0" placeholder="1">
-                <button id="confirmPriceBtn">Confirmar</button>
+                <button id="confirmBtn">Confirmar</button>
             </div>
         </div>
 
         <div class="card-actions">
             <span id="cardQuantity">0</span>
             <button id="addToCollection">📦 Añadir a colección</button>
+            <button id="removeFromCollection">🗑️ Eliminar de colección</button>
             <button id="addToWatchlist">⭐ Añadir a watchlist</button>
             <button id="removeFromWatchlist">🗑️ Eliminar de watchlist</button>
         </div>
     </div>
 </main>
+    <script type="module" src="/js/navbar.js"></script>
     <script type="module" src="/js/cardDetail.js"></script>
 </body>
 </html>

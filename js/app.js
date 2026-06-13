@@ -1,177 +1,114 @@
 // app.js
 
-// Importamos en una sola línea todas las funciones necesarias de api.js
-import { fetchCards, fetchSets } from "./api.js";
+import { fetchCards } from "./api.js";
 import { renderCards } from "./cardsRenderer.js";
 import { setupPagination } from "./pagination.js";
 
-// Referencias a elementos del DOM de la página principal
-const cardsContainer   = document.getElementById("cardsContainer");
-const prevBtn          = document.getElementById("prevPage");
-const nextBtn          = document.getElementById("nextPage");
-const pageDisplay      = document.getElementById("currentPage");
-const totalPagesDisplay = document.getElementById("totalPages");
+const dom = {
+    container: document.getElementById("cardsContainer"),
+    prev: document.getElementById("prevPage"),
+    next: document.getElementById("nextPage"),
+    page: document.getElementById("currentPage"),
+    total: document.getElementById("totalPages")
+};
 
-// Estado de la búsqueda
-let page = 1;
-const size = 30;
-let lastSearch = "";
+const state = {
+    page: 1,
+    size: 30,
+    lastSearch: null
+};
 
-// Recoge el valor del buscador y lanza la búsqueda desde la página 1
-// El nombre es opcional — se puede buscar solo con filtros
-function search() {
-    const searchInput = document.getElementById("searchInput");
-    const name = searchInput.value.trim() || null; // null si está vacío
-    lastSearch = name;
-    page = 1;
-    loadCards(name);
+/**
+ * Obtiene filtros del navbar
+ */
+function getFilters() {
+    const slider = document.getElementById("priceSlider");
+    const values = slider?.noUiSlider?.get();
+
+    return {
+        set: document.getElementById("filterSet")?.value || null,
+        rarity: document.getElementById("filterRarity")?.value || null,
+        lang: document.getElementById("filterLang")?.value || null,
+        typeLine: document.getElementById("filterType")?.value || null,
+        minPrice: values ? values[0] : null,
+        maxPrice: values ? values[1] : null,
+        orderBy: document.getElementById("filterSort")?.value || null,
+        hideNA: document.getElementById("hideNAButton")?.classList.contains("active") || false
+    };
 }
 
-// Llama al backend con el nombre y los filtros activos, y renderiza las cartas
+/**
+ * Carga cartas
+ */
 async function loadCards(name) {
-    const set      = document.getElementById("filterSet")?.value      || null;
-    const rarity   = document.getElementById("filterRarity")?.value   || null;
-    const lang     = document.getElementById("filterLang")?.value     || null;
-    const typeLine = document.getElementById("filterType")?.value     || null;
+    const f = getFilters();
 
-    // Obtener valores del slider de precio
-    const priceSlider = document.getElementById("priceSlider");
-    const priceValues = priceSlider?.noUiSlider?.get();
-    const minPrice = priceValues ? priceValues[0] : null;
-    const maxPrice = priceValues ? priceValues[1] : null;
-    // Ordenar precios ASC/DESC
-    const orderBy = document.getElementById("filterSort")?.value || null;
-
-    // Ocultar cartas sin precio si el botón está activo
-    const hideNA = hideNAButton?.classList.contains("active") || false; 
-    
-
-    // Si no hay ningún criterio de búsqueda, no hacemos nada
-    if (!name && !set && !rarity && !lang && !typeLine && !minPrice && !maxPrice) return;
-
-    try {
-        const data = await fetchCards(name, set, rarity, lang, typeLine, minPrice, maxPrice, orderBy, hideNA, page, size);
-        renderCards(data.cardDTOList, cardsContainer);
-        updatePagination(page, data.totalCards, size);
-    } catch (error) {
-        cardsContainer.innerHTML = "<p>Error al cargar cartas.</p>";
-        console.error(error);
-    }
-}
-
-// Configura los botones de paginación — devuelve la función updatePagination
-const updatePagination = setupPagination(prevBtn, nextBtn, pageDisplay, totalPagesDisplay, (action) => {
-    if (action === "prev" && page > 1) page--;
-    if (action === "next") page++;
-    loadCards(lastSearch);
-});
-
-// Enlaza los listeners del navbar — se llama cuando el navbar está cargado en el DOM
-function initSearch() {
-    const searchInput  = document.getElementById("searchInput");
-    const searchButton = document.getElementById("searchButton");
-    const clearFilters = document.getElementById("clearFilters");
-    
-
-    // Si alguno de los elementos no existe aún, salimos
-    if (!searchInput || !searchButton || !clearFilters) return;
-
-    // Cargamos las ediciones en el combobox solo una vez
-    loadSets();
-    initPriceSlider();
-    initHideNAButton(true);
-    
-    // Buscar al pulsar el botón o al presionar Enter
-    searchButton.addEventListener("click", search);
-    searchInput.addEventListener("keypress", e => {
-        if (e.key === "Enter") search();
-    });
-
-    // Limpiar todos los filtros al pulsar el botón de limpiar
-    clearFilters.addEventListener("click", () => {
-        document.getElementById("filterSet").value    = "";
-        document.getElementById("filterRarity").value = "";
-        document.getElementById("filterLang").value   = "";
-        document.getElementById("filterType").value   = "";
-        document.getElementById("priceSlider").noUiSlider.set(["", ""]);
-        document.getElementById("minPrice").value = "";
-        document.getElementById("maxPrice").value = "";
-        document.getElementById("filterSort").value = "";
-    });
-}
-
-// Intentamos enlazar los listeners ahora y también cuando el navbar termine de cargarse
-initSearch();
-document.addEventListener('navbarLoaded', initSearch);
-
-// Rellena el combobox de ediciones con los datos del backend
-export async function loadSets() {
-    try {
-        const sets = await fetchSets();
-        const setFilter = document.getElementById("filterSet");
-             console.log("Sets recibidos:", sets.length, sets[0]);
-        // Vaciamos el select para evitar duplicados si se llama varias veces
-        setFilter.innerHTML = '<option value="">Edición</option>';
-
-        // Añadimos una opción por cada edición
-        sets.forEach(set => {
-            const option = document.createElement("option");
-            option.value = set.setCode; // Usamos el código interno como valor
-            option.textContent = set.name; // Mostramos el nombre de la edición
-            setFilter.appendChild(option);
-        });
-
-    } catch (error) {
-        console.error("Error al cargar sets:", error);
-    } 
-}
-
-// Cargar slider de precio
-function initPriceSlider() {
-    const priceSlider = document.getElementById("priceSlider");
-    noUiSlider.create(priceSlider, {
-        start: [0, 57750],
-        connect: true,
-        range: { min: 0, max: 57750 },
-        step: 1,
-        format: {
-            to: value => Math.round(value),
-            from: value => Number(value)
-        }
-    });
-
-    // Slider → inputs
-    priceSlider.noUiSlider.on("update", (values) => {
-        document.getElementById("minPrice").value = values[0];
-        document.getElementById("maxPrice").value = values[1];
-    });
-
-    // Inputs → slider
-    document.getElementById("minPrice").addEventListener("change", (e) => {
-        priceSlider.noUiSlider.set([e.target.value, null]);
-    });
-
-    document.getElementById("maxPrice").addEventListener("change", (e) => {
-        priceSlider.noUiSlider.set([null, e.target.value]);
-    });
-
-    // Si hay una búsqueda pendiente desde otra página, ejecutarla
-    const pendingSearch = localStorage.getItem('pendingSearch');
-    if (pendingSearch) {
-        localStorage.removeItem('pendingSearch');
-        lastSearch = pendingSearch;
-        loadCards(pendingSearch);
-    }
-}
-
-// initHideNAButton relanza la búsqueda
-function initHideNAButton(init = false) {
-    if (init) {
-        hideNAButton?.addEventListener("click", () => {
-            hideNAButton.classList.toggle("active");
-            page = 1;
-            loadCards(lastSearch); // relanza con hideNA actualizado
-        });
+    if (!name && !f.set && !f.rarity && !f.lang && !f.typeLine && !f.minPrice && !f.maxPrice) {
         return;
     }
+
+    try {
+        const res = await fetchCards(
+            name,
+            f.set,
+            f.rarity,
+            f.lang,
+            f.typeLine,
+            f.minPrice,
+            f.maxPrice,
+            f.orderBy,
+            f.hideNA,
+            state.page,
+            state.size
+        );
+
+        renderCards(res.cardDTOList, dom.container);
+        updatePagination(state.page, res.totalCards, state.size);
+
+    } catch (err) {
+        console.error(err);
+        dom.container.innerHTML = "<p>Error</p>";
+    }
 }
+
+/**
+ * Paginación
+ */
+const updatePagination = setupPagination(
+    dom.prev,
+    dom.next,
+    dom.page,
+    dom.total,
+    action => {
+        if (action === "prev" && state.page > 1) state.page--;
+        if (action === "next") state.page++;
+
+        loadCards(state.lastSearch);
+    }
+);
+
+/**
+ * Búsqueda desde navbar
+ */
+document.addEventListener("searchRequested", e => {
+    state.lastSearch = e.detail.name || null;
+    state.page = 1;
+
+    loadCards(state.lastSearch);
+});
+
+/**
+ * Búsqueda pendiente desde otras páginas
+ */
+document.addEventListener("navbarReady", () => {
+    const pending = localStorage.getItem("pendingSearch");
+
+    if (!pending) return;
+
+    localStorage.removeItem("pendingSearch");
+
+    state.lastSearch = pending;
+    state.page = 1;
+
+    loadCards(pending);
+});
