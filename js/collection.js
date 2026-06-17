@@ -35,7 +35,7 @@ async function init() {
 // ===========================
 function renderStats() {
     const totalCards = allCards.reduce((sum, c) => sum + (c.quantity || 1), 0); // Total de cartas (sumando cantidades)
-    const totalValue   = allCards.reduce((sum, c) => sum + (c.scryfallCard.cardPrice?.trend || 0) * (c.quantity || 1), 0);
+    const totalValue   = allCards.reduce((sum, c) => sum + (c.scryfallCard.cardPrice?.low || 0) * (c.quantity || 1), 0);
     const totalInvested = allCards.reduce((sum, c) => sum + (c.purchasePrice || 0) * (c.quantity || 1), 0);
     const totalProfit  = totalValue - totalInvested;
 
@@ -96,7 +96,7 @@ function renderCollectionList() {
 
     // Filas de cartas
     allCards.forEach(card => {
-        const currentPrice  = card.scryfallCard.cardPrice?.trend || 0; // Precio actual
+        const currentPrice  = card.scryfallCard.cardPrice?.low || card.scryfallCard.cardPrice?.trend|| 0; // Precio actual
         const purchasePrice = card.purchasePrice || 0; // Precio de compra
         const quantity      = card.quantity || 1; // Cantidad de esa carta en la colección
         const profit        = (currentPrice - purchasePrice) * quantity; // Ganancia total por esa carta
@@ -116,15 +116,15 @@ function renderCollectionList() {
             <span class="collector-number">${card.scryfallCard.collectorNumber}</span>
             <span class="list-lang">${getFlag(card.scryfallCard.lang) || '—'}</span>
             <span class="list-qty">${quantity}</span>
-            <span class="list-purchase">${purchasePrice > 0 ? formatPrice(purchasePrice) : '—'}</span>
-            <span class="list-current">${currentPrice > 0 ? formatPrice(currentPrice) : 'N/A'}</span>
+            <span class="list-purchase">${formatPrice(purchasePrice)}</span>
+            <span class="list-current">${currentPrice >= 0 ? formatPrice(currentPrice) : 'N/A'}</span>
             
-            <span class="list-profit ${profitClass}">${purchasePrice > 0 ? formatPrice(profit) : '—'}</span>
+            <span class="list-profit ${profitClass}">${formatPrice(profit)}</span>
         `;
 
         // Abrir detalle al hacer clic
         row.addEventListener('click', () => {
-            window.open(`/cardDetail.html?id=${card.scryfallCard.id}`, '_blank');
+           window.open(`cardDetail.html?scryfallId=${card.scryfallCard.scryfallId}`, "_blank");
         });
 
         container.appendChild(row);
@@ -157,7 +157,7 @@ function renderCollectionGrid() {
             <p>${card.quantity || 1}x</p>
         `;
         cardEl.addEventListener('click', () => {
-            window.open(`/cardDetail.html?id=${card.scryfallCard.id}`, '_blank');
+           window.open(`cardDetail.html?scryfallId=${card.scryfallCard.scryfallId}`, "_blank");
         });
         container.appendChild(cardEl);
     });
