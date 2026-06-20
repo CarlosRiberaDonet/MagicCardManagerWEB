@@ -37,17 +37,21 @@ async function init() {
 // HELPERS
 // ===========================
 
-// Normaliza precio: trend > low > 0
-function getCurrentPrice(card) {
-    const price = card.scryfallCard?.cardPrice;
-    return price?.trend ?? price?.low ?? 0;
+// Precio actual normalizado (trend > low > 0)
+function getCurrentPrice(item) {
+    const price = item?.card?.cardPrice;
+
+    return price?.trend
+        ?? price?.low
+        ?? price?.avg
+        ?? 0;
 }
 
-// Ganancia por carta
-function calcProfit(card) {
-    const price = getCurrentPrice(card);
-    const purchase = card.purchasePrice || 0;
-    const qty = card.quantity || 1;
+// Ganancia total por carta
+function calcProfit(item) {
+    const price = getCurrentPrice(item);
+    const purchase = item?.purchasePrice ?? 0;
+    const qty = item?.quantity ?? 1;
 
     return (price - purchase) * qty;
 }
@@ -58,16 +62,19 @@ function calcProfit(card) {
 // ===========================
 function renderStats() {
 
-    const totalCards = allCards.reduce((sum, c) =>
-        sum + (c.quantity || 1), 0
+    const totalCards = allCards.reduce(
+        (sum, i) => sum + (i.quantity ?? 1),
+        0
     );
 
-    const totalValue = allCards.reduce((sum, c) =>
-        sum + getCurrentPrice(c) * (c.quantity || 1), 0
+    const totalValue = allCards.reduce(
+        (sum, i) => sum + getCurrentPrice(i) * (i.quantity ?? 1),
+        0
     );
 
-    const totalInvested = allCards.reduce((sum, c) =>
-        sum + (c.purchasePrice || 0) * (c.quantity || 1), 0
+    const totalInvested = allCards.reduce(
+        (sum, i) => sum + (i.purchasePrice ?? 0) * (i.quantity ?? 1),
+        0
     );
 
     const totalProfit = totalValue - totalInvested;
@@ -89,7 +96,7 @@ function loadEditions() {
     const select = document.getElementById("colFilterSet");
     select.innerHTML = '<option value="">Set</option>';
 
-    const sets = new Set(allCards.map(c => c.scryfallCard?.setName));
+    const sets = new Set(allCards.map(i => i?.card?.setName));
 
     sets.forEach(set => {
         const opt = document.createElement("option");
@@ -114,7 +121,6 @@ function renderCollectionList(cards = allCards) {
         return;
     }
 
-    // header
     const header = document.createElement("div");
     header.className = "collection-list-header";
     header.innerHTML = `
@@ -131,10 +137,11 @@ function renderCollectionList(cards = allCards) {
     `;
     container.appendChild(header);
 
-    cards.forEach(card => {
+    cards.forEach(item => {
 
-        const price = getCurrentPrice(card);
-        const profit = calcProfit(card);
+        const card = item?.card;
+        const price = getCurrentPrice(item);
+        const profit = calcProfit(item);
 
         const row = document.createElement("div");
         row.className = "collection-list-item";
@@ -142,24 +149,24 @@ function renderCollectionList(cards = allCards) {
         row.innerHTML = `
             <div class="card-thumb">
                 📷
-                <img src="${card.scryfallCard.imageUrl}" class="card-tooltip-img">
+                <img src="${card?.imageUrl ?? ''}" class="card-tooltip-img">
             </div>
 
-            <span>${card.scryfallCard.name}</span>
+            <span>${card?.name ?? '—'}</span>
 
             <div>
-                <img src="${card.scryfallCard.iconSvgUri}" class="set-icon">
+                <img src="${card?.iconSvgUri ?? ''}" class="set-icon"  title="${card?.setName ?? ''}">
             </div>
 
-            <span>${card.scryfallCard.rarity || '—'}</span>
+            <span>${card?.rarity ?? '—'}</span>
 
-            <span>${card.scryfallCard.collectorNumber}</span>
+            <span>${card?.collectorNumber ?? '—'}</span>
 
-            <span>${getFlag(card.scryfallCard.lang) || '—'}</span>
+            <span>${getFlag(card?.lang) ?? '—'}</span>
 
-            <span>${card.quantity || 1}</span>
+            <span>${item?.quantity ?? 1}</span>
 
-            <span>${formatPrice(card.purchasePrice || 0)}</span>
+            <span>${formatPrice(item?.purchasePrice ?? 0)}</span>
 
             <span>${price ? formatPrice(price) : 'N/A'}</span>
 
@@ -170,7 +177,7 @@ function renderCollectionList(cards = allCards) {
 
         row.addEventListener('click', () => {
             window.open(
-                `cardDetail.html?scryfallId=${card.scryfallCard.scryfallId}`,
+                `cardDetail.html?scryfallId=${card?.scryfallId}`,
                 "_blank"
             );
         });
@@ -180,34 +187,39 @@ function renderCollectionList(cards = allCards) {
 }
 
 
-// ===========================
-// RENDER GRID
-// ===========================
 function renderCollectionGrid(cards = allCards) {
 
     const container = document.getElementById("collectionContainer");
     container.className = 'collection-grid';
     container.innerHTML = '';
 
-    cards.forEach(card => {
+    cards.forEach(item => {
 
-        const price = getCurrentPrice(card);
+        const card = item?.card;
+        const price = getCurrentPrice(item);
 
         const el = document.createElement("div");
         el.className = "card";
 
         el.innerHTML = `
-            <img src="${card.scryfallCard.imageUrl}">
-            <h3>${card.scryfallCard.name}</h3>
-            <img src="${card.scryfallCard.iconSvgUri}" class="set-icon">
-            <p>${getFlag(card.scryfallCard.lang) || '—'}</p>
+            <div class="card-thumb">
+                <img src="${card?.imageUrl ?? ''}">
+            </div>
+
+            <h3>${card?.name ?? '—'}</h3>
+
+            <img src="${card?.iconSvgUri ?? ''}" class="set-icon">
+
+            <p>${getFlag(card?.lang) ?? '—'}</p>
+
             <p>${price ? formatPrice(price) : 'N/A'}</p>
-            <p>${card.quantity || 1}x</p>
+
+            <p>${item?.quantity ?? 1}x</p>
         `;
 
         el.addEventListener('click', () => {
             window.open(
-                `cardDetail.html?scryfallId=${card.scryfallCard.scryfallId}`,
+                `cardDetail.html?scryfallId=${card?.scryfallId}`,
                 "_blank"
             );
         });
@@ -225,11 +237,13 @@ function setupViewToggle() {
     document.getElementById("viewGrid").addEventListener("click", () => {
         currentView = 'grid';
         renderCollectionGrid(applyFilters());
+        updateViewButtons();
     });
 
     document.getElementById("viewList").addEventListener("click", () => {
         currentView = 'list';
         renderCollectionList(applyFilters());
+        updateViewButtons();
     });
 }
 
@@ -257,7 +271,10 @@ function setupFilters() {
     });
 
     document.getElementById("colClearFilters").addEventListener("click", () => {
-        inputs.forEach(id => document.getElementById(id).value = "");
+        inputs.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
 
         currentView === 'list'
             ? renderCollectionList(allCards)
@@ -279,36 +296,33 @@ function applyFilters() {
 
     let filtered = [...allCards];
 
-    if (set) filtered = filtered.filter(c => c.scryfallCard?.setName === set);
-    if (rarity) filtered = filtered.filter(c => c.scryfallCard?.rarity === rarity);
-    if (lang) filtered = filtered.filter(c => c.scryfallCard?.lang === lang);
-    if (search) filtered = filtered.filter(c =>
-        c.scryfallCard?.name?.toLowerCase().includes(search)
-    );
+    if (set) filtered = filtered.filter(i => i?.card?.setName === set);
+    if (rarity) filtered = filtered.filter(i => i?.card?.rarity === rarity);
+    if (lang) filtered = filtered.filter(i => i?.card?.lang === lang);
 
-    if (sort === 'name_asc') filtered.sort((a, b) =>
-        a.scryfallCard.name.localeCompare(b.scryfallCard.name)
-    );
+    if (search) {
+        filtered = filtered.filter(i =>
+            i?.card?.name?.toLowerCase().includes(search)
+        );
+    }
 
-    if (sort === 'name_desc') filtered.sort((a, b) =>
-        b.scryfallCard.name.localeCompare(a.scryfallCard.name)
-    );
+    if (sort === 'name_asc')
+        filtered.sort((a, b) => a.card?.name.localeCompare(b.card?.name));
 
-    if (sort === 'price_desc') filtered.sort((a, b) =>
-        getCurrentPrice(b) - getCurrentPrice(a)
-    );
+    if (sort === 'name_desc')
+        filtered.sort((a, b) => b.card?.name.localeCompare(a.card?.name));
 
-    if (sort === 'price_asc') filtered.sort((a, b) =>
-        getCurrentPrice(a) - getCurrentPrice(b)
-    );
+    if (sort === 'price_desc')
+        filtered.sort((a, b) => getCurrentPrice(b) - getCurrentPrice(a));
 
-    if (sort === 'profit_desc') filtered.sort((a, b) =>
-        calcProfit(b) - calcProfit(a)
-    );
+    if (sort === 'price_asc')
+        filtered.sort((a, b) => getCurrentPrice(a) - getCurrentPrice(b));
 
-    if (sort === 'profit_asc') filtered.sort((a, b) =>
-        calcProfit(a) - calcProfit(b)
-    );
+    if (sort === 'profit_desc')
+        filtered.sort((a, b) => calcProfit(b) - calcProfit(a));
+
+    if (sort === 'profit_asc')
+        filtered.sort((a, b) => calcProfit(a) - calcProfit(b));
 
     return filtered;
 }
@@ -321,7 +335,16 @@ function formatPrice(price) {
     return new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'EUR'
-    }).format(price || 0);
+    }).format(price ?? 0);
+}
+
+function updateViewButtons() {
+
+    const gridBtn = document.getElementById("viewGrid");
+    const listBtn = document.getElementById("viewList");
+
+    gridBtn.classList.toggle("active", currentView === 'grid');
+    listBtn.classList.toggle("active", currentView === 'list');
 }
 
 

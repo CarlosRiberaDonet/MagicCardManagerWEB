@@ -15,7 +15,7 @@ init();
 async function init() {
     if (!id) return;
 
-    const token = userActions.getToken();
+    const token = getToken();
 
     const res = await fetch(`${BASE_URL}/scryfall/scryfallId/${id}`, {
         headers: token
