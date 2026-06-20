@@ -1,7 +1,8 @@
 // cardDetail.js
 
 import { updatePricesFromCardtrader } from "./api.js";
-import { getToken, addCardToCollection } from "./userActions.js";
+import { addCardToCollection } from "./userActions.js";
+import { getToken } from "./auth.js";
 import { showToast } from "./utils.js";
 import * as userActions from "./userActions.js";
 
@@ -13,11 +14,20 @@ init();
 
 async function init() {
     if (!id) return;
+
     const token = userActions.getToken();
-    const res = await fetch(`${BASE_URL}/scryfall/scryfallId/${id}`);
+
+    const res = await fetch(`${BASE_URL}/scryfall/scryfallId/${id}`, {
+        headers: token
+            ? { Authorization: `Bearer ${token}` }
+            : {}
+    });
+
     const card = await res.json();
 
-    // Si no hay token de inicio de sesión, ocultar botones de colección y watchlist
+    // ===========================
+    // UI según login
+    // ===========================
     if (!token) {
         document.getElementById("addToCollection").style.display = "none";
         document.getElementById("addToWatchlist").style.display = "none";
@@ -27,7 +37,7 @@ async function init() {
     render(card);
     buttonListeners(card);
     await updateCardCounts(card);
-    await updateWatchlistButtons(card)
+    await updateWatchlistButtons(card);
 }
 
 function render(card) {

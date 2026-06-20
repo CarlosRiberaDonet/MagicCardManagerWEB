@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil de usuario</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/profile.css">
+</head>
+<body>
+
+<header>
+    <h1>PERFIL</h1>
+</header>
+
+<main class="profile-container">
+
+    <section class="profile-card">
+
+        <div class="profile-header">
+            <h2>Información de cuenta</h2>
+        </div>
+
+        <div class="profile-section">
+            <label>Correo actual</label>
+            <div class="profile-value" id="currentEmail">cargando...</div>
+        </div>
+
+        <div class="profile-section">
+            <label>Cambiar correo</label>
+            <input type="email" id="newEmail" placeholder="Nuevo correo">
+            <button id="updateEmailBtn">Actualizar correo</button>
+        </div>
+
+        <div class="profile-section">
+            <label>Cambiar contraseña</label>
+
+            <input type="password" id="currentPassword" placeholder="Contraseña actual">
+            <input type="password" id="newPassword" placeholder="Nueva contraseña">
+            <input type="password" id="confirmPassword" placeholder="Confirmar contraseña">
+
+            <button id="updatePasswordBtn">Actualizar contraseña</button>
+        </div>
+
+        <div class="profile-section danger-zone">
+            <label>Zona peligrosa</label>
+            <button id="deleteAccountBtn">Eliminar cuenta</button>
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    <p>USER PROFILE</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+.profile-container {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 2rem;
+}
+
+.profile-card {
+    width: 100%;
+    max-width: 720px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 2rem;
+    animation: fadeInUp 0.5s ease both;
+}
+
+.profile-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.profile-header h2 {
+    font-family: var(--font-display);
+    color: var(--gold-light);
+    letter-spacing: 0.1em;
+    font-size: 1.2rem;
+}
+
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.8rem;
+}
+
+.profile-section label {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.profile-value {
+    padding: 0.8rem 1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.profile-section input {
+    padding: 0.8rem 1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    outline: none;
+}
+
+.profile-section input:focus {
+    border-color: var(--gold-dim);
+    box-shadow: 0 0 10px rgba(201,168,76,0.15);
+}
+
+.profile-section button {
+    padding: 0.7rem 1rem;
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold-light);
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border-radius: 4px;
+}
+
+.profile-section button:hover {
+    background: var(--gold);
+    color: var(--bg-deep);
+    box-shadow: 0 0 16px rgba(201,168,76,0.25);
+}
+
+.danger-zone button {
+    border-color: #8a2f2f;
+    color: #e88a8a;
+}
+
+.danger-zone button:hover {
+    background: #8a2f2f;
+    color: white;
+    box-shadow: 0 0 18px rgba(138,47,47,0.35);
+}
+
+/* responsive */
+@media (max-width: 768px) {
+    .profile-card {
+        padding: 1.2rem;
+    }
+}

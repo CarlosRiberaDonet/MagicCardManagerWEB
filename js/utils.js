@@ -26,15 +26,6 @@ export function closePriceModal(modal) {
     document.body.style.overflow = '';
 }
 
-// ===========================
-// TOKEN
-// ===========================
-export function getToken() {
-    const token = localStorage.getItem('authToken');
-    if (!token) window.location.href = '/index.html'; // sin token, al inicio
-    return token;
-}
-
 // Rellena el combobox de ediciones con los datos del backend
 export async function loadSets() {
     try {
@@ -73,5 +64,5 @@ export function showToast(message) {
 
     document.body.appendChild(toast);
 
-    setTimeout(() => toast.remove(), 2000);
+    setTimeout(() => toast.remove(), 5000);
 }

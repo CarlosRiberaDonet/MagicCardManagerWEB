@@ -28,8 +28,6 @@ export function renderCards(cards, container) {
             <img src="${card.imageUrl}" alt="${card.name}">
             <h3>${card.name}</h3>
             <img src="${card.iconSvgUri}" alt="${card.setName}" title="${card.setName}" class="set-icon">
-            <p>${card.rarity}</p>
-            <p>${card.collectorNumber}</p>
             <p>${getFlag(card.lang)}</p>
             <p>${card.price ? formatPrice(card.price) : "N/A"}</p>
         `;

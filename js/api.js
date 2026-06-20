@@ -1,5 +1,5 @@
 // api.js
-import { getToken } from "./utils.js";
+import { getToken } from "./auth.js";
 
 const BASE_URL = "http://localhost:8081";
 
