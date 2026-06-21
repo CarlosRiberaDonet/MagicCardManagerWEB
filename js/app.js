@@ -18,9 +18,7 @@ const state = {
     lastSearch: null
 };
 
-/**
- * Obtiene filtros del navbar
- */
+ // Obtiene filtros del navbar
 function getFilters() {
     const slider = document.getElementById("priceSlider");
     const values = slider?.noUiSlider?.get();
@@ -37,9 +35,7 @@ function getFilters() {
     };
 }
 
-/**
- * Carga cartas
- */
+// Carga cartas
 async function loadCards(name) {
     const f = getFilters();
 
@@ -67,13 +63,11 @@ async function loadCards(name) {
 
     } catch (err) {
         console.error(err);
-        dom.container.innerHTML = "<p>Error</p>";
+        dom.container.innerHTML = "<p>Error al tratar de obtener la lista de cartas. Pongase en contacto con el administrador.</p>";
     }
 }
 
-/**
- * Paginación
- */
+ // Paginación
 const updatePagination = setupPagination(
     dom.prev,
     dom.next,
@@ -87,9 +81,8 @@ const updatePagination = setupPagination(
     }
 );
 
-/**
- * Búsqueda desde navbar
- */
+
+ // Búsqueda desde navbar
 document.addEventListener("searchRequested", e => {
     state.lastSearch = e.detail.name || null;
     state.page = 1;
@@ -97,9 +90,7 @@ document.addEventListener("searchRequested", e => {
     loadCards(state.lastSearch);
 });
 
-/**
- * Búsqueda pendiente desde otras páginas
- */
+ // Búsqueda pendiente desde otras páginas
 document.addEventListener("navbarReady", () => {
     const pending = localStorage.getItem("pendingSearch");
 

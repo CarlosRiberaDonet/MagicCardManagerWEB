@@ -6,28 +6,28 @@ import { getToken } from "./auth.js";
 import { showToast } from "./utils.js";
 import * as userActions from "./userActions.js";
 
-const BASE_URL = "http://localhost:8081";
+const BASE_URL = "http://localhost:8081/scryfall";
 
-const id = new URLSearchParams(location.search).get("scryfallId");
+const params = new URLSearchParams(location.search);
+const cardId = params.get("cardId");
 
 init();
 
 async function init() {
-    if (!id) return;
-
+    if (!cardId) return;
+    
     const token = getToken();
 
-    const res = await fetch(`${BASE_URL}/scryfall/scryfallId/${id}`, {
+    const res = await fetch(`${BASE_URL}/${cardId}`, {
         headers: token
             ? { Authorization: `Bearer ${token}` }
             : {}
     });
 
     const card = await res.json();
+    console.log(card);
 
-    // ===========================
     // UI según login
-    // ===========================
     if (!token) {
         document.getElementById("addToCollection").style.display = "none";
         document.getElementById("addToWatchlist").style.display = "none";
@@ -36,8 +36,8 @@ async function init() {
 
     render(card);
     buttonListeners(card);
-    await updateCardCounts(card);
-    await updateWatchlistButtons(card);
+    await updateCardCounts(cardId);
+    await updateWatchlistButtons(cardId);
 }
 
 function render(card) {
@@ -52,14 +52,19 @@ function render(card) {
     document.getElementById("cardMarketURL").href = card.cardmarketURL;
     document.getElementById("cardCondition").value = card.condition ?? "NM";
 
-    document.getElementById("cardLow").textContent = card.cardPrice.low ? `${card.cardPrice.low.toFixed(2)}€` : "N/A";
-    document.getElementById("cardTrend").textContent = card.cardPrice.trend ? `${card.cardPrice.trend.toFixed(2)}€` : "N/A";
-    document.getElementById("avg30").textContent = card.cardPrice.avg30 ? `${card.cardPrice.avg30.toFixed(2)}€` : "N/A";
-    document.getElementById("avg7").textContent = card.cardPrice.avg7 ? `${card.cardPrice.avg7.toFixed(2)}€` : "N/A";
-    document.getElementById("avg1").textContent = card.cardPrice.avg1 ? `${card.cardPrice.avg1.toFixed(2)}€` : "N/A";
+    document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.low);
+    document.getElementById("cardTrend").textContent = formatPrice(card?.cardPrice?.trend);
+    document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg30);
+    document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.avg7);
+    document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.avg1);
 }
 
 function buttonListeners(card) {
+
+    // Estado de la carta 
+    let condition = "NM";
+    // Checkbox Foil
+    let isFoil = false;
 
     // Listener para añadir carta de la colección, abre modal para introducir precio y cantidad
     document.getElementById("addToCollection").addEventListener("click", () => 
@@ -69,30 +74,47 @@ function buttonListeners(card) {
     // Eliminar carta de la colección
     document.getElementById("removeFromCollection").addEventListener("click", async () => {
         await userActions.removeCardFromCollection(card);
+        await updateCardCounts(cardId);
         showToast(card.name + " eliminada de la colección.");
-        await updateCardCounts(card);
     });
 
     // Añadir carta a la watchlist
     document.getElementById("addToWatchlist").addEventListener("click", async () => {
         await userActions.addCardToWatchlist(card);
+        document.getElementById("addToWatchlist").style.display = "none";
+        document.getElementById("removeFromWatchlist").style.display = "inline-block";
         showToast(card.name + " añadida a la watchlist.");
-        await updateWatchlistButtons(card);
     });
 
     // Eliminar carta de la watchlist
     document.getElementById("removeFromWatchlist").addEventListener("click", async () => {
         await userActions.removeCardFromWatchlist(card);
+        document.getElementById("addToWatchlist").style.display = "inline-block";
+        document.getElementById("removeFromWatchlist").style.display = "none";
         showToast(card.name + " eliminada de la watchlist.");
-        await updateWatchlistButtons(card);
+    });
+
+    // Checkbox foil
+    document.getElementById("cardFoil").addEventListener("change", (e) => {
+        isFoil = e.target.checked;
+    });
+
+    // Selector estado de la carta
+    document.getElementById("cardCondition").addEventListener("change", async (e) =>  {
+        // Asignar la condición seleccionada
+        condition = e.target.value;
+        // Mostrar precios de la condición seleccionada
+        console.log(condition);
     });
 
 
     // Si la carta no tiene precios, mostrar botón para actualizar precios desde Cardtrader
-    if(card.cardPrice.low === null && card.cardPrice.trend === null){
+    if(card?.cardPrice?.low == null && card?.cardPrice?.trend == null){
+
+
         // Actualizar precios desde Cardtrader
         document.getElementById("updatePrices").addEventListener("click", async () => {
-            await updatePricesFromCardtrader(card.scryfallId, card.lang);
+            await updatePricesFromCardtrader(cardId, card.lang, condition, isFoil);
             location.reload();
         });
     } else{
@@ -128,7 +150,7 @@ function buttonListeners(card) {
         document.getElementById("priceModal").classList.remove("active");
         document.body.style.overflow = "";
         showToast(card.name + " añadida a la colección.");
-        await updateCardCounts(card);
+        await updateCardCounts(cardId);
     };
 
     // Botón de cerrar modal
@@ -139,9 +161,9 @@ function buttonListeners(card) {
 }
 
 // Contador de cartas en la colección
-async function updateCardCounts(card) {
+async function updateCardCounts(cardId) {
     const cardQuantityEl = document.getElementById("cardQuantity");
-    const quantity = await userActions.isCardInCollection(card.id);
+    const quantity = await userActions.isCardInCollection(cardId);
     cardQuantityEl.textContent = quantity + "x";
 
     if(quantity < 1){
@@ -155,10 +177,10 @@ async function updateCardCounts(card) {
 }
 
 // Comprobar si la carta está en la watchlist y actualizar botones
-async function updateWatchlistButtons(card) {
+async function updateWatchlistButtons(cardId) {
     const addBtn = document.getElementById("addToWatchlist");
     const removeBtn = document.getElementById("removeFromWatchlist");
-    const isInWatchlist = await userActions.isCardInWatchlist(card.id);
+    const isInWatchlist = await userActions.isCardInWatchlist(cardId);
 
     if (!isInWatchlist) {
         addBtn.style.display = "inline-block";
@@ -167,4 +189,10 @@ async function updateWatchlistButtons(card) {
         addBtn.style.display = "none";
         removeBtn.style.display = "inline-block";
     }
+}
+
+// Formalizar precios de carta
+function formatPrice(price) {
+    if (price == null) return "N/A";
+    return `${price.toFixed(2)}€`;
 }

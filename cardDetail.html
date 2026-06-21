@@ -4,72 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Carta</title>
+
     <link rel="stylesheet" href="/css/cardDetail.css">
     <link rel="stylesheet" href="/css/navbar.css">
 </head>
+
 <body>
-   <main class="card-detail-container">
+
+<main class="card-detail-container">
+
+    <!-- IMAGEN DE LA CARTA -->
     <div class="card-image">
         <img id="cardImage" src="" alt="Carta">
     </div>
 
+    <!-- PANEL COMPLETO -->
     <div class="card-info-wrapper">
+
+        <!-- TÍTULO -->
         <h1 id="cardName" class="card-title">Nombre de la carta</h1>
 
+        <!-- GRID PRINCIPAL -->
         <div class="card-info">
+
+            <!-- COLUMNA IZQUIERDA: INFORMACIÓN -->
             <div class="info-col">
+
                 <p><strong>Set:</strong> <span id="cardSet"></span></p>
                 <p><strong>Idioma:</strong> <span id="cardLang"></span></p>
                 <p><strong>Número de colección:</strong> <span id="collectorNumber"></span></p>
                 <p><strong>Rareza:</strong> <span id="cardRarity"></span></p>
                 <p><strong>Tipo:</strong> <span id="typeLine"></span></p>
                 <p><strong>Lanzamiento:</strong> <span id="released_at"></span></p>
-                <p><a id="cardMarketURL" href="#" target="_blank">Ver en Cardmarket</a></p>
+
+                <p>
+                    <a id="cardMarketURL" href="#" target="_blank">
+                        Ver en Cardmarket
+                    </a>
+                </p>
+
             </div>
 
+            <!-- COLUMNA DERECHA: CONTROLES + PRECIOS -->
             <div class="info-col prices-col">
-                <p>
-                    <strong>Condición:</strong>
-                    <select id="cardCondition">
-                        <option value="NM" selected>Near Mint</option>
-                        <option value="EX">Excellent</option>
-                        <option value="GD">Good</option>
-                        <option value="LP">Light Played</option>
-                        <option value="PL">Played</option>
-                        <option value="PO">Poor</option>
-                    </select>
-                    </p>
+
+                <div class="price-controls">
+
+                    <div class="control">
+                        <strong>Condición:</strong>
+                        <select id="cardCondition">
+                            <option value="NM" selected>Near Mint</option>
+                            <option value="EX">Excellent</option>
+                            <option value="GD">Good</option>
+                            <option value="LP">Light Played</option>
+                            <option value="PL">Played</option>
+                            <option value="PO">Poor</option>
+                        </select>
+                    </div>
+
+                    <div class="control">
+                        <strong>Foil:</strong>
+                        <input type="checkbox" id="cardFoil">
+                    </div>
+
+                </div>
+
+                <!-- PRECIOS -->
                 <p><strong>Desde:</strong> <span id="cardLow"></span></p>
                 <p><strong>Tendencia:</strong> <span id="cardTrend"></span></p>
                 <p><strong>Media 30 días:</strong> <span id="avg30"></span></p>
                 <p><strong>Media 7 días:</strong> <span id="avg7"></span></p>
                 <p><strong>Media 1 día:</strong> <span id="avg1"></span></p>
-                <button id="updatePrices" class="update-btn">↻ Actualizar precios</button>
+
+                <!-- BOTÓN ACTUALIZAR -->
+                <button id="updatePrices" class="update-btn">
+                    ↻ Actualizar precios
+                </button>
+
             </div>
+
         </div>
 
+        <!-- MODAL -->
         <div id="priceModal" class="modal">
+
             <div class="modal-content">
+
                 <span class="close-btn" id="closePriceModal">&times;</span>
+
                 <h2>Añadir a colección</h2>
+
                 <label>Precio de compra (€)</label>
                 <input type="number" id="priceInput" step="0.01" min="0" placeholder="0.00">
+
                 <label>Cantidad</label>
                 <input type="number" id="quantityInput" step="1" min="0" placeholder="1">
+
                 <button id="confirmBtn">Confirmar</button>
+
             </div>
+
         </div>
 
+        <!-- ACCIONES -->
         <div class="card-actions">
+
             <span id="cardQuantity">0</span>
+
             <button id="addToCollection">📦 Añadir a colección</button>
             <button id="removeFromCollection">🗑️ Eliminar de colección</button>
             <button id="addToWatchlist">⭐ Añadir a watchlist</button>
             <button id="removeFromWatchlist">🗑️ Eliminar de watchlist</button>
+
         </div>
+
     </div>
+
 </main>
-    <script type="module" src="/js/navbar.js"></script>
-    <script type="module" src="/js/cardDetail.js"></script>
+
+<script type="module" src="/js/navbar.js"></script>
+<script type="module" src="/js/cardDetail.js"></script>
+
 </body>
 </html>

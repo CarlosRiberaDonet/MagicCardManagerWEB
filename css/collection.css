@@ -23,7 +23,6 @@
     padding-bottom: 1rem;
 }
 
-/* Línea dorada bajo el título */
 .collection-title::after {
     content: '';
     position: absolute;
@@ -35,7 +34,7 @@
 }
 
 /* ===========================
-   ESTADÍSTICAS RÁPIDAS
+   ESTADÍSTICAS
 =========================== */
 .collection-stats {
     display: flex;
@@ -50,17 +49,16 @@
     padding: 1rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
     min-width: 140px;
     position: relative;
-    overflow: hidden;
 }
 
-/* Línea dorada en la parte superior de cada stat */
 .stat::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
@@ -81,7 +79,7 @@
 }
 
 /* ===========================
-   BARRA DE FILTROS
+   FILTROS
 =========================== */
 .collection-filters {
     display: flex;
@@ -95,82 +93,56 @@
     border-radius: var(--radius);
 }
 
+/* selects */
 .col-select {
     padding: 0.3rem 1.5rem 0.3rem 0.6rem;
-    font-family: var(--font-body);
     font-size: 0.85rem;
     background: var(--bg-deep);
     color: var(--text-secondary);
     border: 1px solid var(--border);
     border-radius: 4px;
-    outline: none;
     cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
     appearance: none;
-    -webkit-appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a6230'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.5rem center;
-    background-color: var(--bg-deep);
 }
 
-.col-select:focus,
-.col-select:hover {
+.col-select:hover,
+.col-select:focus {
     border-color: var(--gold-dim);
     color: var(--text-primary);
 }
 
-.col-select option {
-    background: var(--bg-card);
-    color: var(--text-primary);
-}
-
+/* search */
 .col-search {
     flex: 1;
     min-width: 180px;
     padding: 0.3rem 0.75rem;
-    font-family: var(--font-body);
     font-size: 0.85rem;
     background: var(--bg-deep);
     color: var(--text-primary);
     border: 1px solid var(--border);
     border-radius: 4px;
-    outline: none;
-    transition: border-color 0.25s;
 }
 
 .col-search::placeholder {
     color: var(--text-muted);
-    font-style: italic;
 }
 
-.col-search:focus {
-    border-color: var(--gold-dim);
-}
-
+/* clear */
 .col-clear {
-    padding: 0.3rem 0.75rem;
     font-family: var(--font-display);
     font-size: 0.65rem;
-    letter-spacing: 0.08em;
     text-transform: uppercase;
+    border: 1px solid var(--border);
     background: transparent;
     color: var(--text-muted);
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    padding: 0.3rem 0.75rem;
     cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
 }
 
-.col-clear:hover {
-    color: var(--text-primary);
-    border-color: var(--text-muted);
-}
-
-/* ===========================
-   TOGGLE LISTA / CUADRÍCULA
-=========================== */
+/* toggle */
 .view-toggle {
     display: flex;
     gap: 0.25rem;
@@ -179,98 +151,91 @@
 
 .toggle-btn {
     padding: 0.3rem 0.6rem;
-    font-size: 1rem;
+    border: 1px solid var(--border);
     background: transparent;
     color: var(--text-muted);
-    border: 1px solid var(--border);
-    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
 .toggle-btn.active {
     background: var(--gold);
     color: var(--bg-deep);
-    border-color: var(--gold);
-}
-
-.toggle-btn:hover:not(.active) {
-    border-color: var(--gold-dim);
-    color: var(--text-primary);
 }
 
 /* ===========================
-   VISTA CUADRÍCULA
+   GRID VIEW
 =========================== */
 .collection-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 1.25rem;
+    gap: 1rem;
+}
+
+/* tarjeta grid (evita colisión con .card global) */
+.collection-grid .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem;
 }
 
 /* ===========================
-   VISTA LISTA — ESTRUCTURA
-   Columnas: foto | nombre | edición | rareza | # | idioma | cant. | compra | actual | ganancia
+   LIST VIEW
 =========================== */
-
-/*
-   Definición de columnas compartida entre cabecera y filas:
-   28px  → foto tooltip
-   2fr   → nombre de la carta (más espacio)
-   28px  → icono de edición
-   80px  → rareza
-   55px  → número de coleccionista
-   40px  → bandera de idioma
-   50px  → cantidad
-   80px  → precio de compra
-   80px  → valor actual
-   85px  → ganancia
-*/
 .collection-list {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    overflow: visible;
+    gap: 0.6rem;
 }
 
-/* Cabecera de la tabla */
-.collection-list-header {
+/*
+   Header y filas COMPARTEN exactamente la misma definición de
+   columnas (10 columnas: miniatura, nombre, edición, rareza,
+   número, idioma, cantidad, compra, valor actual, ganancia).
+   Esto garantiza que todo quede alineado verticalmente.
+*/
+.collection-list-header,
+.collection-list-item {
     display: grid;
-    grid-template-columns: 28px 2fr 28px 80px 55px 40px 50px 80px 80px 85px;
-    gap: 0.75rem;
-    padding: 0.4rem 1.25rem;
-    font-family: var(--font-display);
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: white;
+    grid-template-columns:
+        32px 2fr 28px 70px 50px 50px 50px 60px 90px 90px 95px;
+    column-gap: 1rem;
+    align-items: center;
+}
+
+/* HEADER */
+.collection-list-header {
+    padding: 0.5rem 1.5rem;
     border-bottom: 1px solid var(--border);
 }
 
-/* Cabecera — alineación de cada columna */
-.collection-list-header span:nth-child(1) { text-align: center; }  /* foto */
-.collection-list-header span:nth-child(2) { text-align: left; }    /* nombre */
-.collection-list-header span:nth-child(3) { text-align: center; }  /* edición */
-.collection-list-header span:nth-child(4) { text-align: center; }  /* rareza */
-.collection-list-header span:nth-child(5) { text-align: center; }  /* # */
-.collection-list-header span:nth-child(6) { text-align: center; }  /* idioma */
-.collection-list-header span:nth-child(7) { text-align: center; }  /* cant. */
-.collection-list-header span:nth-child(8) { text-align: right; }   /* compra */
-.collection-list-header span:nth-child(9) { text-align: right; }   /* actual */
-.collection-list-header span:nth-child(10){ text-align: right; }   /* ganancia */
+/*
+   FIX TAMAÑO CABECERA:
+   Las clases .list-name, .list-rarity, .list-qty, .list-purchase, etc.
+   ya traen su propio font-size pensado para las celdas de DATOS.
+   Como esas mismas clases se reutilizan en el header, cada título
+   heredaba un tamaño distinto según su clase.
+   Esta regla tiene más especificidad (selector hijo directo) y
+   sobreescribe el font-size/weight/color en TODOS los <span> del
+   header por igual, sin tocar el tamaño de las celdas de datos
+   (que siguen definidas más abajo, fuera de este selector).
+*/
+.collection-list-header > * {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
 
-/* Fila de carta */
+/* ROW */
 .collection-list-item {
-    display: grid;
-    grid-template-columns: 28px 2fr 28px 80px 55px 40px 50px 80px 80px 85px;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.65rem 1.25rem;
+    padding: 0.75rem 1.5rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.15s, background 0.15s;
 }
 
 .collection-list-item:hover {
@@ -279,26 +244,23 @@
 }
 
 /* ===========================
-   TOOLTIP DE IMAGEN DE CARTA
+   TOOLTIP IMAGEN (al pasar el ratón sobre la miniatura)
 =========================== */
 .card-thumb {
     position: relative;
-    cursor: pointer;
-    font-size: 1rem;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 }
 
 .card-tooltip-img {
     display: none;
     position: absolute;
-    left: 30px;
-    bottom: 0;
-    width: 200px;
-    border-radius: 8px;
+    left: 40px;
+    width: 220px;
+    border-radius: 10px;
     box-shadow: var(--shadow-card);
-    z-index: 500;
+    z-index: 999;
 }
 
 .card-thumb:hover .card-tooltip-img {
@@ -306,101 +268,123 @@
 }
 
 /* ===========================
-   CONTENIDO DE CADA CELDA
+   CELDAS DE DATOS
+   (cada clase corresponde 1:1 a un <span>/<div> del JS,
+   en el mismo orden que las columnas del grid)
 =========================== */
-
-/* Nombre de la carta */
 .list-name {
     font-family: var(--font-display);
     font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Icono del set */
-.set-name {
+.list-edition {
     display: flex;
-    align-items: center;
     justify-content: center;
 }
 
-.collection-list-item .set-icon {
-    filter: invert(68%) sepia(35%) saturate(600%) hue-rotate(5deg) brightness(95%);
+.set-icon {
     width: 20px;
     height: 20px;
+    filter: invert(68%) sepia(35%) saturate(600%);
 }
 
-/* Rareza */
-.list-rarity {
-    font-family: var(--font-body);
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    text-align: center;
-}
-
-/* Número de coleccionista */
-.collector-number {
-    font-family: var(--font-body);
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    text-align: center;
-}
-
-/* Bandera de idioma */
-.list-lang {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.list-lang img {
-    width: 20px;
-    height: 15px;
-    border-radius: 2px;
-}
-
-/* Cantidad */
+.list-rarity,
+.list-number,
 .list-qty {
-    font-family: var(--font-body);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     text-align: center;
 }
 
-/* Precio de compra */
+.list-lang {
+    text-align: center;
+}
+
+/* valores monetarios alineados a la derecha, como cualquier tabla numérica */
 .list-purchase {
-    font-family: var(--font-body);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     text-align: right;
 }
 
-/* Valor actual */
 .list-current {
-    font-family: var(--font-body);
-    font-size: 0.88rem;
+    text-align: right;
     font-weight: 600;
     color: var(--gold-light);
-    text-align: right;
 }
 
-/* Ganancia/pérdida */
 .list-profit {
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 600;
     text-align: right;
+    font-weight: 600;
 }
 
 .list-profit.positive { color: #4caf50; }
 .list-profit.negative { color: #e88a8a; }
 
+
 /* ===========================
-   RESPONSIVE — TABLET (max 1024px)
-   Ocultamos número de coleccionista y precio de compra
+   BADGE DE CONDICIÓN
+=========================== */
+.condition-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;       /* pastilla totalmente redondeada */
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+}
+
+/* NM — Near Mint (mejor estado) */
+.condition-nm {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+/* LP — Lightly Played */
+.condition-lp {
+    background: rgba(156, 204, 60, 0.15);
+    color: #9ccc3c;
+    border: 1px solid rgba(156, 204, 60, 0.4);
+}
+
+/* MP — Moderately Played */
+.condition-mp {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.4);
+}
+
+/* HP — Heavily Played */
+.condition-hp {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ff9800;
+    border: 1px solid rgba(255, 152, 0, 0.4);
+}
+
+/* PO — Poor / Damaged (peor estado) */
+.condition-po {
+    background: rgba(232, 138, 138, 0.15);
+    color: #e88a8a;
+    border: 1px solid rgba(232, 138, 138, 0.4);
+}
+
+/* fallback si no hay condición registrada */
+.condition-unknown {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+
+/* ===========================
+   RESPONSIVE TABLET
+   Se oculta "Compra" y se reduce a 9 columnas reales
+   (coincide exactamente con lo que queda visible).
 =========================== */
 @media (max-width: 1024px) {
 
@@ -408,65 +392,40 @@
         grid-template-columns: repeat(4, 1fr);
     }
 
-    /* 8 columnas: sin # ni compra */
     .collection-list-header,
     .collection-list-item {
-        grid-template-columns: 28px 2fr 28px 80px 40px 50px 80px 85px;
+        grid-template-columns:
+            32px 2fr 28px 70px 50px 50px 60px 90px 95px;
     }
 
-    .collector-number,
-    .list-purchase,
-    .collection-list-header span:nth-child(5),
-    .collection-list-header span:nth-child(8) {
+    .list-purchase {
         display: none;
     }
 }
 
 /* ===========================
-   RESPONSIVE — MÓVIL (max 768px)
-   Solo foto, nombre, idioma, actual y ganancia
+   RESPONSIVE MOBILE
+   Solo quedan: miniatura, nombre, valor actual y ganancia.
+   Se ocultan edición, rareza, número y cantidad.
 =========================== */
 @media (max-width: 768px) {
 
-    .collection-stats {
-        gap: 0.75rem;
-    }
-
-    .stat {
-        min-width: 110px;
-        padding: 0.75rem 1rem;
-    }
-
-    .stat-value {
-        font-size: 1.1rem;
-    }
-
     .collection-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
     }
 
-    /* 4 columnas en móvil: foto | nombre | actual | ganancia */
     .collection-list-header,
     .collection-list-item {
-        grid-template-columns: 28px 1fr 80px 80px;
-        gap: 0.5rem;
-        padding: 0.6rem 0.75rem;
+        grid-template-columns: 32px 1fr 90px 95px;
+        column-gap: 0.6rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
 
-    /* Ocultar columnas en móvil */
-    .set-name,
+    .list-edition,
     .list-rarity,
-    .collector-number,
-    .list-lang,
-    .list-qty,
-    .list-purchase,
-    .collection-list-header span:nth-child(3),
-    .collection-list-header span:nth-child(4),
-    .collection-list-header span:nth-child(5),
-    .collection-list-header span:nth-child(6),
-    .collection-list-header span:nth-child(7),
-    .collection-list-header span:nth-child(8) {
+    .list-number,
+    .list-qty {
         display: none;
     }
 }

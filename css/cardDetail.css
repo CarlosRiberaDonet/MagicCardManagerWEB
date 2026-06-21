@@ -150,6 +150,41 @@ body {
 /* ===========================
    PANEL DE INFORMACIÓN
 =========================== */
+.price-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.control strong {
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.control select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.control input[type="checkbox"] {
+    transform: scale(1.1);
+    accent-color: var(--gold);
+}
 .card-info {
     flex: 1;
     min-width: 560px;

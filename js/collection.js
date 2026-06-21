@@ -2,7 +2,7 @@
 
 import { getToken } from './auth.js';
 import { loadCollection } from "./apiUser.js";
-import { getFlag } from './utils.js';
+import { getFlag, getCondition } from './utils.js';
 
 
 // ===========================
@@ -37,7 +37,7 @@ async function init() {
 // HELPERS
 // ===========================
 
-// Precio actual normalizado (trend > low > 0)
+// Precio actual normalizado (trend > low > avg > 0)
 function getCurrentPrice(item) {
     const price = item?.card?.cardPrice;
 
@@ -47,7 +47,7 @@ function getCurrentPrice(item) {
         ?? 0;
 }
 
-// Ganancia total por carta
+// Ganancia total por carta (precio actual - precio compra) * cantidad
 function calcProfit(item) {
     const price = getCurrentPrice(item);
     const purchase = item?.purchasePrice ?? 0;
@@ -121,19 +121,24 @@ function renderCollectionList(cards = allCards) {
         return;
     }
 
+    // Cabecera de la lista.
+    // IMPORTANTE: cada <span> lleva la misma clase que su celda
+    // correspondiente en las filas (list-name, list-rarity, etc.)
+    // para que el CSS pueda alinear cabecera y filas de forma idéntica.
     const header = document.createElement("div");
     header.className = "collection-list-header";
     header.innerHTML = `
         <span></span>
-        <span>Nombre</span>
-        <span>Edición</span>
-        <span>Rareza</span>
-        <span>#</span>
-        <span>Idioma</span>
-        <span>Cant.</span>
-        <span>Compra</span>
-        <span>V.Actual</span>
-        <span>Ganancia</span>
+        <span class="list-name">Nombre</span>
+        <span class="list-edition">Edición</span>
+        <span class="list-rarity">Rareza</span>
+        <span class="list-number">#</span>
+        <span class="list-lang">Idioma</span>
+        <span class="list-condition">Cond.</span>
+        <span class="list-qty">Cant.</span>
+        <span class="list-purchase">Compra</span>
+        <span class="list-current">V.Actual</span>
+        <span class="list-profit">Ganancia</span>
     `;
     container.appendChild(header);
 
@@ -146,38 +151,42 @@ function renderCollectionList(cards = allCards) {
         const row = document.createElement("div");
         row.className = "collection-list-item";
 
+        // Cada celda lleva su clase para alinearse exactamente
+        // bajo su columna del header (10 columnas en total).
         row.innerHTML = `
             <div class="card-thumb">
                 📷
                 <img src="${card?.imageUrl ?? ''}" class="card-tooltip-img">
             </div>
 
-            <span>${card?.name ?? '—'}</span>
+            <span class="list-name">${card?.name ?? '—'}</span>
 
-            <div>
-                <img src="${card?.iconSvgUri ?? ''}" class="set-icon"  title="${card?.setName ?? ''}">
+            <div class="list-edition">
+                <img src="${card?.iconSvgUri ?? ''}" class="set-icon" title="${card?.setName ?? ''}">
             </div>
 
-            <span>${card?.rarity ?? '—'}</span>
+            <span class="list-rarity">${card?.rarity ?? '—'}</span>
 
-            <span>${card?.collectorNumber ?? '—'}</span>
+            <span class="list-number">${card?.collectorNumber ?? '—'}</span>
 
-            <span>${getFlag(card?.lang) ?? '—'}</span>
+            <span class="list-lang">${getFlag(card?.lang) ?? '—'}</span>
 
-            <span>${item?.quantity ?? 1}</span>
+            <span class="list-condition condition-badge ${getCondition(item?.cardCondition)}">${item?.cardCondition ?? '—'}</span>
 
-            <span>${formatPrice(item?.purchasePrice ?? 0)}</span>
+            <span class="list-qty">${item?.quantity ?? 1}</span>
 
-            <span>${price ? formatPrice(price) : 'N/A'}</span>
+            <span class="list-purchase">${formatPrice(item?.purchasePrice ?? 0)}</span>
 
-            <span style="color:${profit >= 0 ? 'green' : 'red'}">
+            <span class="list-current">${price ? formatPrice(price) : 'N/A'}</span>
+
+            <span class="list-profit ${profit >= 0 ? 'positive' : 'negative'}">
                 ${formatPrice(profit)}
             </span>
         `;
 
         row.addEventListener('click', () => {
             window.open(
-                `cardDetail.html?scryfallId=${card?.scryfallId}`,
+                `cardDetail.html?cardId=${card.id}`,
                 "_blank"
             );
         });
@@ -210,6 +219,8 @@ function renderCollectionGrid(cards = allCards) {
 
             <img src="${card?.iconSvgUri ?? ''}" class="set-icon">
 
+            <span class="list-condition condition-badge ${getCondition(item?.cardCondition)}">${item?.cardCondition ?? '—'}</span>
+
             <p>${getFlag(card?.lang) ?? '—'}</p>
 
             <p>${price ? formatPrice(price) : 'N/A'}</p>
@@ -218,10 +229,7 @@ function renderCollectionGrid(cards = allCards) {
         `;
 
         el.addEventListener('click', () => {
-            window.open(
-                `cardDetail.html?scryfallId=${card?.scryfallId}`,
-                "_blank"
-            );
+            window.open(`cardDetail.html?cardId=${card.id}`, "_blank");
         });
 
         container.appendChild(el);

@@ -34,7 +34,8 @@ export function renderCards(cards, container) {
 
         // Listener directo con acceso al id del objeto
         cardEl.addEventListener("click", () => {
-            window.open(`cardDetail.html?scryfallId=${card.scryfallId}`, "_blank");
+
+            window.open(`cardDetail.html?cardId=${card.id}`, "_blank");
         });
 
         container.appendChild(cardEl);

@@ -31,13 +31,13 @@ export async function fetchSets() {
 }
 
 // Actualizar precios desde cardtrader
-export async function updatePricesFromCardtrader(scryfallId, lang) {
+export async function updatePricesFromCardtrader(cardId, lang, condition, isFoil) {
     //const token = getToken();
     //if (!token) throw new Error("Usuario no autenticado");
-        const url = `http://localhost:8081/pricecache/${scryfallId}?lang=${lang}`;
+        const url = `http://localhost:8081/pricecache/${cardId}?lang=${lang}&condition=${condition}&isFoil=${isFoil}`;
         console.log("URL:", url);
 
-    const response = await fetch(`http://localhost:8081/pricecache/${scryfallId}?lang=${lang}`, {
+    const response = await fetch(`http://localhost:8081/pricecache/${cardId}?lang=${lang}`, {
         
         method: "GET",
         headers: {
