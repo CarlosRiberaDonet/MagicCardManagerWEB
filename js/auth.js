@@ -132,7 +132,7 @@ export function logout() {
     document.getElementById('userMenu').classList.remove('active');
 }
 
-    // Menú de usuario logueado
+// Menú de usuario logueado
 export function usersMenuListeners() {
 
     const goProfile = document.getElementById('goProfile');
@@ -142,16 +142,16 @@ export function usersMenuListeners() {
     const logOut = document.getElementById('logOut');
 
     goProfile.addEventListener('click', () => {
-        window.location.href = 'profile.html'; // Redirige a la página de perfil
+        window.open('profile.html', '_blank'); // Redirige a la página de perfil
     });
     goCollection.addEventListener('click', () => {
-        window.location.href = 'collection.html'; // Redirige a la página de colección
+        window.open('collection.html', '_blank'); // Redirige a la página de colección
     });
     goInvestor.addEventListener('click', () => {
-        window.location.href = 'investor.html'; // Redirige a la página de inversión
+        window.open('investor.html', '_blank'); // Redirige a la página de inversión
     });
     goWatchlist.addEventListener('click', () => {
-        window.location.href = 'watchlist.html'; // Redirige a la página de watchlist
+        window.open('watchlist.html', '_blank'); // Redirige a la página de watchlist
     });
     logOut.addEventListener('click', () => {
         logout();

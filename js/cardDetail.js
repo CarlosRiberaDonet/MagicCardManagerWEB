@@ -25,8 +25,7 @@ async function init() {
     });
 
     const card = await res.json();
-    console.log(card);
-
+    
     // UI según login
     if (!token) {
         document.getElementById("addToCollection").style.display = "none";
