@@ -2,12 +2,18 @@
 import { getFlag } from './utils.js';
 
 
-    // Formatear precio a moneda local
-    function formatPrice(price) {
+// Formatear precio a moneda local
+function formatPrice(price) {
+    if (price == null) return "N/A";
+
     return new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'EUR'
     }).format(price);
+}
+
+function getCurrentPrice(priceObj) {
+    return priceObj?.low ?? priceObj?.trend ?? priceObj?.avg ?? null;
 }
 
 // cardClickCallback: función que recibe el id de la carta cuando se hace click
@@ -29,7 +35,7 @@ export function renderCards(cards, container) {
             <h3>${card.name}</h3>
             <img src="${card.iconSvgUri}" alt="${card.setName}" title="${card.setName}" class="set-icon">
             <p>${getFlag(card.lang)}</p>
-            <p>${card.price ? formatPrice(card.price) : "N/A"}</p>
+            <p>${formatPrice(getCurrentPrice(card.cardPrice))}</p>
         `;
 
         // Listener directo con acceso al id del objeto

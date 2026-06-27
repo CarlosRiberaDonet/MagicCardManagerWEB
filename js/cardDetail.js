@@ -49,7 +49,7 @@ function render(card) {
     document.getElementById("typeLine").textContent = card.typeLine;
     document.getElementById("released_at").textContent = card.releasedAt;
     document.getElementById("cardMarketURL").href = card.cardmarketURL;
-    document.getElementById("cardCondition").value = card.condition ?? "NM";
+    document.getElementById("cardCondition").value = "M";
 
     document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.low);
     document.getElementById("cardTrend").textContent = formatPrice(card?.cardPrice?.trend);
@@ -60,15 +60,10 @@ function render(card) {
 
 function buttonListeners(card) {
 
-    // Estado de la carta 
-    let condition = "NM";
-    // Checkbox Foil
-    let isFoil = false;
-
     // Listener para añadir carta de la colección, abre modal para introducir precio y cantidad
-    document.getElementById("addToCollection").addEventListener("click", () => 
-        openPriceModal(card)
-    );
+   document.getElementById("addToCollection").addEventListener("click", () => {
+        openPriceModal(card);
+    });
 
     // Eliminar carta de la colección
     document.getElementById("removeFromCollection").addEventListener("click", async () => {
@@ -95,13 +90,13 @@ function buttonListeners(card) {
 
     // Checkbox foil
     document.getElementById("cardFoil").addEventListener("change", (e) => {
-        isFoil = e.target.checked;
+        const isFoil = e.target.checked;
     });
 
     // Selector estado de la carta
     document.getElementById("cardCondition").addEventListener("change", async (e) =>  {
         // Asignar la condición seleccionada
-        condition = e.target.value;
+        const condition = e.target.value;
         // Mostrar precios de la condición seleccionada
         console.log(condition);
     });
@@ -124,7 +119,7 @@ function buttonListeners(card) {
 }
 
     // Abrir modal para añadir carta a la colección con precio
-    function openPriceModal(card) {
+  function openPriceModal(card) {
 
     const modal = document.getElementById("priceModal");
     const priceInput = document.getElementById("priceInput");
@@ -134,25 +129,43 @@ function buttonListeners(card) {
 
     if (!modal || !priceInput || !quantityInput || !confirmBtn) return;
 
+    priceInput.value =
+        card?.cardPrice?.low ??
+        card?.cardPrice?.trend ??
+        card?.cardPrice?.avg ??
+        0;
 
-    priceInput.value = card?.cardPrice?.low ?? card?.cardPrice?.trend ?? 0;
     quantityInput.value = 1;
 
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
 
-    // IMPORTANTE: evitar duplicar listeners
-    confirmBtn.onclick =  async () => {
-        card.purchasePrice = parseFloat(priceInput.value);
-        card.quantity = parseInt(quantityInput.value);
-        await addCardToCollection(card);
-        document.getElementById("priceModal").classList.remove("active");
-        document.body.style.overflow = "";
-        showToast(card.name + " añadida a la colección.");
-        await updateCardCounts(cardId);
-    };
+    confirmBtn.onclick = async () => {
 
-    // Botón de cerrar modal
+    const modalCondition = modal.querySelector("#conditionSelect");
+    const modalFoil = modal.querySelector("#foilCheck");
+
+    console.log("condicion: " + modalCondition)
+    if (!modalCondition || !modalFoil) return;
+
+    const condition = modalCondition.value;
+    const isFoil = modalFoil.checked;
+
+    card.purchasePrice = parseFloat(priceInput.value);
+    card.quantity = parseInt(quantityInput.value);
+    card.condition = condition;
+    card.foil = isFoil;
+
+    await addCardToCollection(card);
+
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+
+    showToast(`${card.name} añadida a la colección`);
+
+    await updateCardCounts(cardId);
+};
+
     closeBtn.onclick = () => {
         modal.classList.remove("active");
         document.body.style.overflow = "";

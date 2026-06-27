@@ -56,7 +56,6 @@ export function setupAuthListeners() {
     }
 }
 
-
 export function register() {
     const registerModal = document.getElementById("registerModal");
     const registerButton = document.getElementById("registerBtn");
@@ -172,9 +171,7 @@ export function closeModal() {
     document.body.style.overflow = '';
 }
 
-// ===========================
 // TOKEN
-// ===========================
 export function getToken() {
     return localStorage.getItem('authToken');
 }
@@ -183,9 +180,7 @@ export function setToken(token) {
     localStorage.setItem('authToken', token);
 }
 
-// ===========================
 // JWT EXPIRATION CHECK
-// ===========================
 export function isTokenExpired(token) {
     if (!token) return true;
 

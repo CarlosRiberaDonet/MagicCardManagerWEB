@@ -339,42 +339,56 @@
     line-height: 1.4;
 }
 
-/* NM — Near Mint (mejor estado) */
+/* M — Mint (máximo estado) */
+.condition-m {
+    background: rgba(33, 150, 243, 0.18);
+    color: #2196f3;
+    border: 1px solid rgba(33, 150, 243, 0.45);
+}
+
+/* NM — Near Mint */
 .condition-nm {
-    background: rgba(76, 175, 80, 0.15);
+    background: rgba(76, 175, 80, 0.18);
     color: #4caf50;
-    border: 1px solid rgba(76, 175, 80, 0.4);
+    border: 1px solid rgba(76, 175, 80, 0.45);
 }
 
-/* LP — Lightly Played */
+/* EX — Excellent */
+.condition-ex {
+    background: rgba(139, 195, 74, 0.15);
+    color: #8bc34a;
+    border: 1px solid rgba(139, 195, 74, 0.4);
+}
+
+/* GD — Good */
+.condition-gd {
+    background: rgba(205, 220, 57, 0.15);
+    color: #cddc39;
+    border: 1px solid rgba(205, 220, 57, 0.4);
+}
+
+/* LP — Light Played */
 .condition-lp {
-    background: rgba(156, 204, 60, 0.15);
-    color: #9ccc3c;
-    border: 1px solid rgba(156, 204, 60, 0.4);
-}
-
-/* MP — Moderately Played */
-.condition-mp {
     background: rgba(255, 193, 7, 0.15);
     color: #ffc107;
     border: 1px solid rgba(255, 193, 7, 0.4);
 }
 
-/* HP — Heavily Played */
-.condition-hp {
+/* PL — Played */
+.condition-pl {
     background: rgba(255, 152, 0, 0.15);
     color: #ff9800;
     border: 1px solid rgba(255, 152, 0, 0.4);
 }
 
-/* PO — Poor / Damaged (peor estado) */
+/* PO — Poor */
 .condition-po {
-    background: rgba(232, 138, 138, 0.15);
-    color: #e88a8a;
-    border: 1px solid rgba(232, 138, 138, 0.4);
+    background: rgba(244, 67, 54, 0.15);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.4);
 }
 
-/* fallback si no hay condición registrada */
+/* fallback */
 .condition-unknown {
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-muted);

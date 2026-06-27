@@ -2,21 +2,16 @@
 
 import { fetchSets } from "./api.js";
 import { setupAuthListeners } from "./auth.js";
+import { showToast } from "./utils.js";
 
 /**
- * Detecta si estamos en página de búsqueda (index)
- */
-const isIndex = window.location.pathname.includes("index");
-
-/**
- * Carga del navbar en todas las páginas
+ * Navbar se inyecta dinámicamente en todas las páginas
  */
 fetch("/navbar.html")
     .then(res => res.text())
     .then(html => {
         document.body.insertAdjacentHTML("afterbegin", html);
 
-        // Mover modal si existe
         const modal = document.getElementById("loginModal");
         if (modal) document.body.appendChild(modal);
 
@@ -28,17 +23,19 @@ fetch("/navbar.html")
     });
 
 /**
- * Inicialización del navbar (solo UI)
+ * Inicializa toda la UI del navbar
+ * (NO hace llamadas a backend de cartas)
  */
 function initNavbarUI() {
     initScroll();
     initSearch();
     initHideNA();
     loadSets();
+    clearFilters();
 }
 
 /**
- * Ocultar navbar al hacer scroll hacia abajo
+ * Ocultar navbar al hacer scroll
  */
 function initScroll() {
     let lastScroll = 0;
@@ -59,7 +56,7 @@ function initScroll() {
 }
 
 /**
- * Carga de sets en el select del navbar
+ * Cargar sets en el selector
  */
 async function loadSets() {
     const select = document.getElementById("filterSet");
@@ -83,65 +80,68 @@ async function loadSets() {
 }
 
 /**
- * Ejecuta búsqueda (delegada a app.js o redirect)
+ * Limpia filtros y notifica a app
  */
-function triggerSearch() {
-    const input = document.getElementById("searchInput");
-    const name = input?.value?.trim() || null;
-
-    // Si no estamos en index → guardamos y redirigimos
-    if (!isIndex) {
-        if (name) localStorage.setItem("pendingSearch", name);
-        window.location.href = "/index.html";
-        return;
-    }
-
-    // Si estamos en index → notificamos a app.js
-    document.dispatchEvent(
-        new CustomEvent("searchRequested", {
-            detail: { name }
-        })
-    );
-}
-
-/**
- * Inicializa buscador del navbar
- */
-function initSearch() {
-    const input = document.getElementById("searchInput");
-    const btn = document.getElementById("searchButton");
+function clearFilters() {
     const clear = document.getElementById("clearFilters");
-
-    if (!input || !btn || !clear) return;
-
-    btn.addEventListener("click", triggerSearch);
-
-    input.addEventListener("keypress", e => {
-        if (e.key === "Enter") triggerSearch();
-    });
+    if (!clear) return;
 
     clear.addEventListener("click", () => {
 
+        document.getElementById("filterSet").value = "";
+        document.getElementById("filterRarity").value = "";
+        document.getElementById("filterLang").value = "";
+        document.getElementById("filterType").value = "";
+        document.getElementById("filterSort").value = "";
+
+        document.dispatchEvent(new Event("filtersChanged"));
+    });
+}
+
+/**
+ * Búsqueda principal
+ * Solo emite evento, NO llama API
+ */
+function initSearch() {
+    const input = document.getElementById("searchInput");
     const set = document.getElementById("filterSet");
-    if (set) set.value = "";
+    const btn = document.getElementById("searchButton");
 
-    const rarity = document.getElementById("filterRarity");
-    if (rarity) rarity.value = "";
+    if (!input || !set || !btn) return;
 
-    const lang = document.getElementById("filterLang");
-    if (lang) lang.value = "";
+    function search() {
+        const name = input.value.trim();
+        const setValue = set.value;
 
-    const type = document.getElementById("filterType");
-    if (type) type.value = "";
+        if (!name && !setValue) {
+            showToast("Debes introducir nombre o edición");
+            return;
+        }
 
-    const sort = document.getElementById("filterSort");
-    if (sort) sort.value = "";
+        document.dispatchEvent(
+            new CustomEvent("searchRequested", {
+                detail: { name }
+            })
+        );
+    }
 
-});
+    btn.addEventListener("click", search);
+
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            search();
+        }
+    });
+
+    set.addEventListener("change", () => {
+        document.dispatchEvent(new Event("filtersChanged"));
+    });
 }
 
 /**
  * Botón hide NA
+ * SOLO cambia estado visual + notifica cambio
  */
 function initHideNA() {
     const btn = document.getElementById("hideNAButton");
@@ -150,12 +150,6 @@ function initHideNA() {
     btn.addEventListener("click", () => {
         btn.classList.toggle("active");
 
-        document.dispatchEvent(
-            new CustomEvent("searchRequested", {
-                detail: {
-                    name: document.getElementById("searchInput")?.value?.trim() || null
-                }
-            })
-        );
+        document.dispatchEvent(new Event("filtersChanged"));
     });
 }

@@ -20,15 +20,19 @@ export function getFlag(lang) {
 }
 
 // Traduce el código de condición a una clase CSS de color.
-// Escala de mejor a peor estado: NM (verde) → LP → MP → HP → PO (rojo)
+// Escala de mejor a peor estado: NM (verde) → EX -> GD -> LP → MP → HP → PO (rojo)
 export function getCondition(condition) {
-    switch (condition) {
-        case 'NM': return 'condition-nm'; // Near Mint
-        case 'LP': return 'condition-lp'; // Lightly Played
-        case 'MP': return 'condition-mp'; // Moderately Played
-        case 'HP': return 'condition-hp'; // Heavily Played
-        case 'PO': return 'condition-po'; // Poor / Damaged
-        default:   return 'condition-unknown';
+    switch ((condition || "").toUpperCase()) {
+
+        case 'M':  return 'condition-m';   // Mint
+        case 'NM': return 'condition-nm';  // Near Mint
+        case 'EX': return 'condition-ex';  // Excellent
+        case 'GD': return 'condition-gd';  // Good
+        case 'LP': return 'condition-lp';  // Light Played
+        case 'PL': return 'condition-pl';  // Played
+        case 'PO': return 'condition-po';  // Poor
+
+        default: return 'condition-unknown';
     }
 }
 

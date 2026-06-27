@@ -50,7 +50,9 @@ export async function addToCollection(card, token) {
         body: JSON.stringify(
             { cardId: card.id,
                 purchasePrice: card.purchasePrice,
-                quantity: card.quantity
+                quantity: card.quantity,
+                condition: card.condition,
+                foil: card.foil
             })
     });
     if (!response.ok) throw new Error("Error al añadir carta a la colección");

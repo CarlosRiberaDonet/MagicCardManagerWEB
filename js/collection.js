@@ -23,8 +23,8 @@ async function init() {
         loadEditions();
         setupFilters();
         setupViewToggle();
-
         renderCollectionList(allCards);
+
     } catch (error) {
         console.error("Error al cargar la colección:", error);
         document.getElementById("collectionContainer").innerHTML =
@@ -123,7 +123,6 @@ function renderCollectionList(cards = allCards) {
 
     // Cabecera de la lista.
     // IMPORTANTE: cada <span> lleva la misma clase que su celda
-    // correspondiente en las filas (list-name, list-rarity, etc.)
     // para que el CSS pueda alinear cabecera y filas de forma idéntica.
     const header = document.createElement("div");
     header.className = "collection-list-header";
@@ -151,8 +150,6 @@ function renderCollectionList(cards = allCards) {
         const row = document.createElement("div");
         row.className = "collection-list-item";
 
-        // Cada celda lleva su clase para alinearse exactamente
-        // bajo su columna del header (10 columnas en total).
         row.innerHTML = `
             <div class="card-thumb">
                 📷
@@ -171,7 +168,7 @@ function renderCollectionList(cards = allCards) {
 
             <span class="list-lang">${getFlag(card?.lang) ?? '—'}</span>
 
-            <span class="list-condition condition-badge ${getCondition(item?.cardCondition)}">${item?.cardCondition ?? '—'}</span>
+            <span class="list-condition condition-badge ${getCondition(item?.condition)}">${item?.condition ?? '—'}</span>
 
             <span class="list-qty">${item?.quantity ?? 1}</span>
 
