@@ -56,10 +56,7 @@ function calcProfit(item) {
     return (price - purchase) * qty;
 }
 
-
-// ===========================
 // ESTADÍSTICAS
-// ===========================
 function renderStats() {
 
     const totalCards = allCards.reduce(
@@ -94,7 +91,7 @@ function renderStats() {
 // ===========================
 function loadEditions() {
     const select = document.getElementById("colFilterSet");
-    select.innerHTML = '<option value="">Set</option>';
+    select.innerHTML = '<option value="">Edición</option>';
 
     const sets = new Set(allCards.map(i => i?.card?.setName));
 
@@ -216,7 +213,7 @@ function renderCollectionGrid(cards = allCards) {
 
             <img src="${card?.iconSvgUri ?? ''}" class="set-icon">
 
-            <span class="list-condition condition-badge ${getCondition(item?.cardCondition)}">${item?.cardCondition ?? '—'}</span>
+            <span class="list-condition condition-badge ${getCondition(item?.condition)}">${item?.condition ?? '—'}</span>
 
             <p>${getFlag(card?.lang) ?? '—'}</p>
 

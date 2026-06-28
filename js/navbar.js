@@ -22,10 +22,7 @@ fetch("/navbar.html")
         document.dispatchEvent(new Event("navbarReady"));
     });
 
-/**
- * Inicializa toda la UI del navbar
- * (NO hace llamadas a backend de cartas)
- */
+ // Inicializa toda la UI del navbar
 function initNavbarUI() {
     initScroll();
     initSearch();
@@ -34,9 +31,7 @@ function initNavbarUI() {
     clearFilters();
 }
 
-/**
- * Ocultar navbar al hacer scroll
- */
+ // Ocultar navbar al hacer scroll
 function initScroll() {
     let lastScroll = 0;
 
@@ -55,9 +50,7 @@ function initScroll() {
     });
 }
 
-/**
- * Cargar sets en el selector
- */
+ // Cargar sets en el selector
 async function loadSets() {
     const select = document.getElementById("filterSet");
     if (!select) return;
@@ -79,9 +72,7 @@ async function loadSets() {
     }
 }
 
-/**
- * Limpia filtros y notifica a app
- */
+ // Limpia filtros y notifica a app
 function clearFilters() {
     const clear = document.getElementById("clearFilters");
     if (!clear) return;

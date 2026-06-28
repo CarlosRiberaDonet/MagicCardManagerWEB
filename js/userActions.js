@@ -36,21 +36,19 @@ import * as auth from "./auth.js";
     }
 
     // Llamada a la api para comprobar si una carta está en la colección del usuario
-    export function isCardInCollection(cardId) {
+    export function isCardInCollection(card) {
         const token = auth.getToken();
         if(token){
-            return apiUser.isInCollection(cardId, token);
+            return apiUser.isInCollection(card, token);
         }
     }
 
-    export function isCardInWatchlist(cardId) {
+    export function isCardInWatchlist(card) {
         const token = auth.getToken();
         if(token){
-            return apiUser.isInWatchlist(cardId, token);
+            return apiUser.isInWatchlist(card, token);
         }
     }
-
- 
 
    export function closePriceModal() {
     const modal = document.getElementById("priceModal");

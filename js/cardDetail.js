@@ -3,13 +3,15 @@
 import { updatePricesFromCardtrader } from "./api.js";
 import { addCardToCollection } from "./userActions.js";
 import { getToken } from "./auth.js";
-import { showToast } from "./utils.js";
+import { showToast, getCondition } from "./utils.js";
 import * as userActions from "./userActions.js";
 
 const BASE_URL = "http://localhost:8081/scryfall";
 
 const params = new URLSearchParams(location.search);
 const cardId = params.get("cardId");
+let condition = "NM";
+let isFoil = false;
 
 init();
 
@@ -35,8 +37,8 @@ async function init() {
 
     render(card);
     buttonListeners(card);
-    await updateCardCounts(cardId);
-    await updateWatchlistButtons(cardId);
+    await updateCardCounts(card);
+    await updateWatchlistButtons(card);
 }
 
 function render(card) {
@@ -49,8 +51,7 @@ function render(card) {
     document.getElementById("typeLine").textContent = card.typeLine;
     document.getElementById("released_at").textContent = card.releasedAt;
     document.getElementById("cardMarketURL").href = card.cardmarketURL;
-    document.getElementById("cardCondition").value = "M";
-
+    document.getElementById("cardCondition").value = "NM";
     document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.low);
     document.getElementById("cardTrend").textContent = formatPrice(card?.cardPrice?.trend);
     document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg30);
@@ -65,15 +66,9 @@ function buttonListeners(card) {
         openPriceModal(card);
     });
 
-    // Eliminar carta de la colección
-    document.getElementById("removeFromCollection").addEventListener("click", async () => {
-        await userActions.removeCardFromCollection(card);
-        await updateCardCounts(cardId);
-        showToast(card.name + " eliminada de la colección.");
-    });
-
     // Añadir carta a la watchlist
     document.getElementById("addToWatchlist").addEventListener("click", async () => {
+        //card.purchasePrice = 
         await userActions.addCardToWatchlist(card);
         document.getElementById("addToWatchlist").style.display = "none";
         document.getElementById("removeFromWatchlist").style.display = "inline-block";
@@ -89,22 +84,28 @@ function buttonListeners(card) {
     });
 
     // Checkbox foil
-    document.getElementById("cardFoil").addEventListener("change", (e) => {
-        const isFoil = e.target.checked;
+    document.getElementById("cardFoil").addEventListener("change", async (e) => {
+        isFoil = e.target.checked;
+            card.foil = e.target.checked;
+            await updateWatchlistButtons(card); // Comprobar si la carta está en la lista de seguimiento del user
+            await updateCardCounts(card); // Conteo de la colección de cartas del user
+        
     });
 
     // Selector estado de la carta
     document.getElementById("cardCondition").addEventListener("change", async (e) =>  {
         // Asignar la condición seleccionada
-        const condition = e.target.value;
+        condition = e.target.value;
+        card.condition = condition;
+        await updateWatchlistButtons(card); 
+        await updateCardCounts(card);
         // Mostrar precios de la condición seleccionada
-        console.log(condition);
     });
 
 
+    // --------------------- IMPLEMENTAR ------------------------------------------------
     // Si la carta no tiene precios, mostrar botón para actualizar precios desde Cardtrader
     if(card?.cardPrice?.low == null && card?.cardPrice?.trend == null){
-
 
         // Actualizar precios desde Cardtrader
         document.getElementById("updatePrices").addEventListener("click", async () => {
@@ -121,11 +122,16 @@ function buttonListeners(card) {
     // Abrir modal para añadir carta a la colección con precio
   function openPriceModal(card) {
 
+    const conditionElement = document.getElementById("labelConditionValue");
     const modal = document.getElementById("priceModal");
+    const el = document.getElementById("labelConditionValue");
     const priceInput = document.getElementById("priceInput");
     const quantityInput = document.getElementById("quantityInput");
     const confirmBtn = document.getElementById("confirmBtn");
     const closeBtn = document.getElementById("closePriceModal");
+    conditionElement.textContent = condition;
+    conditionElement.className = getCondition(condition);
+    document.getElementById("labelFoilValue").textContent = isFoil ? "Sí" : "No";
 
     if (!modal || !priceInput || !quantityInput || !confirmBtn) return;
 
@@ -142,29 +148,20 @@ function buttonListeners(card) {
 
     confirmBtn.onclick = async () => {
 
-    const modalCondition = modal.querySelector("#conditionSelect");
-    const modalFoil = modal.querySelector("#foilCheck");
+        card.purchasePrice = parseFloat(priceInput.value);
+        card.quantity = parseInt(quantityInput.value);
+        card.condition = condition;
+        card.foil = isFoil;
 
-    console.log("condicion: " + modalCondition)
-    if (!modalCondition || !modalFoil) return;
+        await addCardToCollection(card);
 
-    const condition = modalCondition.value;
-    const isFoil = modalFoil.checked;
+        modal.classList.remove("active");
+        document.body.style.overflow = "";
 
-    card.purchasePrice = parseFloat(priceInput.value);
-    card.quantity = parseInt(quantityInput.value);
-    card.condition = condition;
-    card.foil = isFoil;
+        showToast(`${card.name} añadida a la colección`);
 
-    await addCardToCollection(card);
-
-    modal.classList.remove("active");
-    document.body.style.overflow = "";
-
-    showToast(`${card.name} añadida a la colección`);
-
-    await updateCardCounts(cardId);
-};
+        await updateCardCounts(card);
+    };
 
     closeBtn.onclick = () => {
         modal.classList.remove("active");
@@ -173,26 +170,18 @@ function buttonListeners(card) {
 }
 
 // Contador de cartas en la colección
-async function updateCardCounts(cardId) {
+async function updateCardCounts(card) {
     const cardQuantityEl = document.getElementById("cardQuantity");
-    const quantity = await userActions.isCardInCollection(cardId);
+    const quantity = await userActions.isCardInCollection(card);
     cardQuantityEl.textContent = quantity + "x";
-
-    if(quantity < 1){
-        // Ocultar botón de eliminar carta de la colección si no hay ninguna
-        document.getElementById("removeFromCollection").style.display = "none";
-    }
-    else{
-        // Mostrar botón de eliminar carta de la colección si hay alguna
-        document.getElementById("removeFromCollection").style.display = "inline-block";
-    }
 }
 
 // Comprobar si la carta está en la watchlist y actualizar botones
-async function updateWatchlistButtons(cardId) {
+async function updateWatchlistButtons(card) {
     const addBtn = document.getElementById("addToWatchlist");
     const removeBtn = document.getElementById("removeFromWatchlist");
-    const isInWatchlist = await userActions.isCardInWatchlist(cardId);
+    card.condition = condition;
+    const isInWatchlist = await userActions.isCardInWatchlist(card);
 
     if (!isInWatchlist) {
         addBtn.style.display = "inline-block";

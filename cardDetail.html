@@ -53,8 +53,8 @@
                     <div class="control">
                         <strong>Condición:</strong>
                         <select id="cardCondition">
-                            <option value="M" selected>Mint</option>
-                            <option value="NM">Near Mint</option>
+                            <option value="M">Mint</option>
+                            <option value="NM" selected>Near Mint</option>
                             <option value="EX">Excellent</option>
                             <option value="GD">Good</option>
                             <option value="LP">Light Played</option>
@@ -86,7 +86,7 @@
 
         </div>
 
-        <!-- MODAL -->
+       <!-- MODAL -->
         <div id="priceModal" class="modal">
 
             <div class="modal-content">
@@ -95,23 +95,25 @@
 
                 <h2>Añadir a colección</h2>
 
-                <label>Condición:</label>
-                <select id="conditionSelect">
-                            <option value="M" selected>Mint</option>
-                            <option value="NM" selected>Near Mint</option>
-                            <option value="EX">Excellent</option>
-                            <option value="GD">Good</option>
-                            <option value="LP">Light Played</option>
-                            <option value="PL">Played</option>
-                            <option value="PO">Poor</option>
-                </select>
-                <label>Foil:</label>
-                <input type="checkbox" id="foilCheck">
-                <label>Precio de compra (€)</label>
-                <input type="number" id="priceInput" step="0.01" min="0" placeholder="0.00">
+                <div class="modal-row">
+                    <span class="label">Condición</span>
+                    <span id="labelConditionValue"></span>
+                </div>
 
-                <label>Cantidad</label>
-                <input type="number" id="quantityInput" step="1" min="0" placeholder="1">
+                <div class="modal-row">
+                    <span class="label">Foil</span>
+                    <span id="labelFoilValue" class="value"></span>
+                </div>
+
+                <div class="modal-row">
+                    <span class="label">Precio (€)</span>
+                    <input type="number" id="priceInput" step="0.01" min="0" placeholder="0.00">
+                </div>
+
+                <div class="modal-row">
+                    <span class="label">Cantidad</span>
+                    <input type="number" id="quantityInput" step="1" min="1" value="1">
+                </div>
 
                 <button id="confirmBtn">Confirmar</button>
 
@@ -125,7 +127,6 @@
             <span id="cardQuantity">0</span>
 
             <button id="addToCollection">📦 Añadir a colección</button>
-            <button id="removeFromCollection">🗑️ Eliminar de colección</button>
             <button id="addToWatchlist">⭐ Añadir a watchlist</button>
             <button id="removeFromWatchlist">🗑️ Eliminar de watchlist</button>
 

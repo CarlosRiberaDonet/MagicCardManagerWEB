@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watchlist — Magic Investor</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/watchlist.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
+</head>
+
+<body>
+
+<main>
+
+    <!-- HEADER KPI -->
+    <section class="watchlist-header">
+
+        <h1 class="watchlist-title">Watchlist</h1>
+
+        <div class="watchlist-stats">
+
+            <div class="stat">
+                <span class="stat-label">Cartas</span>
+                <span class="stat-value" id="totalCards">—</span>
+            </div>
+
+            <div class="stat">
+                <span class="stat-label">Valor actual</span>
+                <span class="stat-value" id="totalValue">—</span>
+            </div>
+
+            <div class="stat">
+                <span class="stat-label">Variación</span>
+                <span class="stat-value" id="totalProfit">—</span>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- FILTERS -->
+    <section class="watchlist-filters">
+
+        <select id="wlFilterSet" class="wl-select">
+            <option value="">Set</option>
+        </select>
+
+        <select id="wlFilterCondition" class="wl-select">
+            <option value="">Condición</option>
+            <option value="NM">NM</option>
+            <option value="EX">EX</option>
+            <option value="GD">GD</option>
+            <option value="LP">LP</option>
+            <option value="PL">PL</option>
+            <option value="PO">PO</option>
+        </select>
+
+        <select id="wlFilterFoil" class="wl-select">
+            <option value="">Foil</option>
+            <option value="true">Foil</option>
+            <option value="false">Normal</option>
+        </select>
+
+        <select id="wlFilterSort" class="wl-select">
+            <option value="">Ordenar por</option>
+            <option value="price_desc">Mayor valor</option>
+            <option value="price_asc">Menor valor</option>
+            <option value="profit_desc">Mayor subida</option>
+            <option value="profit_asc">Mayor bajada</option>
+            <option value="name_asc">Nombre A-Z</option>
+        </select>
+
+        <input type="text" id="wlSearch" class="wl-search" placeholder="Buscar en watchlist...">
+
+        <button id="wlClearFilters" class="wl-clear">✕ Limpiar</button>
+
+        <div class="view-toggle">
+            <button id="viewGrid" class="toggle-btn" title="Vista cuadrícula">⊞</button>
+            <button id="viewList" class="toggle-btn active" title="Vista lista">☰</button>
+        </div>
+
+    </section>
+
+    <!-- LIST / GRID -->
+    <section id="watchlistContainer" class="watchlist-grid">
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Magic Investor</p>
+</footer>
+
+<!-- MODAL: mover carta a colección -->
+<div id="moveModal" class="wl-modal">
+    <div class="wl-modal-content">
+        <h2 class="wl-modal-title">Mover a colección</h2>
+        <p class="wl-modal-card-name" id="moveModalCardName">—</p>
+
+        <label class="wl-modal-label" for="movePurchasePrice">Precio de compra</label>
+        <input type="number" id="movePurchasePrice" class="wl-modal-input" step="0.01" min="0" placeholder="0.00">
+
+        <label class="wl-modal-label" for="moveQuantity">Cantidad</label>
+        <input type="number" id="moveQuantity" class="wl-modal-input" min="1" value="1">
+
+        <div class="wl-modal-actions">
+            <button id="moveModalCancel" class="wl-modal-btn secondary">Cancelar</button>
+            <button id="moveModalConfirm" class="wl-modal-btn primary">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/navbar.js" type="module"></script>
+<script src="/js/watchlist.js" type="module"></script>
+
+</body>
+</html>

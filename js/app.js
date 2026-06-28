@@ -4,9 +4,7 @@ import { fetchCards } from "./api.js";
 import { renderCards } from "./cardsRenderer.js";
 import { setupPagination } from "./pagination.js";
 
-/**
- * Cache DOM
- */
+ // Cache DOM
 const dom = {
     container: document.getElementById("cardsContainer"),
     prev: document.getElementById("prevPage"),
@@ -15,19 +13,15 @@ const dom = {
     total: document.getElementById("totalPages")
 };
 
-/**
- * Estado global
- */
+ // Estado global
 const state = {
     page: 1,
     size: 30,
     lastSearch: null
 };
 
-/**
- * Carga principal
- * Aquí se aplica el filtro hideNA (FRONTEND)
- */
+ // Carga principal
+ // Aquí se aplica el filtro hideNA (FRONTEND)
 async function loadCards() {
 
     const f = getFilters();
@@ -60,9 +54,8 @@ async function loadCards() {
     }
 }
 
-/**
- * Lee filtros del DOM
- */
+
+ // Lee filtros del DOM
 function getFilters() {
     return {
         set: document.getElementById("filterSet")?.value || null,
@@ -74,9 +67,7 @@ function getFilters() {
     };
 }
 
-/**
- * PAGINACIÓN
- */
+// PAGINACIÓN
 const updatePagination = setupPagination(
     dom.prev,
     dom.next,
@@ -91,9 +82,7 @@ const updatePagination = setupPagination(
     }
 );
 
-/**
- * Búsqueda desde navbar
- */
+ // Búsqueda desde navbar
 document.addEventListener("searchRequested", e => {
     state.lastSearch = e.detail.name || null;
     state.page = 1;
@@ -101,18 +90,14 @@ document.addEventListener("searchRequested", e => {
     loadCards();
 });
 
-/**
- * Cambio de filtros (incluye hideNA)
- */
+ // Cambio de filtros (incluye hideNA)
 document.addEventListener("filtersChanged", () => {
     state.page = 1;
 
     loadCards();
 });
 
-/**
- * Carga inicial desde otras páginas
- */
+ // Carga inicial desde otras páginas
 document.addEventListener("navbarReady", () => {
     const pending = localStorage.getItem("pendingSearch");
 

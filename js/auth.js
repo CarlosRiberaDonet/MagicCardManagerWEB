@@ -20,8 +20,7 @@ export function setupAuthListeners() {
             loginModal.classList.add('active');
         }
     });
-
-            
+ 
     // Listener para cerrar el modal del login
     document.addEventListener('click', (event) => {
         const loginModal = document.getElementById('loginModal');
@@ -145,9 +144,6 @@ export function usersMenuListeners() {
     });
     goCollection.addEventListener('click', () => {
         window.open('collection.html', '_blank'); // Redirige a la página de colección
-    });
-    goInvestor.addEventListener('click', () => {
-        window.open('investor.html', '_blank'); // Redirige a la página de inversión
     });
     goWatchlist.addEventListener('click', () => {
         window.open('watchlist.html', '_blank'); // Redirige a la página de watchlist
