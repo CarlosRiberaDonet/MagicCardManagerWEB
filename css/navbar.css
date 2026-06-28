@@ -1,29 +1,9 @@
 /* ===========================
-   IMPORTS
-=========================== */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap');
-
-/* ===========================
-   VARIABLES
-=========================== */
-:root {
-    --bg-deep:        #0c0c10;
-    --bg-card:        #1a1a24;
-    --border:         #2a2a38;
-    --gold:           #c9a84c;
-    --gold-light:     #e8cc7a;
-    --gold-dim:       #7a6230;
-    --text-primary:   #f0ead8;
-    --text-secondary: #9a9070;
-    --text-muted:     #5a5448;
-    --radius:         8px;
-    --shadow-card:    0 8px 40px rgba(0, 0, 0, 0.6);
-    --font-display:   'Cinzel', serif;
-    --font-body:      'Crimson Pro', Georgia, serif;
-}
-
-/* ===========================
    NAVBAR BASE
+   (Las variables de color y la fuente Google Fonts ya NO se
+   declaran aquí — vivían duplicadas con valores distintos a los
+   de style.css, p.ej. --radius: 8px aquí vs 10px en style.css.
+   Ahora todo el sitio usa el único :root de style.css.)
 =========================== */
 .navbar {
     display: flex;
@@ -40,7 +20,6 @@
     transition: transform 0.3s ease;
 }
 
-/* Línea dorada decorativa inferior */
 .navbar::after {
     content: '';
     position: absolute;
@@ -52,9 +31,6 @@
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
-/* ===========================
-   LOGO / INICIO
-=========================== */
 .navbar-left {
     flex-shrink: 0;
 }
@@ -74,9 +50,6 @@
     color: var(--gold-light);
 }
 
-/* ===========================
-   CENTRO — BÚSQUEDA Y FILTROS
-=========================== */
 .navbar-center {
     display: flex;
     flex-direction: column;
@@ -85,7 +58,6 @@
     max-width: 900px;
 }
 
-/* Barra de búsqueda */
 .nav-search {
     display: flex;
 }
@@ -107,14 +79,12 @@
   background-color: rgba(201, 168, 76, 0.1);
 }
 
-/* Cuando el filtro está activo */
 #hideNAButton.active {
   background-color: #c9a84c;
   color: #0a0a0a;
 }
 
-.nav-search input
- {
+.nav-search input {
     flex: 1;
     padding: 0.5rem 1rem;
     font-family: var(--font-body);
@@ -158,7 +128,6 @@
     box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
 }
 
-/* Fila de filtros */
 .nav-filters {
     display: flex;
     gap: 0.5rem;
@@ -166,7 +135,6 @@
     flex-wrap: wrap;
 }
 
-/* Selects de filtro */
 .nav-select {
     padding: 0.3rem 1.5rem 0.3rem 0.6rem;
     font-family: var(--font-body);
@@ -200,9 +168,6 @@
 /* ===========================
    SLIDER DE PRECIO
 =========================== */
-/* ===========================
-   SLIDER DE PRECIO
-=========================== */
 .nav-price-filter {
     display: flex;
     align-items: center;
@@ -216,7 +181,6 @@
     flex: 1;
 }
 
-/* Inputs de precio mínimo y máximo */
 #minPrice,
 #maxPrice {
     font-family: var(--font-body);
@@ -237,7 +201,6 @@
     border-color: var(--gold-dim);
 }
 
-/* Quitar flechas de input number */
 #minPrice::-webkit-inner-spin-button,
 #maxPrice::-webkit-inner-spin-button,
 #minPrice::-webkit-outer-spin-button,
@@ -246,7 +209,6 @@
     margin: 0;
 }
 
-/* Personalización del slider noUiSlider */
 .noUi-target {
     background: var(--border);
     border: none;
@@ -271,7 +233,6 @@
     transition: background 0.2s;
 }
 
-/* Ocultar las líneas internas del handle */
 .noUi-handle::before,
 .noUi-handle::after {
     display: none;
@@ -281,7 +242,6 @@
     background: var(--gold-light);
 }
 
-/* Botón limpiar filtros */
 .nav-clear {
     padding: 0.3rem 0.75rem;
     font-family: var(--font-display);
@@ -332,9 +292,6 @@
     box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
 }
 
-/* ===========================
-   MENÚ USUARIO DESPLEGABLE
-=========================== */
 .user-menu {
     display: none;
     position: absolute;
@@ -481,7 +438,6 @@
 =========================== */
 @media (max-width: 768px) {
 
-    /* Navbar en columna en móvil */
     .navbar {
         flex-direction: column;
         align-items: stretch;
@@ -489,47 +445,39 @@
         gap: 0.75rem;
     }
 
-    /* Logo centrado */
     .navbar-left {
         text-align: center;
     }
 
-    /* Centro ocupa todo el ancho */
     .navbar-center {
         max-width: 100%;
     }
 
-    /* Filtros en dos columnas en móvil */
     .nav-filters {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 0.4rem;
     }
 
-    /* Slider ocupa toda la fila */
     .nav-price-filter {
         grid-column: 1 / -1;
         max-width: 100%;
     }
 
-    /* Inputs de precio más anchos en móvil */
     #minPrice,
     #maxPrice {
         width: 70px;
     }
 
-    /* Botón limpiar ocupa toda la fila */
     .nav-clear {
         grid-column: 1 / -1;
         text-align: center;
     }
 
-    /* Login a la derecha en móvil */
     .navbar-right {
         text-align: right;
     }
 
-    /* Modal más pequeño en móvil */
     .modal-content {
         padding: 1.5rem;
     }

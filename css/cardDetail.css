@@ -1,61 +1,26 @@
 /* ===========================
-   IMPORTS
-=========================== */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap');
-
-/* ===========================
-   VARIABLES
+   OVERRIDE DE VARIABLE — solo para esta página
+   El resto de variables (colores, fuentes, sombras...) ya vienen
+   de style.css. Aquí solo se sobreescribe --radius, porque el
+   título + panel de info de esta página forman una "píldora"
+   redondeada conjunta con un radio ligeramente mayor (12px) que
+   el resto del sitio (10px) — es una decisión de diseño deliberada
+   de esta página, no un duplicado accidental.
 =========================== */
 :root {
-    --bg-deep:       #0c0c10;
-    --bg-surface:    #13131a;
-    --bg-card:       #1a1a24;
-    --border:        #2a2a38;
-    --border-glow:   #c9a84c44;
-    --gold:          #c9a84c;
-    --gold-light:    #e8cc7a;
-    --gold-dim:      #7a6230;
-    --text-primary:  #f0ead8;
-    --text-secondary:#9a9070;
-    --text-muted:    #5a5448;
-    --accent-blue:   #3a7bd5;
-    --shadow-card:   0 8px 40px rgba(0, 0, 0, 0.6);
-    --shadow-glow:   0 0 30px rgba(201, 168, 76, 0.15);
-    --radius:        12px;
-    --font-display:  'Cinzel', serif;
-    --font-body:     'Crimson Pro', Georgia, serif;
+    --radius: 12px;
 }
 
 /* ===========================
    RESET & BASE
 =========================== */
-*, *::before, *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 html {
     scroll-behavior: smooth;
-}
-
-body {
-    font-family: var(--font-body);
-    background-color: var(--bg-deep);
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-image:
-        radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(58,123,213,0.04) 0%, transparent 50%);
 }
 
 /* ===========================
    LAYOUT PRINCIPAL
 =========================== */
-
-/* Wrapper que agrupa título + panel de info */
 .card-info-wrapper {
     display: flex;
     flex-direction: column;
@@ -64,7 +29,6 @@ body {
     max-width: 700px;
 }
 
-/* Título de la carta — actúa como header del panel */
 .card-title {
     font-family: var(--font-display);
     font-size: 1.3rem;
@@ -81,7 +45,6 @@ body {
     text-align: center;
 }
 
-/* Línea dorada en la parte superior del título */
 .card-title::after {
     content: '';
     position: absolute;
@@ -92,7 +55,6 @@ body {
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
-/* Contenedor principal — imagen + info en fila */
 .card-detail-container {
     display: flex;
     flex-wrap: wrap;
@@ -113,7 +75,6 @@ body {
     position: relative;
 }
 
-/* Halo dorado al hacer hover sobre la imagen */
 .card-image::before {
     content: '';
     position: absolute;
@@ -185,6 +146,7 @@ body {
     transform: scale(1.1);
     accent-color: var(--gold);
 }
+
 .card-info {
     flex: 1;
     min-width: 560px;
@@ -196,11 +158,10 @@ body {
     position: relative;
     overflow: hidden;
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Dos columnas: datos | precios */
+    grid-template-columns: 1fr 1fr;
     align-items: start;
 }
 
-/* Línea dorada decorativa arriba del panel */
 .card-info::before {
     content: '';
     position: absolute;
@@ -212,17 +173,14 @@ body {
     z-index: 1;
 }
 
-/* Columnas de información */
 .info-col {
     padding: 2rem 1.75rem;
 }
 
-/* Columna de precios con separador izquierdo */
 .prices-col {
     border-left: 1px solid var(--border);
 }
 
-/* Filas de información dentro de cada columna */
 .info-col p {
     display: flex;
     justify-content: space-between;
@@ -240,7 +198,6 @@ body {
     border-bottom: none;
 }
 
-/* Efecto hover en cada fila */
 .info-col p:hover {
     background: rgba(201, 168, 76, 0.04);
     margin: 0 -1.75rem;
@@ -248,7 +205,6 @@ body {
     padding-right: 1.75rem;
 }
 
-/* Labels en mayúsculas y dorado tenue */
 .info-col p strong {
     font-family: var(--font-display);
     font-size: 0.68rem;
@@ -259,14 +215,12 @@ body {
     flex-shrink: 0;
 }
 
-/* Valores alineados a la derecha */
 .info-col p span {
     color: var(--text-primary);
     font-size: 1.05rem;
     text-align: right;
 }
 
-/* Precios destacados en dorado */
 #cardLow,
 #cardTrend,
 #avg30,
@@ -327,7 +281,6 @@ body {
     transition: all 0.25s ease;
 }
 
-/* Botones de añadir — dorado */
 #addToCollection,
 #addToWatchlist {
     background: var(--gold);
@@ -340,7 +293,6 @@ body {
     box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
 }
 
-/* Botones de eliminar — rojo oscuro */
 #removeFromCollection,
 #removeFromWatchlist {
     background: #5a1a1a;
@@ -354,7 +306,6 @@ body {
     box-shadow: 0 0 16px rgba(200, 50, 50, 0.2);
 }
 
-/* Botones deshabilitados */
 .card-actions button:disabled {
     opacity: 0.35;
     cursor: not-allowed;
@@ -362,9 +313,8 @@ body {
 }
 
 /* ===========================
-   MODAL (REFORZADO Y CONSISTENTE CON UI)
+   MODAL (precio / añadir-eliminar carta)
 =========================== */
-
 .price-modal {
     position: fixed;
     inset: 0;
@@ -380,7 +330,6 @@ body {
     display: flex;
 }
 
-/* CONTENEDOR PRINCIPAL */
 .price-modal-content {
     width: 420px;
     max-width: 92vw;
@@ -395,7 +344,6 @@ body {
     position: relative;
 }
 
-/* TITULO */
 .price-modal-content h2 {
     margin: 0;
     text-align: center;
@@ -405,7 +353,6 @@ body {
     color: var(--gold);
 }
 
-/* BOTÓN CERRAR */
 .price-modal-close {
     position: absolute;
     top: 10px;
@@ -420,7 +367,6 @@ body {
     color: var(--gold);
 }
 
-/* FILAS (display + inputs unificados) */
 .modal-row {
     display: flex;
     justify-content: space-between;
@@ -434,7 +380,6 @@ body {
     border-bottom: none;
 }
 
-/* LABEL */
 .modal-row .label {
     font-family: var(--font-display);
     font-size: 0.65rem;
@@ -444,14 +389,12 @@ body {
     flex-shrink: 0;
 }
 
-/* VALUE (solo lectura) */
 .modal-row .value {
     font-weight: 600;
     color: var(--text-primary);
     text-align: right;
 }
 
-/* INPUTS */
 .modal-row input {
     width: 100%;
     padding: 0.65rem;
@@ -467,7 +410,6 @@ body {
     box-shadow: 0 0 0 2px var(--border-glow);
 }
 
-/* CHECKBOX BLOQUE */
 .mtg-checkbox {
     display: flex;
     align-items: center;
@@ -482,7 +424,6 @@ body {
     cursor: pointer;
 }
 
-/* BOTÓN */
 #confirmBtn {
     margin-top: 0.6rem;
     padding: 0.4rem;
@@ -501,63 +442,6 @@ body {
     background: var(--gold-light);
     box-shadow: var(--shadow-glow);
 }
-
-/* M — Mint (máximo estado) */
-.condition-m {
-    background: rgba(33, 150, 243, 0.18);
-    color: #2196f3;
-    border: 1px solid rgba(33, 150, 243, 0.45);
-}
-
-/* NM — Near Mint */
-.condition-nm {
-    background: rgba(76, 175, 80, 0.18);
-    color: #4caf50;
-    border: 1px solid rgba(76, 175, 80, 0.45);
-}
-
-/* EX — Excellent */
-.condition-ex {
-    background: rgba(139, 195, 74, 0.15);
-    color: #8bc34a;
-    border: 1px solid rgba(139, 195, 74, 0.4);
-}
-
-/* GD — Good */
-.condition-gd {
-    background: rgba(205, 220, 57, 0.15);
-    color: #cddc39;
-    border: 1px solid rgba(205, 220, 57, 0.4);
-}
-
-/* LP — Light Played */
-.condition-lp {
-    background: rgba(255, 193, 7, 0.15);
-    color: #ffc107;
-    border: 1px solid rgba(255, 193, 7, 0.4);
-}
-
-/* PL — Played */
-.condition-pl {
-    background: rgba(255, 152, 0, 0.15);
-    color: #ff9800;
-    border: 1px solid rgba(255, 152, 0, 0.4);
-}
-
-/* PO — Poor */
-.condition-po {
-    background: rgba(244, 67, 54, 0.15);
-    color: #f44336;
-    border: 1px solid rgba(244, 67, 54, 0.4);
-}
-
-/* fallback */
-.condition-unknown {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-}
-
 
 /* ===========================
    ANIMACIONES
@@ -582,7 +466,6 @@ body {
         gap: 2rem;
     }
 
-    /* El panel info ocupa todo el ancho */
     .card-info {
         min-width: unset;
         max-width: 100%;
@@ -614,7 +497,6 @@ body {
     box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
 }
 
-/* Animación al pulsar */
 .update-btn.loading {
     opacity: 0.6;
     cursor: not-allowed;
@@ -637,7 +519,6 @@ body {
 =========================== */
 @media (max-width: 768px) {
 
-    /* Contenedor en columna — imagen encima, info debajo */
     .card-detail-container {
         flex-direction: column;
         padding: 0 1rem;
@@ -646,44 +527,37 @@ body {
         align-items: center;
     }
 
-    /* Imagen más pequeña en móvil */
     .card-image img {
         width: 200px;
     }
 
-    /* Panel de info en una sola columna */
     .card-info {
         grid-template-columns: 1fr;
         min-width: unset;
         max-width: 100%;
     }
 
-    /* Quitar borde izquierdo de precios en móvil */
     .prices-col {
         border-left: none;
         border-top: 1px solid var(--border);
         padding-top: 1rem;
     }
 
-    /* Columnas con menos padding */
     .info-col {
         padding: 1.25rem 1rem;
     }
 
-    /* Hover en filas ajustado al nuevo padding */
     .info-col p:hover {
         margin: 0 -1rem;
         padding-left: 1rem;
         padding-right: 1rem;
     }
 
-    /* Título más pequeño */
     .card-title {
         font-size: 1rem;
         padding: 0.75rem 1rem;
     }
 
-    /* Botones de acción en columna */
     .card-actions {
         flex-direction: column;
         padding: 1rem;
@@ -696,7 +570,7 @@ body {
         text-align: center;
         padding: 0.6rem;
     }
-    
+
     .modal {
         position: fixed !important;
         top: 0 !important;
@@ -733,5 +607,4 @@ body {
     .info-col p span {
         text-align: center;
     }
-    
 }

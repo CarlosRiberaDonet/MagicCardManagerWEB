@@ -103,10 +103,7 @@ function loadEditions() {
     });
 }
 
-
-// ===========================
 // RENDER LIST
-// ===========================
 function renderCollectionList(cards = allCards) {
 
     const container = document.getElementById("collectionContainer");
@@ -176,6 +173,12 @@ function renderCollectionList(cards = allCards) {
             <span class="list-profit ${profit >= 0 ? 'positive' : 'negative'}">
                 ${formatPrice(profit)}
             </span>
+
+            <div class="user-actions">
+                <button class="action-remove danger" title="Quitar de watchlist">
+                    ✕
+                </button>
+            </div>
         `;
 
         row.addEventListener('click', () => {

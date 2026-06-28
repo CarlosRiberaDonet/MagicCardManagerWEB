@@ -1,23 +1,31 @@
 /* ===========================
    IMPORTS
+   (única fuente de la tipografía — se ha eliminado de navbar.css
+   y cardDetail.css, que la repetían)
 =========================== */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap');
 
 /* ===========================
    VARIABLES
+   ÚNICA fuente de verdad para todo el sitio. Antes este bloque
+   estaba duplicado en navbar.css y cardDetail.css con valores
+   distintos (--radius: 10px / 8px / 12px según el archivo), lo que
+   hacía que el redondeo de bordes cambiara de página a página sin
+   que nadie lo hubiera decidido así. Ahora solo existe aquí.
 =========================== */
 :root {
     --bg-deep:        #0c0c10;
     --bg-surface:     #13131a;
     --bg-card:        #1a1a24;
     --border:         #2a2a38;
+    --border-glow:    #c9a84c44; /* antes solo en cardDetail.css, usada en focus de inputs */
     --gold:           #c9a84c;
     --gold-light:     #e8cc7a;
     --gold-dim:       #7a6230;
     --text-primary:   #f0ead8;
     --text-secondary: #9a9070;
     --text-muted:     #5a5448;
-    --accent:         #3a7bd5;
+    --accent:         #3a7bd5; /* cardDetail.css tenía un duplicado "--accent-blue" con el mismo valor, sin uso real */
     --shadow-card:    0 8px 40px rgba(0, 0, 0, 0.6);
     --shadow-glow:    0 0 30px rgba(201, 168, 76, 0.12);
     --radius:         10px;
@@ -87,20 +95,17 @@ main {
     animation: fadeInUp 0.6s ease 0.1s both;
 }
 
-
 /* ===========================
-   GRID DE CARTAS
+   GRID DE CARTAS (catálogo principal)
 =========================== */
 .cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
     gap: 1.25rem;
-
     justify-content: center;
     align-items: start;
 }
 
-/* Cada carta */
 .card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -140,7 +145,6 @@ main {
     display: block;
 }
 
-/* Icono pequeñito de set centrado debajo de la imagen y antes del nombre de la carta de color dorado */
 .card .set-icon {
     filter: invert(68%) sepia(35%) saturate(600%) hue-rotate(5deg) brightness(95%);
     width: 20px;
@@ -153,16 +157,13 @@ main {
     width: 20px;
     height: 15px;
     border-radius: 2px;
-    
 }
 
 .card h3 {
     font-family: var(--font-display);
     font-size: 0.75rem;
     font-weight: 600;
-
     margin-bottom: 0.4rem;
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -179,7 +180,6 @@ main {
     vertical-align: middle;
 }
 
-/* Precio destacado — última p de cada carta */
 .card p:last-child {
     margin-top: auto;
     color: var(--gold-light);
@@ -256,6 +256,330 @@ footer {
     text-transform: uppercase;
 }
 
+/* ======================================================
+   COMPONENTES COMPARTIDOS ENTRE PÁGINAS
+   (Collection / Watchlist / CardDetail)
+
+   Todo lo de aquí abajo estaba duplicado, byte a byte, en
+   collection.css y watchlist.css (y en algún caso también en
+   cardDetail.css). Ahora vive en un único sitio. Las páginas usan
+   prefijos de clase distintos para el mismo componente (p.ej.
+   col-select / wl-select), así que se combinan en un selector
+   único en vez de tocar el HTML.
+====================================================== */
+
+/* --- Header de página + título con línea dorada ---
+   (.collection-header / .watchlist-header,
+    .collection-title  / .watchlist-title) */
+.collection-header,
+.watchlist-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.collection-title,
+.watchlist-title {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-primary);
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.collection-title::after,
+.watchlist-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+/* --- Tarjetas KPI (.stat) --- */
+.stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+    position: relative;
+}
+
+.stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.stat-label {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--gold-light);
+}
+
+/* --- Barra de filtros (.collection-filters / .watchlist-filters) --- */
+.collection-filters,
+.watchlist-filters {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+/* selects: .col-select (collection) / .wl-select (watchlist) */
+.col-select,
+.wl-select {
+    padding: 0.3rem 1.5rem 0.3rem 0.6rem;
+    font-size: 0.85rem;
+    background: var(--bg-deep);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a6230'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+}
+
+.col-select:hover, .col-select:focus,
+.wl-select:hover,  .wl-select:focus {
+    border-color: var(--gold-dim);
+    color: var(--text-primary);
+}
+
+/* búsqueda: .col-search / .wl-search */
+.col-search,
+.wl-search {
+    flex: 1;
+    min-width: 180px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.85rem;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.col-search::placeholder,
+.wl-search::placeholder {
+    color: var(--text-muted);
+}
+
+/* limpiar: .col-clear / .wl-clear */
+.col-clear,
+.wl-clear {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0.3rem 0.75rem;
+    cursor: pointer;
+}
+
+.col-clear:hover,
+.wl-clear:hover {
+    border-color: var(--gold-dim);
+    color: var(--text-primary);
+}
+
+/* --- Toggle vista lista/cuadrícula --- */
+.view-toggle {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: auto;
+}
+
+.toggle-btn {
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.toggle-btn.active {
+    background: var(--gold);
+    color: var(--bg-deep);
+}
+
+/* --- Tooltip de imagen al pasar el ratón sobre la miniatura --- */
+.card-thumb {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-tooltip-img {
+    display: none;
+    position: absolute;
+    left: 40px;
+    width: 220px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-card);
+    z-index: 999;
+}
+
+.card-thumb:hover .card-tooltip-img {
+    display: block;
+}
+
+/* --- Fix de tamaño de cabecera en las vistas de lista ---
+   Las celdas (.list-name, .list-rarity, etc.) llevan su propio
+   font-size pensado para los DATOS. Como las cabeceras reutilizan
+   esas mismas clases, esta regla (más específica) fuerza un
+   tamaño/peso/color uniforme SOLO en los títulos del header,
+   sin tocar las celdas de datos. */
+.collection-list-header > *,
+.watchlist-list-header > * {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.collection-list-item:hover,
+.watchlist-list-item:hover {
+    border-color: var(--gold-dim);
+    background: rgba(201, 168, 76, 0.03);
+}
+
+/* --- Celdas reutilizadas igual en ambas listas --- */
+.list-name {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.list-edition {
+    display: flex;
+    justify-content: center;
+}
+
+/* icono de set en las filas de lista (distinto del .card .set-icon
+   del catálogo principal, que tiene su propio margen/tamaño) */
+.set-icon {
+    width: 20px;
+    height: 20px;
+    filter: invert(68%) sepia(35%) saturate(600%);
+}
+
+.list-current {
+    text-align: right;
+    font-weight: 600;
+    color: var(--gold-light);
+}
+
+/* Esta clase la usa tanto collection.js como watchlist.js para
+   centrar el badge de condición en su columna. Antes solo estaba
+   definida en watchlist.css — en collection.css faltaba por
+   completo, así que la celda de condición quedaba sin centrar. */
+.list-condition {
+    display: flex;
+    justify-content: center;
+}
+
+/* ===========================
+   BADGE DE CONDICIÓN
+   Escala de mejor a peor estado: M → NM → EX → GD → LP → PL → PO
+
+   Estaba duplicado en collection.css, watchlist.css y
+   cardDetail.css, y los colores NO coincidían entre archivos
+   (p.ej. "M" era azul en dos de ellos y verde en el tercero).
+   Se unifica al esquema que ya compartían 2 de los 3 archivos.
+=========================== */
+.condition-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+}
+
+.condition-m {
+    background: rgba(33, 150, 243, 0.18);
+    color: #2196f3;
+    border: 1px solid rgba(33, 150, 243, 0.45);
+}
+
+.condition-nm {
+    background: rgba(76, 175, 80, 0.18);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.45);
+}
+
+.condition-ex {
+    background: rgba(139, 195, 74, 0.15);
+    color: #8bc34a;
+    border: 1px solid rgba(139, 195, 74, 0.4);
+}
+
+.condition-gd {
+    background: rgba(205, 220, 57, 0.15);
+    color: #cddc39;
+    border: 1px solid rgba(205, 220, 57, 0.4);
+}
+
+.condition-lp {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.4);
+}
+
+.condition-pl {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ff9800;
+    border: 1px solid rgba(255, 152, 0, 0.4);
+}
+
+.condition-po {
+    background: rgba(244, 67, 54, 0.15);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.4);
+}
+
+.condition-unknown {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+
 /* ===========================
    ANIMACIONES
 =========================== */
@@ -269,34 +593,15 @@ footer {
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* VERSION MÓVIL */
+/* ===========================
+   RESPONSIVE — MÓVIL
+   (Se han retirado de aquí las reglas de .nav-filters/#minPrice/
+   #maxPrice: eran código muerto, porque navbar.css las redefine
+   después y siempre gana. Ya viven correctamente solo en
+   navbar.css, sin duplicado.)
+=========================== */
 @media (max-width: 768px) {
     .cards-container {
         grid-template-columns: repeat(2, 1fr);
     }
-
-    /* Ajustes para el navbar en móvil */
-    .nav-filters {
-        flex-direction: column;
-        gap: 0.8rem;
-    }
-    .nav-filters select,
-    .nav-filters input {
-        width: 100%;
-    }
-    .nav-price-filter {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-    }
-    #priceSlider {
-        flex: 1;
-    }
-
-    /* Inputs de precio más anchos en móvil */
-    #minPrice,
-    #maxPrice {
-        width: 70px;
-    }
-    
 }

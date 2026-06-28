@@ -1,166 +1,11 @@
 /* ===========================
-   IMPORTS
+   COLLECTION — solo lo específico de esta página.
+   El header, las stats, los filtros, el toggle de vista, el
+   tooltip de imagen, las celdas compartidas y el badge de
+   condición ya viven en style.css (eran duplicados exactos
+   con watchlist.css). El @import a style.css se ha quitado:
+   ya se carga vía <link> en el HTML, así que era redundante.
 =========================== */
-@import url('/css/style.css');
-
-/* ===========================
-   HEADER DE COLECCIÓN
-=========================== */
-.collection-header {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.collection-title {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    color: var(--text-primary);
-    position: relative;
-    padding-bottom: 1rem;
-}
-
-.collection-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 200px;
-    height: 1px;
-    background: linear-gradient(90deg, var(--gold), transparent);
-}
-
-/* ===========================
-   ESTADÍSTICAS
-=========================== */
-.collection-stats {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.stat {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    min-width: 140px;
-    position: relative;
-}
-
-.stat::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-.stat-label {
-    font-family: var(--font-display);
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-}
-
-.stat-value {
-    font-family: var(--font-body);
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--gold-light);
-}
-
-/* ===========================
-   FILTROS
-=========================== */
-.collection-filters {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-    padding: 1rem 1.25rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-}
-
-/* selects */
-.col-select {
-    padding: 0.3rem 1.5rem 0.3rem 0.6rem;
-    font-size: 0.85rem;
-    background: var(--bg-deep);
-    color: var(--text-secondary);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a6230'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.5rem center;
-}
-
-.col-select:hover,
-.col-select:focus {
-    border-color: var(--gold-dim);
-    color: var(--text-primary);
-}
-
-/* search */
-.col-search {
-    flex: 1;
-    min-width: 180px;
-    padding: 0.3rem 0.75rem;
-    font-size: 0.85rem;
-    background: var(--bg-deep);
-    color: var(--text-primary);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-
-.col-search::placeholder {
-    color: var(--text-muted);
-}
-
-/* clear */
-.col-clear {
-    font-family: var(--font-display);
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-muted);
-    padding: 0.3rem 0.75rem;
-    cursor: pointer;
-}
-
-/* toggle */
-.view-toggle {
-    display: flex;
-    gap: 0.25rem;
-    margin-left: auto;
-}
-
-.toggle-btn {
-    padding: 0.3rem 0.6rem;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-}
-
-.toggle-btn.active {
-    background: var(--gold);
-    color: var(--bg-deep);
-}
 
 /* ===========================
    GRID VIEW
@@ -171,7 +16,6 @@
     gap: 1rem;
 }
 
-/* tarjeta grid (evita colisión con .card global) */
 .collection-grid .card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -181,6 +25,8 @@
 
 /* ===========================
    LIST VIEW
+   11 columnas: miniatura, nombre, edición, rareza, número,
+   idioma, condición, cantidad, compra, valor actual, ganancia.
 =========================== */
 .collection-list {
     display: flex;
@@ -188,12 +34,6 @@
     gap: 0.6rem;
 }
 
-/*
-   Header y filas COMPARTEN exactamente la misma definición de
-   columnas (10 columnas: miniatura, nombre, edición, rareza,
-   número, idioma, cantidad, compra, valor actual, ganancia).
-   Esto garantiza que todo quede alineado verticalmente.
-*/
 .collection-list-header,
 .collection-list-item {
     display: grid;
@@ -203,32 +43,11 @@
     align-items: center;
 }
 
-/* HEADER */
 .collection-list-header {
     padding: 0.5rem 1.5rem;
     border-bottom: 1px solid var(--border);
 }
 
-/*
-   FIX TAMAÑO CABECERA:
-   Las clases .list-name, .list-rarity, .list-qty, .list-purchase, etc.
-   ya traen su propio font-size pensado para las celdas de DATOS.
-   Como esas mismas clases se reutilizan en el header, cada título
-   heredaba un tamaño distinto según su clase.
-   Esta regla tiene más especificidad (selector hijo directo) y
-   sobreescribe el font-size/weight/color en TODOS los <span> del
-   header por igual, sin tocar el tamaño de las celdas de datos
-   (que siguen definidas más abajo, fuera de este selector).
-*/
-.collection-list-header > * {
-    font-size: 0.62rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-}
-
-/* ROW */
 .collection-list-item {
     padding: 0.75rem 1.5rem;
     background: var(--bg-card);
@@ -238,59 +57,11 @@
     transition: border-color 0.15s, background 0.15s;
 }
 
-.collection-list-item:hover {
-    border-color: var(--gold-dim);
-    background: rgba(201, 168, 76, 0.03);
-}
-
 /* ===========================
-   TOOLTIP IMAGEN (al pasar el ratón sobre la miniatura)
+   CELDAS ESPECÍFICAS DE COLLECTION
+   (.list-name, .list-edition, .set-icon, .list-current y
+   .list-condition ya están en style.css, compartidas con watchlist)
 =========================== */
-.card-thumb {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.card-tooltip-img {
-    display: none;
-    position: absolute;
-    left: 40px;
-    width: 220px;
-    border-radius: 10px;
-    box-shadow: var(--shadow-card);
-    z-index: 999;
-}
-
-.card-thumb:hover .card-tooltip-img {
-    display: block;
-}
-
-/* ===========================
-   CELDAS DE DATOS
-   (cada clase corresponde 1:1 a un <span>/<div> del JS,
-   en el mismo orden que las columnas del grid)
-=========================== */
-.list-name {
-    font-family: var(--font-display);
-    font-size: 0.78rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.list-edition {
-    display: flex;
-    justify-content: center;
-}
-
-.set-icon {
-    width: 20px;
-    height: 20px;
-    filter: invert(68%) sepia(35%) saturate(600%);
-}
-
 .list-rarity,
 .list-number,
 .list-qty {
@@ -303,17 +74,10 @@
     text-align: center;
 }
 
-/* valores monetarios alineados a la derecha, como cualquier tabla numérica */
 .list-purchase {
     font-size: 0.8rem;
     color: var(--text-secondary);
     text-align: right;
-}
-
-.list-current {
-    text-align: right;
-    font-weight: 600;
-    color: var(--gold-light);
 }
 
 .list-profit {
@@ -324,81 +88,11 @@
 .list-profit.positive { color: #4caf50; }
 .list-profit.negative { color: #e88a8a; }
 
-
-/* ===========================
-   BADGE DE CONDICIÓN
-=========================== */
-.condition-badge {
-    display: inline-block;
-    padding: 0.15rem 0.55rem;
-    border-radius: 999px;       /* pastilla totalmente redondeada */
-    font-size: 0.68rem;
-    font-weight: 600;
-    text-align: center;
-    letter-spacing: 0.04em;
-    line-height: 1.4;
-}
-
-/* M — Mint (máximo estado) */
-.condition-m {
-    background: rgba(33, 150, 243, 0.18);
-    color: #2196f3;
-    border: 1px solid rgba(33, 150, 243, 0.45);
-}
-
-/* NM — Near Mint */
-.condition-nm {
-    background: rgba(76, 175, 80, 0.18);
-    color: #4caf50;
-    border: 1px solid rgba(76, 175, 80, 0.45);
-}
-
-/* EX — Excellent */
-.condition-ex {
-    background: rgba(139, 195, 74, 0.15);
-    color: #8bc34a;
-    border: 1px solid rgba(139, 195, 74, 0.4);
-}
-
-/* GD — Good */
-.condition-gd {
-    background: rgba(205, 220, 57, 0.15);
-    color: #cddc39;
-    border: 1px solid rgba(205, 220, 57, 0.4);
-}
-
-/* LP — Light Played */
-.condition-lp {
-    background: rgba(255, 193, 7, 0.15);
-    color: #ffc107;
-    border: 1px solid rgba(255, 193, 7, 0.4);
-}
-
-/* PL — Played */
-.condition-pl {
-    background: rgba(255, 152, 0, 0.15);
-    color: #ff9800;
-    border: 1px solid rgba(255, 152, 0, 0.4);
-}
-
-/* PO — Poor */
-.condition-po {
-    background: rgba(244, 67, 54, 0.15);
-    color: #f44336;
-    border: 1px solid rgba(244, 67, 54, 0.4);
-}
-
-/* fallback */
-.condition-unknown {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-}
-
 /* ===========================
    RESPONSIVE TABLET
-   Se oculta "Compra" y se reduce a 9 columnas reales
-   (coincide exactamente con lo que queda visible).
+   FIX: antes este breakpoint tenía solo 9 valores de columna
+   pero hay 10 columnas visibles tras ocultar "Compra"
+   (faltaba contar la columna de Condición). Corregido a 10.
 =========================== */
 @media (max-width: 1024px) {
 
@@ -409,7 +103,7 @@
     .collection-list-header,
     .collection-list-item {
         grid-template-columns:
-            32px 2fr 28px 70px 50px 50px 60px 90px 95px;
+            32px 2fr 28px 70px 50px 50px 50px 60px 90px 95px;
     }
 
     .list-purchase {
@@ -419,8 +113,10 @@
 
 /* ===========================
    RESPONSIVE MOBILE
-   Solo quedan: miniatura, nombre, valor actual y ganancia.
-   Se ocultan edición, rareza, número y cantidad.
+   FIX: se añaden .list-lang y .list-condition a la lista de
+   ocultos — antes el grid de 4 columnas asumía que solo quedaban
+   miniatura/nombre/actual/ganancia, pero idioma y condición
+   seguían siendo visibles sin hueco real en el grid.
 =========================== */
 @media (max-width: 768px) {
 
@@ -439,7 +135,9 @@
     .list-edition,
     .list-rarity,
     .list-number,
-    .list-qty {
+    .list-qty,
+    .list-lang,
+    .list-condition {
         display: none;
     }
 }
