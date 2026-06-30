@@ -4,9 +4,9 @@ import { fetchSets } from "./api.js";
 import { setupAuthListeners } from "./auth.js";
 import { showToast } from "./utils.js";
 
-/**
- * Navbar se inyecta dinámicamente en todas las páginas
- */
+
+// Navbar se inyecta dinámicamente en todas las páginas
+
 fetch("/navbar.html")
     .then(res => res.text())
     .then(html => {
@@ -89,17 +89,15 @@ function clearFilters() {
     });
 }
 
-/**
- * Búsqueda principal
- * Solo emite evento, NO llama API
- */
+ // Búsqueda principal
+ // Solo emite evento, NO llama API
 function initSearch() {
     const input = document.getElementById("searchInput");
     const set = document.getElementById("filterSet");
     const btn = document.getElementById("searchButton");
 
     if (!input || !set || !btn) return;
-
+    showToast("BUSCAR");
     function search() {
         const name = input.value.trim();
         const setValue = set.value;
@@ -130,10 +128,8 @@ function initSearch() {
     });
 }
 
-/**
- * Botón hide NA
- * SOLO cambia estado visual + notifica cambio
- */
+ // Botón hide NA
+ //SOLO cambia estado visual + notifica cambio
 function initHideNA() {
     const btn = document.getElementById("hideNAButton");
     if (!btn) return;

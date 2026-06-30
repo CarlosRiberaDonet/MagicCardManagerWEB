@@ -19,7 +19,6 @@ async function init() {
     if (!cardId) return;
     
     const token = getToken();
-
     const res = await fetch(`${BASE_URL}/${cardId}`, {
         headers: token
             ? { Authorization: `Bearer ${token}` }
