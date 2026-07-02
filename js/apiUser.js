@@ -38,7 +38,7 @@ export async function isInCollection(card, token) {
 
 // Comprobar si una carta está en la lista de seguimiento del usuario
 export async function isInWatchlist(card, token) {
-    const response = await fetch(`${BASE_URL}/watchlist/contains?cardId=${card.id}&condition=${card.condition}&lastPrice=${card.cardPrice.low}&isFoil=${card.foil}`, {
+    const response = await fetch(`${BASE_URL}/watchlist/contains?cardId=${card.id}&condition=${card.condition}&lastPrice=${card.cardPrice?.low ?? 0}&isFoil=${card.foil}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`

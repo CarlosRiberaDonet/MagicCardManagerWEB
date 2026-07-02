@@ -97,7 +97,6 @@ function initSearch() {
     const btn = document.getElementById("searchButton");
 
     if (!input || !set || !btn) return;
-    showToast("BUSCAR");
     function search() {
         const name = input.value.trim();
         const setValue = set.value;

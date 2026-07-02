@@ -28,19 +28,31 @@ export async function fetchSets() {
 }
 
 // Actualizar precios desde cardtrader
-export async function updatePricesFromCardtrader(cardId, lang, condition, isFoil) {
-    //const token = getToken();
-    //if (!token) throw new Error("Usuario no autenticado");
-        const url = `http://localhost:8081/pricecache/${cardId}?lang=${lang}&condition=${condition}&isFoil=${isFoil}`;
-        console.log("URL:", url);
+export async function updatePricesFromCardtrader(card) {
+    console.log(card.scryfallId, card.lang, card.condition, card.foil);
+    const token = getToken();
+    if (!token) {
+        showToast("Debe de estar logueado para actualizar precios", "error");
+        return;
+    }
 
-    const response = await fetch(`http://localhost:8081/pricecache/${cardId}?lang=${lang}`, {
-        
-        method: "GET",
+    const response = await fetch("http://localhost:8081/pricecache/getPrices", {
+        method: "POST",
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+        body: JSON.stringify({
+            scryfallId: card.scryfallId,
+            lang: card.lang,
+            condition: card.condition,
+            isFoil: card.foil
+        })
     });
-    if (!response.ok) throw new Error("Error al actualizar precios");
+
+    if (!response.ok) {
+        showToast("Error al actualizar precios", "error");
+        throw new Error("Error al actualizar precios");
+    }
+
     return await response.json();
 }

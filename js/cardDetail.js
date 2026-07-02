@@ -108,7 +108,15 @@ function buttonListeners(card) {
 
         // Actualizar precios desde Cardtrader
         document.getElementById("updatePrices").addEventListener("click", async () => {
-            await updatePricesFromCardtrader(cardId, card.lang, condition, isFoil);
+
+            card.cardPrice = {};
+            const updatedPrice = await updatePricesFromCardtrader(card);
+            card.cardPrice.low = updatedPrice.low;
+            card.cardPrice.avg = updatedPrice.avg;
+            card.cardPrice.trend = updatedPrice.trend;
+            card.cardPrice.avg1 = updatedPrice.avg1;
+            card.cardPrice.avg7 = updatedPrice.avg7;
+            card.cardPrice.avg30 = updatedPrice.avg30;8
             location.reload();
         });
     } else{
