@@ -2,7 +2,7 @@
 
 import { getToken } from './auth.js';
 import { loadWatchlist, addToCollection, removeFromWatchlist } from './apiUser.js';
-import { getCondition, showToast } from './utils.js';
+import { getCondition, getFlag, showToast } from './utils.js';
 
 // ===========================
 // ESTADO GLOBAL
@@ -143,6 +143,9 @@ function renderList(items = allItems) {
         <span></span>
         <span class="list-name">Nombre</span>
         <span class="list-edition">Edición</span>
+        <span class="list-rarity">Rareza</span>
+        <span class="list-number">#</span>
+        <span class="list-lang">Idioma</span>
         <span class="list-condition">Cond.</span>
         <span class="list-foil">Foil</span>
         <span class="list-last">Últ. precio</span>
@@ -157,7 +160,7 @@ function renderList(items = allItems) {
 
         // "card" aquí es item.scryfallCardDTO (nombre, imagen, set, icono...)
         const card = item?.scryfallCardDTO;
-        const current = getCurrentPrice(item);
+        const current = getCurrentPrice(item.currentPrice);
         const delta = calcDelta(item);
 
         const row = document.createElement("div");
@@ -175,6 +178,12 @@ function renderList(items = allItems) {
                 <img src="${card?.iconSvgUri ?? ''}" class="set-icon" title="${card?.setName ?? ''}">
             </div>
 
+            <span class="list-rarity">${card?.rarity ?? '—'}</span>
+
+            <span class="list-number">${card?.collectorNumber ?? '—'}</span>
+
+            <span class="list-lang">${getFlag(card?.lang) ?? '—'}</span>
+
             <div class="list-condition">
                 <span class="condition-badge ${getCondition(item?.condition)}">
                     ${(item?.condition ?? '—').toUpperCase()}
@@ -183,7 +192,7 @@ function renderList(items = allItems) {
 
             <div class="list-foil">
                 <span class="foil-badge ${item?.foil ? 'is-foil' : ''}">
-                    ${item?.foil ? '✦ Foil' : 'Normal'}
+                    ${item?.foil ? 'SI' : 'NO'}
                 </span>
             </div>
 

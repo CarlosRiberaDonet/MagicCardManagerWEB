@@ -1,7 +1,7 @@
 // collection.js
 
 import { getToken } from './auth.js';
-import { loadCollection } from "./apiUser.js";
+import { loadCollection, removeFromCollection  } from "./apiUser.js";
 import { getFlag, getCondition } from './utils.js';
 
 
@@ -128,10 +128,12 @@ function renderCollectionList(cards = allCards) {
         <span class="list-number">#</span>
         <span class="list-lang">Idioma</span>
         <span class="list-condition">Cond.</span>
+        <span class="list-foil">Foil</span>
         <span class="list-qty">Cant.</span>
         <span class="list-purchase">Compra</span>
         <span class="list-current">V.Actual</span>
         <span class="list-profit">Ganancia</span>
+        <span></span>
     `;
     container.appendChild(header);
 
@@ -164,6 +166,12 @@ function renderCollectionList(cards = allCards) {
 
             <span class="list-condition condition-badge ${getCondition(item?.condition)}">${item?.condition ?? '—'}</span>
 
+             <div class="list-foil">
+                <span class="foil-badge ${item?.foil ? 'is-foil' : ''}">
+                    ${item?.foil ? 'SI' : 'NO'}
+                </span>
+            </div>
+
             <span class="list-qty">${item?.quantity ?? 1}</span>
 
             <span class="list-purchase">${formatPrice(item?.purchasePrice ?? 0)}</span>
@@ -174,12 +182,17 @@ function renderCollectionList(cards = allCards) {
                 ${formatPrice(profit)}
             </span>
 
-            <div class="user-actions">
-                <button class="action-remove danger" title="Quitar de watchlist">
-                    ✕
+            <div class="watch-actions">
+                <button class="action-remove danger" title="Quitar de colección">
+                    ✕<span class="btn-label"> Quitar</span>
                 </button>
             </div>
         `;
+
+        row.querySelector('.action-remove')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeItemFromCollection(item);
+        });
 
         row.addEventListener('click', () => {
             window.open(
@@ -223,7 +236,18 @@ function renderCollectionGrid(cards = allCards) {
             <p>${price ? formatPrice(price) : 'N/A'}</p>
 
             <p>${item?.quantity ?? 1}x</p>
+
+            <div class="watch-actions">
+                <button class="action-remove danger" title="Quitar de colección">
+                    ✕<span class="btn-label"> Quitar</span>
+                </button>
+            </div>
         `;
+
+        el.querySelector('.action-remove')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeItemFromCollection(item);
+        });
 
         el.addEventListener('click', () => {
             window.open(`cardDetail.html?cardId=${card.id}`, "_blank");
@@ -233,6 +257,38 @@ function renderCollectionGrid(cards = allCards) {
     });
 }
 
+async function removeItemFromCollection(item) {
+
+    const card = item?.card;
+
+    const confirmed = confirm(`¿Quitar "${card?.name ?? 'esta carta'}" de tu colección?`);
+    if (!confirmed) return;
+
+    const token = getToken();
+
+    try {
+        await removeFromCollection({
+            id: card.id,
+            purchasePrice: item.purchasePrice,
+            condition: item.cardCondition,  // ojo: en collection es item.cardCondition, no item.condition
+            foil: card.foil
+        }, token);
+
+        allCards = allCards.filter(i => i !== item);
+        renderStats();
+        loadEditions();
+
+        currentView === 'list'
+            ? renderCollectionList(applyFilters())
+            : renderCollectionGrid(applyFilters());
+
+        showToast("Carta eliminada de tu colección.");
+
+    } catch (error) {
+        console.error("Error al eliminar de la colección:", error);
+        showToast("No se pudo eliminar la carta.");
+    }
+}
 
 // ===========================
 // VIEW SWITCH
@@ -351,7 +407,6 @@ function updateViewButtons() {
     gridBtn.classList.toggle("active", currentView === 'grid');
     listBtn.classList.toggle("active", currentView === 'list');
 }
-
 
 // ===========================
 // START

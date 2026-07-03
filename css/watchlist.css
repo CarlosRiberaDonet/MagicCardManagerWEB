@@ -138,42 +138,6 @@
 }
 
 /* ===========================
-   ACCIONES (mover / quitar) — feature solo de watchlist por ahora
-=========================== */
-.watch-actions {
-    display: flex;
-    gap: 0.4rem;
-    justify-content: flex-end;
-}
-
-.watch-actions button {
-    font-size: 0.65rem;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-    background: var(--bg-deep);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: 0.2s;
-    white-space: nowrap;
-}
-
-.action-move:hover {
-    border-color: var(--gold);
-    color: var(--gold-light);
-}
-
-.action-remove.danger {
-    border-color: rgba(232, 138, 138, 0.4);
-    color: #e88a8a;
-}
-
-.action-remove.danger:hover {
-    background: rgba(232, 138, 138, 0.08);
-    border-color: #e88a8a;
-}
-
-/* ===========================
    MODAL — Mover a colección
 =========================== */
 .wl-modal {

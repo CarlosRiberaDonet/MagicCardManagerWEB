@@ -581,6 +581,81 @@ footer {
 }
 
 /* ===========================
+   ESTADO DE CARGA (búsqueda/filtros)
+=========================== */
+.cards-container.is-loading {
+    position: relative;
+    min-height: 240px;
+    pointer-events: none;
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+}
+
+.cards-container.is-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 42px;
+    height: 42px;
+    margin: -21px 0 0 -21px;
+    border: 3px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Botón "Buscar" deshabilitado mientras carga */
+.nav-search button.is-loading {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ===========================
+   ACCIONES DE FILA (quitar / mover)
+   Compartido entre collection y watchlist
+=========================== */
+.watch-actions {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-end;
+}
+
+.watch-actions button {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.action-move:hover {
+    border-color: var(--gold);
+    color: var(--gold-light);
+}
+
+.action-remove.danger {
+    border-color: rgba(232, 138, 138, 0.4);
+    color: #e88a8a;
+}
+
+.action-remove.danger:hover {
+    background: rgba(232, 138, 138, 0.08);
+    border-color: #e88a8a;
+}
+
+/* La animación "spin" puede que ya exista en cardDetail.css (.update-btn.loading);
+   si no la tienes en style.css todavía, añade también esto: */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* ===========================
    ANIMACIONES
 =========================== */
 @keyframes fadeInDown {
@@ -605,3 +680,7 @@ footer {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+ .watch-actions .btn-label {
+        display: none;
+    }
