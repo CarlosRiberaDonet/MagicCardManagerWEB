@@ -45,13 +45,25 @@ async function init() {
 // Precio actual normalizado (trend > low > avg > 0)
 function getCurrentPrice(item) {
     const price = item?.scryfallCardDTO?.cardPrice;
-    return price?.trend ?? price?.low ?? price?.avg ?? 0;
+
+    if(item?.foil === false){
+        return price?.low
+            ?? price?.trend
+            ?? price?.avg
+            ?? 0;
+    }
+     return price?.lowFoil
+        ?? price?.trendFoil
+        ?? price?.avgFoil
+        ?? 0;
+   
 }
 
 // Diferencia contra el último precio guardado al añadir a la watchlist
 function calcDelta(item) {
     const current = getCurrentPrice(item);
     const last = item?.lastPrice ?? 0;
+    console.log(`calcDelta: current=${current}, last=${last}, delta=${current - last}`);
     return current - last;
 }
 
@@ -160,7 +172,7 @@ function renderList(items = allItems) {
 
         // "card" aquí es item.scryfallCardDTO (nombre, imagen, set, icono...)
         const card = item?.scryfallCardDTO;
-        const current = getCurrentPrice(item.currentPrice);
+        const current = getCurrentPrice(item);
         const delta = calcDelta(item);
 
         const row = document.createElement("div");
@@ -198,7 +210,7 @@ function renderList(items = allItems) {
 
             <span class="list-last">${formatPrice(item?.lastPrice ?? 0)}</span>
 
-            <span class="list-current">${formatPrice(current)}</span>
+            <span class="list-current">${formatPrice(card?.cardPrice.low ?? 0)}</span>
 
             <span class="list-delta ${delta >= 0 ? 'positive' : 'negative'}">
                 ${formatPrice(delta)}
@@ -226,7 +238,6 @@ function renderList(items = allItems) {
             removeItemFromWatchlist(item);
         });
 
-        // El id real de la carta es item.cardId (NO card.id, que siempre es null)
         row.addEventListener('click', () => {
             window.open(`cardDetail.html?cardId=${item.cardId}`, "_blank");
         });
@@ -250,12 +261,11 @@ function renderGrid(items = allItems) {
     }
 
     items.forEach(item => {
-
         const card = item?.scryfallCardDTO;
         const current = getCurrentPrice(item);
         const delta = calcDelta(item);
-
         const el = document.createElement("div");
+              
         el.className = "watchlist-card";
 
         el.innerHTML = `
@@ -268,7 +278,7 @@ function renderGrid(items = allItems) {
                     ${(item?.condition ?? '—').toUpperCase()}
                 </span>
                 <span class="foil-badge ${item?.foil ? 'is-foil' : ''}">
-                    ${item?.foil ? '✦ Foil' : 'Normal'}
+                    ${item?.foil ? 'Foil' : 'Normal'}
                 </span>
             </div>
 
@@ -281,7 +291,8 @@ function renderGrid(items = allItems) {
 
             <div class="prices-row">
                 <span>Actual</span>
-                <span class="list-current">${formatPrice(current)}</span>
+                <span class="list-current">${formatPrice(card?.cardPrice.low ?? 0)}</span>
+                
             </div>
 
             <div class="watch-actions">

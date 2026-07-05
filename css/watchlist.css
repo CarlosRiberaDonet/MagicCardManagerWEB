@@ -60,18 +60,24 @@
    10 columnas: miniatura, nombre, edición, condición, foil,
    últ. precio, actual, diferencia, fecha, acciones.
 =========================== */
-.watchlist-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
-
 .watchlist-list-header,
 .watchlist-list-item {
     display: grid;
     grid-template-columns:
-        32px 2fr 85px 70px 70px 85px 85px 85px 95px 140px;
-    column-gap: 0.9rem;
+        32px
+        2fr
+        85px
+        70px
+        50px
+        50px
+        70px
+        70px
+        85px
+        85px
+        85px
+        95px
+        120px;
+    column-gap: .9rem;
     align-items: center;
 }
 

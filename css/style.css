@@ -459,13 +459,25 @@ footer {
    esas mismas clases, esta regla (más específica) fuerza un
    tamaño/peso/color uniforme SOLO en los títulos del header,
    sin tocar las celdas de datos. */
-.collection-list-header > *,
-.watchlist-list-header > * {
-    font-size: 0.62rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
+.watchlist-list-header,
+.watchlist-list-item {
+    display: grid;
+    grid-template-columns:
+        32px
+        2fr
+        85px
+        70px
+        50px
+        50px
+        70px
+        70px
+        85px
+        85px
+        85px
+        95px
+        120px;
+    column-gap: .9rem;
+    align-items: center;
 }
 
 .collection-list-item:hover,

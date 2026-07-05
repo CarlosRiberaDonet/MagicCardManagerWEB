@@ -101,8 +101,6 @@ function buttonListeners(card) {
         // Mostrar precios de la condición seleccionada
     });
 
-
-    // --------------------- IMPLEMENTAR ------------------------------------------------
     // Si la carta no tiene precios, mostrar botón para actualizar precios desde Cardtrader
     if(card?.cardPrice?.low == null && card?.cardPrice?.trend == null){
 
