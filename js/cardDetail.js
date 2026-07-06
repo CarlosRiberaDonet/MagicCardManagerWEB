@@ -26,6 +26,7 @@ async function init() {
     });
 
     const card = await res.json();
+    card.condition = condition; // por defecto, condición NM
     
     // UI según login
     if (!token) {
@@ -126,7 +127,6 @@ function buttonListeners(card) {
 
     // Abrir modal para añadir carta a la colección con precio
   function openPriceModal(card) {
-
     const conditionElement = document.getElementById("labelConditionValue");
     const modal = document.getElementById("priceModal");
     const el = document.getElementById("labelConditionValue");
@@ -156,6 +156,7 @@ function buttonListeners(card) {
         card.purchasePrice = parseFloat(priceInput.value);
         card.quantity = parseInt(quantityInput.value);
         card.condition = condition;
+        card.lang = card.lang;
         card.foil = isFoil;
 
         await addCardToCollection(card);
@@ -178,6 +179,7 @@ function buttonListeners(card) {
 async function updateCardCounts(card) {
     const cardQuantityEl = document.getElementById("cardQuantity");
     const quantity = await userActions.isCardInCollection(card);
+    console.log("Cantidad de cartas en la colección:", quantity);
     cardQuantityEl.textContent = quantity + "x";
 }
 

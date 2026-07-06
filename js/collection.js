@@ -2,7 +2,7 @@
 
 import { getToken } from './auth.js';
 import { loadCollection, removeFromCollection  } from "./apiUser.js";
-import { getFlag, getCondition } from './utils.js';
+import { getFlag, getCondition, showToast } from './utils.js';
 
 
 // ===========================
@@ -259,19 +259,18 @@ function renderCollectionGrid(cards = allCards) {
 
 async function removeItemFromCollection(item) {
 
-    const card = item?.card;
-
-    const confirmed = confirm(`¿Quitar "${card?.name ?? 'esta carta'}" de tu colección?`);
+    const confirmed = confirm(`¿Quitar "${item?.card.name ?? 'esta carta'}" de tu colección?`);
     if (!confirmed) return;
 
     const token = getToken();
 
     try {
         await removeFromCollection({
-            id: card.id,
+            id: item.cardId,
             purchasePrice: item.purchasePrice,
-            condition: item.cardCondition,  // ojo: en collection es item.cardCondition, no item.condition
-            foil: card.foil
+            condition: item.condition,
+            lang: item.lang,
+            foil: item.foil,
         }, token);
 
         allCards = allCards.filter(i => i !== item);

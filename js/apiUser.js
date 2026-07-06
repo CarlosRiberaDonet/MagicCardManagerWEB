@@ -26,14 +26,23 @@ export async function loadWatchlist(token){
 
 // Comprobar si una carta está en la colección del usuario
 export async function isInCollection(card, token) {
-    const response = await fetch(`${BASE_URL}/collection/contains?cardId=${card.id}&condition=${card.condition}&isFoil=${card.foil}`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
+   const params = new URLSearchParams({
+        cardId: card.id,
+        condition: card.condition,
+        lang: card.lang,
+        foil: card.foil
     });
+
+    const response = await fetch(
+        `${BASE_URL}/collection/contains?${params}`,
+        {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        }
+    );
     if (!response.ok) throw new Error("Error al comprobar si la carta está en la colección");
-    return await response.json(); // Devuelve 0 si la carta no está en la colección, <0 si está en la colección
+    return await response.json(); // Devuelve 0 si la carta no está en la colección, >0 si está en la colección
 }
 
 // Comprobar si una carta está en la lista de seguimiento del usuario
@@ -61,6 +70,7 @@ export async function addToCollection(card, token) {
                 purchasePrice: card.purchasePrice,
                 quantity: card.quantity,
                 condition: card.condition,
+                lang: card.lang,
                 foil: card.foil
             })
     });
@@ -80,6 +90,7 @@ export async function removeFromCollection(card, token) {
             { cardId: card.id,
                 purchasePrice: card.purchasePrice,
                 condition: card.condition,
+                lang: card.lang,
                 foil: card.foil
             })
     });
