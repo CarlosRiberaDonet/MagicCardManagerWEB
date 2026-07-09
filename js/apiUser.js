@@ -109,7 +109,7 @@ export async function addToWatchlist(card, token) {
         body: JSON.stringify(
             {
                 cardId: card.id,
-                lastPrice: card.cardPrice.low,
+                lastPrice: card.cardPrice?.low ?? null,
                 condition: card.condition,
                 isFoil: card.foil
             })
