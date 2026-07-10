@@ -1,6 +1,6 @@
 // cardDetail.js
 
-import { updatePricesFromCardtrader } from "./api.js";
+import { updatePricesFromCardtrader, fetchCardtraderPrice } from "./api.js";
 import { addCardToCollection } from "./userActions.js";
 import { getToken } from "./auth.js";
 import { showToast, getCondition } from "./utils.js";
@@ -8,10 +8,9 @@ import * as userActions from "./userActions.js";
 
 const BASE_URL = "http://localhost:8081/scryfall";
 
-const params = new URLSearchParams(location.search);
-const cardId = params.get("cardId");
-let condition = "NM";
-let isFoil = false;
+const cardId = new URLSearchParams(location.search).get("cardId");
+let card;
+let condition;
 
 init();
 
@@ -25,9 +24,8 @@ async function init() {
             : {}
     });
 
-    const card = await res.json();
-    card.condition = condition; // por defecto, condición NM
-    
+    card = await res.json();
+
     // UI según login
     if (!token) {
         document.getElementById("addToCollection").style.display = "none";
@@ -36,14 +34,18 @@ async function init() {
     }
 
     render(card);
-    buttonListeners(card);
+    await buttonListeners(card);
     await updateCardCounts(card);
     await updateWatchlistButtons(card);
 }
 
 function render(card) {
-    document.getElementById("cardName").textContent = card.name;
-    document.getElementById("cardImage").src = card.imageUrl
+    if(card.printedName){
+        document.getElementById("cardName").textContent = card.printedName;
+    } else {
+        document.getElementById("cardName").textContent = card.name;
+    }
+    document.getElementById("cardImage").src = card.imageUrl;
     document.getElementById("cardSet").textContent = card.setName;
     document.getElementById("cardLang").textContent = card.lang;
     document.getElementById("collectorNumber").textContent = card.collectorNumber;
@@ -51,15 +53,29 @@ function render(card) {
     document.getElementById("typeLine").textContent = card.typeLine;
     document.getElementById("released_at").textContent = card.releasedAt;
     document.getElementById("cardMarketURL").href = card.cardmarketURL;
-    document.getElementById("cardCondition").value = "NM";
-    document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.low);
-    document.getElementById("cardTrend").textContent = formatPrice(card?.cardPrice?.trend);
-    document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg30);
-    document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.avg7);
-    document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.avg1);
+    document.getElementById("cardCondition").value = card.condition;
+    
+
+    // Mostrar precios de la carta
+    if(!card.isFoil){
+        document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.low);
+        document.getElementById("cardTrend").textContent = formatPrice(card?.cardPrice?.trend);
+        document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg30);
+        document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.avg7);
+        document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.avg1);
+    } else{
+        document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.lowFoil);
+        document.getElementById("cardTrend").textContent = formatPrice(card?.cardPrice?.trendFoil);
+        document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg1Foil);
+        document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.foilAvg7);
+        document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.foilAvg1);
+    }
+    
 }
 
-function buttonListeners(card) {
+async function buttonListeners(card) {
+
+    await chekPrices(card);
 
     // Listener para añadir carta de la colección, abre modal para introducir precio y cantidad
    document.getElementById("addToCollection").addEventListener("click", () => {
@@ -85,44 +101,51 @@ function buttonListeners(card) {
 
     // Checkbox foil
     document.getElementById("cardFoil").addEventListener("change", async (e) => {
-        isFoil = e.target.checked;
-            card.foil = e.target.checked;
-            await updateWatchlistButtons(card); // Comprobar si la carta está en la lista de seguimiento del user
-            await updateCardCounts(card); // Conteo de la colección de cartas del user
-        
+        card.foil = e.target.checked;
+        await updateWatchlistButtons(card); // Comprobar si la carta está en la lista de seguimiento del user
+        await updateCardCounts(card); // Conteo de la colección de cartas del user
+        // Obtener precios de la carta según si es foil o no
+        await chekPrices(card);
+        render(card);
     });
 
     // Selector estado de la carta
     document.getElementById("cardCondition").addEventListener("change", async (e) =>  {
         // Asignar la condición seleccionada
-        condition = e.target.value;
-        card.condition = condition;
+        card.condition =  e.target.value;;
         await updateWatchlistButtons(card); 
         await updateCardCounts(card);
         // Mostrar precios de la condición seleccionada
-    });
+        await chekPrices(card);
+        render(card);
+    });   
+}
 
-    // Si la carta no tiene precios, mostrar botón para actualizar precios desde Cardtrader
-    if(card?.cardPrice?.low == null && card?.cardPrice?.trend == null){
+async function chekPrices(card) {
 
-        // Actualizar precios desde Cardtrader
-        document.getElementById("updatePrices").addEventListener("click", async () => {
+    // Obtener precios de la carta según si es foil o no
+    card.cardPrice = await fetchCardtraderPrice(card);
 
-            card.cardPrice = {};
-            const updatedPrice = await updatePricesFromCardtrader(card);
-            card.cardPrice.low = updatedPrice.low;
-            card.cardPrice.avg = updatedPrice.avg;
-            card.cardPrice.trend = updatedPrice.trend;
-            card.cardPrice.avg1 = updatedPrice.avg1;
-            card.cardPrice.avg7 = updatedPrice.avg7;
-            card.cardPrice.avg30 = updatedPrice.avg30;8
-            location.reload();
-        });
-    } else{
-        // Ocultar botón de actualizar precios si ya tiene precios
-        document.getElementById("updatePrices").style.display = "none";
+    // No tiene precios
+    if (card?.cardPrice == null) {
+        // Activar botón de actualizar precios
+        document.getElementById("updatePrices").style.display = "inline-block";
+        return;
     }
-   
+    
+
+    // Tiene precios
+    if (card.cardPrice.updatedAt) {
+        // Desactivar botón de actualizar precios
+        document.getElementById("updatePrices").style.display = "none";
+        // Mostrar fecha de actualización de precios
+        const updatedAt = new Date(card.cardPrice.updatedAt);
+
+        document.getElementById("lastUpdated").textContent =
+            `Precios actualizados: ${updatedAt.toLocaleString()}`;
+
+        console.log("Fecha:", updatedAt);
+    }
 }
 
     // Abrir modal para añadir carta a la colección con precio
@@ -179,7 +202,6 @@ function buttonListeners(card) {
 async function updateCardCounts(card) {
     const cardQuantityEl = document.getElementById("cardQuantity");
     const quantity = await userActions.isCardInCollection(card);
-    console.log("Cantidad de cartas en la colección:", quantity);
     cardQuantityEl.textContent = quantity + "x";
 }
 
@@ -187,7 +209,6 @@ async function updateCardCounts(card) {
 async function updateWatchlistButtons(card) {
     const addBtn = document.getElementById("addToWatchlist");
     const removeBtn = document.getElementById("removeFromWatchlist");
-    card.condition = condition;
     const isInWatchlist = await userActions.isCardInWatchlist(card);
 
     if (!isInWatchlist) {
