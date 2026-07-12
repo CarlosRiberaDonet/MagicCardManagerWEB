@@ -1,6 +1,6 @@
 // cardDetail.js
 
-import { updatePricesFromCardtrader, fetchCardtraderPrice } from "./api.js";
+import { updatePricesFromCardtrader } from "./api.js";
 import { addCardToCollection } from "./userActions.js";
 import { getToken } from "./auth.js";
 import { showToast, getCondition } from "./utils.js";
@@ -121,26 +121,37 @@ async function buttonListeners(card) {
     });   
 }
 
+// TENGO QUE SINCRONIZAR LOS PRECIOS DE LA CARTA CUANDO CAMBIO DE CONDICION O DE FOIL, PARA QUE VUELVA A MOSTRAR LOS PRECIOS QUE TENÍA DISPONIBLES
+// EMPIEZO A IMPLEMENTARLO EN LA CLASE CardmarketPriceController
 async function chekPrices(card) {
 
-    // Obtener precios de la carta según si es foil o no
-    card.cardPrice = await fetchCardtraderPrice(card);
+    if(card.condition != "NM" || card.foil != false){
+        showToast("Cambiando parametros de la carta");
 
-    // No tiene precios
-    if (card?.cardPrice == null) {
-        // Activar botón de actualizar precios
-        document.getElementById("updatePrices").style.display = "inline-block";
-        return;
+        // Obtener precios de la carta según si es foil o no
+        card.cardPrice = await updatePricesFromCardtrader(card);
+
+        // No tiene precios
+        if (card?.cardPrice === null) {
+            // Activar botón de actualizar precios
+            document.getElementById("lastUpdated").style.display = "none";
+            document.getElementById("updatePrices").style.display = "inline-block";
+            return;
+        }
+        if(card.cardPrice === null){
+        showToast("No se han podido obtener los precios de la carta", "error");
+    } else{
+
     }
-    
 
+    }
     // Tiene precios
     if (card.cardPrice.updatedAt) {
         // Desactivar botón de actualizar precios
         document.getElementById("updatePrices").style.display = "none";
         // Mostrar fecha de actualización de precios
         const updatedAt = new Date(card.cardPrice.updatedAt);
-
+        document.getElementById("lastUpdated").style.display = "block";
         document.getElementById("lastUpdated").textContent =
             `Precios actualizados: ${updatedAt.toLocaleString()}`;
 
@@ -157,9 +168,9 @@ async function chekPrices(card) {
     const quantityInput = document.getElementById("quantityInput");
     const confirmBtn = document.getElementById("confirmBtn");
     const closeBtn = document.getElementById("closePriceModal");
-    conditionElement.textContent = condition;
-    conditionElement.className = getCondition(condition);
-    document.getElementById("labelFoilValue").textContent = isFoil ? "Sí" : "No";
+    conditionElement.textContent = card.condition;
+    conditionElement.className = getCondition(card.condition);
+    document.getElementById("labelFoilValue").textContent = card.foil ? "Sí" : "No";
 
     if (!modal || !priceInput || !quantityInput || !confirmBtn) return;
 
@@ -178,9 +189,6 @@ async function chekPrices(card) {
 
         card.purchasePrice = parseFloat(priceInput.value);
         card.quantity = parseInt(quantityInput.value);
-        card.condition = condition;
-        card.lang = card.lang;
-        card.foil = isFoil;
 
         await addCardToCollection(card);
 

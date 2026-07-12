@@ -45,7 +45,7 @@ export async function updatePricesFromCardtrader(card) {
     });
 
     const response = await fetch(
-        `${BASE_URL}/pricecache/getPrices?${params}`,
+        `${BASE_URL}/cardtrader/lastPrices?${params}`,
         {
             method: "POST",
             headers: {
@@ -54,45 +54,14 @@ export async function updatePricesFromCardtrader(card) {
         }
     );
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+    if (response.status === 204) {
+        return null;
     }
-
-    const data = await response.json();
-    return data;
-}
-
-export async function fetchCardtraderPrice(card) {
-    const token = getToken();
-    if (!token) {
-        showToast("Debe de estar logueado para actualizar precios", "error");
-        return;
-    }
-
-    const params = new URLSearchParams({
-        cardId: card.id,
-        scryfallId: card.scryfallId,
-        lang: card.lang,
-        condition: card.condition,
-        isFoil: card.foil ?? false
-    });
-
-    const response = await fetch(
-        `${BASE_URL}/cardtrader/lastPrices?${params}`,
-        {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${getToken()}`
-            }
-        }
-    );
 
     if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
 }
