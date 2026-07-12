@@ -1,6 +1,6 @@
 // cardDetail.js
 
-import { updatePricesFromCardtrader } from "./api.js";
+import { fetchCardDetails, fetchCardMarketPrices, updatePricesFromCardtrader } from "./api.js";
 import { addCardToCollection } from "./userActions.js";
 import { getToken } from "./auth.js";
 import { showToast, getCondition } from "./utils.js";
@@ -15,16 +15,15 @@ let condition;
 init();
 
 async function init() {
+
+    const token = getToken();
+
     if (!cardId) return;
     
-    const token = getToken();
-    const res = await fetch(`${BASE_URL}/${cardId}`, {
-        headers: token
-            ? { Authorization: `Bearer ${token}` }
-            : {}
-    });
-
-    card = await res.json();
+    if (!token) {
+        showToast("Debe de estar logueado.", "error");
+        return;
+    }
 
     // UI según login
     if (!token) {
@@ -32,14 +31,18 @@ async function init() {
         document.getElementById("addToWatchlist").style.display = "none";
         document.getElementById("removeFromWatchlist").style.display = "none";
     }
+    
+    // Llamo a la API para obtener los detalles de la carta
+    card = await fetchCardDetails(cardId);
 
-    render(card);
+    await render(card);
+    await renderPrices(card);
     await buttonListeners(card);
     await updateCardCounts(card);
     await updateWatchlistButtons(card);
 }
 
-function render(card) {
+async function render(card) {
     if(card.printedName){
         document.getElementById("cardName").textContent = card.printedName;
     } else {
@@ -53,9 +56,13 @@ function render(card) {
     document.getElementById("typeLine").textContent = card.typeLine;
     document.getElementById("released_at").textContent = card.releasedAt;
     document.getElementById("cardMarketURL").href = card.cardmarketURL;
-    document.getElementById("cardCondition").value = card.condition;
-    
+    document.getElementById("cardCondition").value = card.condition; 
+}
 
+async function renderPrices(card) {
+
+    // Obtener precios
+    await chekPrices(card);
     // Mostrar precios de la carta
     if(!card.isFoil){
         document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.low);
@@ -63,19 +70,18 @@ function render(card) {
         document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg30);
         document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.avg7);
         document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.avg1);
-    } else{
+    } 
+    if(card.isFoil){
+        showToast("Carta Foil, mostrando precios de carta foil");
         document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.lowFoil);
         document.getElementById("cardTrend").textContent = formatPrice(card?.cardPrice?.trendFoil);
         document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg1Foil);
         document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.foilAvg7);
         document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.foilAvg1);
     }
-    
 }
 
 async function buttonListeners(card) {
-
-    await chekPrices(card);
 
     // Listener para añadir carta de la colección, abre modal para introducir precio y cantidad
    document.getElementById("addToCollection").addEventListener("click", () => {
@@ -104,9 +110,9 @@ async function buttonListeners(card) {
         card.foil = e.target.checked;
         await updateWatchlistButtons(card); // Comprobar si la carta está en la lista de seguimiento del user
         await updateCardCounts(card); // Conteo de la colección de cartas del user
-        // Obtener precios de la carta según si es foil o no
-        await chekPrices(card);
-        render(card);
+        await render(card);
+        await renderPrices(card)
+        console.log(card.cardPrice);
     });
 
     // Selector estado de la carta
@@ -115,16 +121,37 @@ async function buttonListeners(card) {
         card.condition =  e.target.value;;
         await updateWatchlistButtons(card); 
         await updateCardCounts(card);
-        // Mostrar precios de la condición seleccionada
-        await chekPrices(card);
-        render(card);
+        await render(card);
+        await renderPrices(card);
     });   
 }
 
-// TENGO QUE SINCRONIZAR LOS PRECIOS DE LA CARTA CUANDO CAMBIO DE CONDICION O DE FOIL, PARA QUE VUELVA A MOSTRAR LOS PRECIOS QUE TENÍA DISPONIBLES
-// EMPIEZO A IMPLEMENTARLO EN LA CLASE CardmarketPriceController
+
 async function chekPrices(card) {
 
+    // Obtener los precios desde Cardmarket
+    if(card.condition === "NM"){
+        card.cardPrice = await fetchCardMarketPrices(card.id);
+
+        console.log(card.cardPrice);
+        // Si carmarket no devuelve precios, obtener de cardtrader
+        if(card.cardPrice === null){
+            showToast("No se han podido obtener los precios de la carta desde Cardmarket, obteniendo desde Cardtrader", "error");
+            card.cardPrice = await updatePricesFromCardtrader(card);
+            console.log("Precios obtenidos" + card.cardPrice);
+        }
+
+       /* else{
+             document.getElementById("updatePrices").style.display = "none"; // Desactivar botón de actualizar precios
+            // Mostrar fecha de actualización de precios
+            const updatedAt = new Date(card.cardPrice.updatedAt);
+            document.getElementById("lastUpdated").style.display = "block";
+            document.getElementById("lastUpdated").textContent =
+                `Precios actualizados: ${updatedAt.toLocaleString()}`;
+        }
+    }
+
+    // Si la carta no está en "NM" o no es foil, actualizar precios desde Cardtrader
     if(card.condition != "NM" || card.foil != false){
         showToast("Cambiando parametros de la carta");
 
@@ -139,23 +166,8 @@ async function chekPrices(card) {
             return;
         }
         if(card.cardPrice === null){
-        showToast("No se han podido obtener los precios de la carta", "error");
-    } else{
-
-    }
-
-    }
-    // Tiene precios
-    if (card.cardPrice.updatedAt) {
-        // Desactivar botón de actualizar precios
-        document.getElementById("updatePrices").style.display = "none";
-        // Mostrar fecha de actualización de precios
-        const updatedAt = new Date(card.cardPrice.updatedAt);
-        document.getElementById("lastUpdated").style.display = "block";
-        document.getElementById("lastUpdated").textContent =
-            `Precios actualizados: ${updatedAt.toLocaleString()}`;
-
-        console.log("Fecha:", updatedAt);
+            showToast("No se han podido obtener los precios de la carta", "error");
+        } */
     }
 }
 

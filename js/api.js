@@ -27,6 +27,54 @@ export async function fetchSets() {
     return await response.json();
 }
 
+//Obtener detelles de una carta mediante su ID
+export async function fetchCardDetails(cardId) {
+     const token = getToken();
+
+     if (!token) {
+        showToast("Debe de estar logueado.", "error");
+        return;
+    }
+
+    const res = await fetch(`${BASE_URL}/scryfall/${cardId}`, {
+        headers: token
+            ? { Authorization: `Bearer ${token}` }
+            : {}
+    });
+
+    return await res.json();
+}
+
+// Obtener precios desde cardmarket
+export async function fetchCardMarketPrices(cardId) {
+    const token = getToken();
+    if (!token) {
+        showToast("Debe de estar logueado para actualizar precios", "error");
+        return;
+    }
+
+    const res = await fetch(
+        `${BASE_URL}/cardmarket/${cardId}`,
+        {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }    
+        }
+    );
+
+    if (res.status === 204) {
+        return null;
+    }
+
+     if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message);
+    }
+
+    return await res.json();
+}
+
 // Actualizar precios desde Cardtrader
 export async function updatePricesFromCardtrader(card) {
 
@@ -38,7 +86,6 @@ export async function updatePricesFromCardtrader(card) {
 
     const params = new URLSearchParams({
         cardId: card.id,
-        scryfallId: card.scryfallId,
         lang: card.lang,
         condition: card.condition,
         isFoil: card.foil ?? false
