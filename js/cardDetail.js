@@ -83,6 +83,15 @@ async function renderPrices(card) {
 
 async function buttonListeners(card) {
 
+    if(card.cardPrice != null){
+         document.getElementById("updatePrices").style.display = "none"; // Desactivar botón de actualizar precios
+            // Mostrar fecha de actualización de precios
+            const updatedAt = new Date(card.cardPrice.fetchedAt);
+            document.getElementById("lastUpdated").style.display = "block";
+            document.getElementById("lastUpdated").textContent =
+                `Precios actualizados: ${updatedAt.toLocaleString()}`;
+    }
+
     // Listener para añadir carta de la colección, abre modal para introducir precio y cantidad
    document.getElementById("addToCollection").addEventListener("click", () => {
         openPriceModal(card);
@@ -136,7 +145,8 @@ async function chekPrices(card) {
         console.log(card.cardPrice);
         // Si carmarket no devuelve precios, obtener de cardtrader
         if(card.cardPrice === null){
-            showToast("No se han podido obtener los precios de la carta desde Cardmarket, obteniendo desde Cardtrader", "error");
+            showToast("No se han podido obtener los precios de la carta desde Cardmarket, obteniendo desde Cardtrader", "error"); 
+            console.log(card.id);
             card.cardPrice = await updatePricesFromCardtrader(card);
             console.log("Precios obtenidos" + card.cardPrice);
         }

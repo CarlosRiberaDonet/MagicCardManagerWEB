@@ -86,6 +86,7 @@ export async function updatePricesFromCardtrader(card) {
 
     const params = new URLSearchParams({
         cardId: card.id,
+        scryfallId: card.scryfallId,
         lang: card.lang,
         condition: card.condition,
         isFoil: card.foil ?? false
