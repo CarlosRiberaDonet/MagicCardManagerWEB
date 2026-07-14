@@ -94,11 +94,12 @@ export async function removeFromCollection(item, token) {
                 purchasePrice: item.purchasePrice,
                 condition: item.condition,
                 lang: item.lang,
-                foil: item.foil
+                foil: item.foil,
+                quantity: item.quantity
             })
     });
     if (!response.ok) throw new Error("Error al eliminar carta de la colección");
-    return await response.text();
+    return await response.json();
 }
 
 // INSERTAR CARTA EN WATCHLIST (lista de seguimiento)

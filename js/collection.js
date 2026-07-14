@@ -25,7 +25,7 @@ async function init() {
         loadEditions();
         setupFilters();
         setupViewToggle();
-        renderCollectionList(allCards);
+        await renderCollectionList(allCards);
 
     } catch (error) {
         console.error("Error al cargar la colección:", error);
@@ -87,10 +87,7 @@ function renderStats() {
     profitEl.style.color = totalProfit >= 0 ? '#4caf50' : '#e88a8a';
 }
 
-
-// ===========================
 // EDITIONS FILTER
-// ===========================
 function loadEditions() {
     const select = document.getElementById("colFilterSet");
     select.innerHTML = '<option value="">Edición</option>';
@@ -144,7 +141,7 @@ function renderCollectionList(cards = allCards) {
         const card = item?.card;
         const price = getCurrentPrice(item);
         const profit = calcProfit(item);
-             console.log(item.cardId);
+             console.log(item);
 
 
         const row = document.createElement("div");
@@ -263,27 +260,46 @@ function renderCollectionGrid(cards = allCards) {
     });
 }
 
-function removeItemFromCollection(item) {
+async function removeItemFromCollection(item) {
 
     const confirmed = confirm(`¿Quitar "${item?.card.name ?? 'esta carta'}" de tu colección?`);
     if (!confirmed) return;
 
-        removeCardFromCollection(item);
+    try {
+        const deleted = await removeCardFromCollection(item);
 
-        allCards = allCards.filter(i => i !== item);
+        if (!deleted) {
+            showToast("No se pudo eliminar la carta.", "error");
+            return;
+        }
+
+        // Actualizar estado local
+        if (item.quantity > 1) {
+            item.quantity--;
+        } else {
+            allCards = allCards.filter(i => i !== item);
+        }
+
+        // Actualizar interfaz
         renderStats();
         loadEditions();
 
-        currentView === 'list'
-            ? renderCollectionList(applyFilters())
-            : renderCollectionGrid(applyFilters());
+        const filtered = applyFilters();
+
+        if (currentView === "list") {
+            renderCollectionList(filtered);
+        } else {
+            renderCollectionGrid(filtered);
+        }
 
         showToast("Carta eliminada de tu colección.");
+
+    } catch (e) {
+        showToast(e.message, "error");
+    }
 }
 
-// ===========================
 // VIEW SWITCH
-// ===========================
 function setupViewToggle() {
 
     document.getElementById("viewGrid").addEventListener("click", () => {
@@ -299,10 +315,7 @@ function setupViewToggle() {
     });
 }
 
-
-// ===========================
 // FILTERS
-// ===========================
 function setupFilters() {
 
     const inputs = [
@@ -334,10 +347,7 @@ function setupFilters() {
     });
 }
 
-
-// ===========================
 // APPLY FILTERS
-// ===========================
 function applyFilters() {
 
     const set = document.getElementById("colFilterSet")?.value;
@@ -380,9 +390,7 @@ function applyFilters() {
 }
 
 
-// ===========================
-// FORMAT
-// ===========================
+// FORMATEAR PRECIO
 function formatPrice(price) {
     return new Intl.NumberFormat('de-DE', {
         style: 'currency',
@@ -399,7 +407,5 @@ function updateViewButtons() {
     listBtn.classList.toggle("active", currentView === 'list');
 }
 
-// ===========================
 // START
-// ===========================
 init();
