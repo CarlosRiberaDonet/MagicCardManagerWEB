@@ -1,7 +1,9 @@
 // collection.js
 
 import { getToken } from './auth.js';
-import { loadCollection, removeFromCollection  } from "./apiUser.js";
+import { chekPrices } from './cardDetail.js';
+import { loadCollection  } from './apiUser.js';
+import { removeCardFromCollection  } from './userActions.js';
 import { getFlag, getCondition, showToast } from './utils.js';
 
 
@@ -142,6 +144,8 @@ function renderCollectionList(cards = allCards) {
         const card = item?.card;
         const price = getCurrentPrice(item);
         const profit = calcProfit(item);
+             console.log(item.cardId);
+
 
         const row = document.createElement("div");
         row.className = "collection-list-item";
@@ -188,6 +192,8 @@ function renderCollectionList(cards = allCards) {
                 </button>
             </div>
         `;
+
+       
 
         row.querySelector('.action-remove')?.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -257,21 +263,12 @@ function renderCollectionGrid(cards = allCards) {
     });
 }
 
-async function removeItemFromCollection(item) {
+function removeItemFromCollection(item) {
 
     const confirmed = confirm(`¿Quitar "${item?.card.name ?? 'esta carta'}" de tu colección?`);
     if (!confirmed) return;
 
-    const token = getToken();
-
-    try {
-        await removeFromCollection({
-            id: item.cardId,
-            purchasePrice: item.purchasePrice,
-            condition: item.condition,
-            lang: item.lang,
-            foil: item.foil,
-        }, token);
+        removeCardFromCollection(item);
 
         allCards = allCards.filter(i => i !== item);
         renderStats();
@@ -282,11 +279,6 @@ async function removeItemFromCollection(item) {
             : renderCollectionGrid(applyFilters());
 
         showToast("Carta eliminada de tu colección.");
-
-    } catch (error) {
-        console.error("Error al eliminar de la colección:", error);
-        showToast("No se pudo eliminar la carta.");
-    }
 }
 
 // ===========================

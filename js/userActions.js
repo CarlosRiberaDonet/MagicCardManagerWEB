@@ -11,13 +11,12 @@ import * as auth from "./auth.js";
     }
 
     // Llamada a la api para eliminar carta de la colección
-    export function removeCardFromCollection(card) {
+    export function removeCardFromCollection(item) {
         const token = auth.getToken();
         if(!token){
             return;
         }
-        console.log("Removing card from collection:", card);
-        return apiUser.removeFromCollection(card, token);
+        return apiUser.removeFromCollection(item, token);
     }
 
     // Llamada a la api para añadir a la lista de seguimiento (watchlist)

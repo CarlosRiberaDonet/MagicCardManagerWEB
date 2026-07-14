@@ -63,34 +63,30 @@ async function renderPrices(card) {
 
     // Obtener precios
     await chekPrices(card);
-    // Mostrar precios de la carta
-    if(!card.isFoil){
+
+    // Si la carta tiene precio
+    if(card.cardPrice != null){
+        document.getElementById("updatePrices").style.display = "none"; // Desactivar botón de actualizar precios
+
+        // Mostrar precios de la carta
         document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.low);
         document.getElementById("cardTrend").textContent = formatPrice(card?.cardPrice?.trend);
         document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg30);
         document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.avg7);
         document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.avg1);
-    } 
-    if(card.isFoil){
-        showToast("Carta Foil, mostrando precios de carta foil");
-        document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.lowFoil);
-        document.getElementById("cardTrend").textContent = formatPrice(card?.cardPrice?.trendFoil);
-        document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg1Foil);
-        document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.foilAvg7);
-        document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.foilAvg1);
+
+        // Mostrar fecha de actualización de precios
+        const updatedAt = new Date(card.cardPrice.updatedAt);
+        document.getElementById("lastUpdated").style.display = "block";
+        document.getElementById("lastUpdated").textContent =
+            `Precios actualizados: ${updatedAt.toLocaleString()}`;
+    } else{
+        document.getElementById("updatePrices").style.display = "block";
     }
+    
 }
 
 async function buttonListeners(card) {
-
-    if(card.cardPrice != null){
-         document.getElementById("updatePrices").style.display = "none"; // Desactivar botón de actualizar precios
-            // Mostrar fecha de actualización de precios
-            const updatedAt = new Date(card.cardPrice.fetchedAt);
-            document.getElementById("lastUpdated").style.display = "block";
-            document.getElementById("lastUpdated").textContent =
-                `Precios actualizados: ${updatedAt.toLocaleString()}`;
-    }
 
     // Listener para añadir carta de la colección, abre modal para introducir precio y cantidad
    document.getElementById("addToCollection").addEventListener("click", () => {
@@ -119,9 +115,7 @@ async function buttonListeners(card) {
         card.foil = e.target.checked;
         await updateWatchlistButtons(card); // Comprobar si la carta está en la lista de seguimiento del user
         await updateCardCounts(card); // Conteo de la colección de cartas del user
-        await render(card);
         await renderPrices(card)
-        console.log(card.cardPrice);
     });
 
     // Selector estado de la carta
@@ -130,54 +124,48 @@ async function buttonListeners(card) {
         card.condition =  e.target.value;;
         await updateWatchlistButtons(card); 
         await updateCardCounts(card);
-        await render(card);
         await renderPrices(card);
     });   
 }
 
 
-async function chekPrices(card) {
+export async function chekPrices(card) {
 
     // Obtener los precios desde Cardmarket
-    if(card.condition === "NM"){
+    if(card.condition === "NM" && card.foil === false){
         card.cardPrice = await fetchCardMarketPrices(card.id);
 
-        console.log(card.cardPrice);
         // Si carmarket no devuelve precios, obtener de cardtrader
         if(card.cardPrice === null){
             showToast("No se han podido obtener los precios de la carta desde Cardmarket, obteniendo desde Cardtrader", "error"); 
-            console.log(card.id);
             card.cardPrice = await updatePricesFromCardtrader(card);
-            console.log("Precios obtenidos" + card.cardPrice);
-        }
-
-       /* else{
-             document.getElementById("updatePrices").style.display = "none"; // Desactivar botón de actualizar precios
-            // Mostrar fecha de actualización de precios
-            const updatedAt = new Date(card.cardPrice.updatedAt);
-            document.getElementById("lastUpdated").style.display = "block";
-            document.getElementById("lastUpdated").textContent =
-                `Precios actualizados: ${updatedAt.toLocaleString()}`;
         }
     }
 
-    // Si la carta no está en "NM" o no es foil, actualizar precios desde Cardtrader
-    if(card.condition != "NM" || card.foil != false){
-        showToast("Cambiando parametros de la carta");
+    // Si la carta no está en "NM" o card.foil === true
+    if(card.condition != "NM" || card.foil === true){
+        showToast("Cambiada condición de la carta.");
 
-        // Obtener precios de la carta según si es foil o no
+        // Obtener precios de la carta desde cardtrader
         card.cardPrice = await updatePricesFromCardtrader(card);
-
+    
         // No tiene precios
-        if (card?.cardPrice === null) {
+        if (card?.cardPrice === null ) {
             // Activar botón de actualizar precios
             document.getElementById("lastUpdated").style.display = "none";
             document.getElementById("updatePrices").style.display = "inline-block";
+
+            // Poner precios en N/A
+            document.getElementById("cardLow").textContent = "N/A";
+            document.getElementById("cardTrend").textContent = "N/A";
+            document.getElementById("avg30").textContent =  "N/A";
+            document.getElementById("avg7").textContent = "N/A";
+            document.getElementById("avg1").textContent = "N/A";
             return;
         }
         if(card.cardPrice === null){
             showToast("No se han podido obtener los precios de la carta", "error");
-        } */
+        }
     }
 }
 
@@ -187,14 +175,13 @@ async function chekPrices(card) {
     const modal = document.getElementById("priceModal");
     const el = document.getElementById("labelConditionValue");
     const priceInput = document.getElementById("priceInput");
-    const quantityInput = document.getElementById("quantityInput");
     const confirmBtn = document.getElementById("confirmBtn");
     const closeBtn = document.getElementById("closePriceModal");
     conditionElement.textContent = card.condition;
     conditionElement.className = getCondition(card.condition);
     document.getElementById("labelFoilValue").textContent = card.foil ? "Sí" : "No";
 
-    if (!modal || !priceInput || !quantityInput || !confirmBtn) return;
+    if (!modal || !priceInput || !confirmBtn) return;
 
     priceInput.value =
         card?.cardPrice?.low ??
@@ -202,24 +189,21 @@ async function chekPrices(card) {
         card?.cardPrice?.avg ??
         0;
 
-    quantityInput.value = 1;
-
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
 
     confirmBtn.onclick = async () => {
 
         card.purchasePrice = parseFloat(priceInput.value);
-        card.quantity = parseInt(quantityInput.value);
 
         await addCardToCollection(card);
 
         modal.classList.remove("active");
         document.body.style.overflow = "";
 
-        showToast(`${card.name} añadida a la colección`);
-
         await updateCardCounts(card);
+
+        showToast(`${card.name} añadida a la colección`);
     };
 
     closeBtn.onclick = () => {

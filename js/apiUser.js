@@ -79,19 +79,22 @@ export async function addToCollection(card, token) {
 }
 
 // ELIMINAR CARTA DE COLECCIÓN
-export async function removeFromCollection(card, token) {
+export async function removeFromCollection(item, token) {
+            console.log("quitando card", item);
+
     const response = await fetch(`${BASE_URL}/collection/del`, {
+        
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(
-            { cardId: card.id,
-                purchasePrice: card.purchasePrice,
-                condition: card.condition,
-                lang: card.lang,
-                foil: card.foil
+            { cardId: item.cardId,
+                purchasePrice: item.purchasePrice,
+                condition: item.condition,
+                lang: item.lang,
+                foil: item.foil
             })
     });
     if (!response.ok) throw new Error("Error al eliminar carta de la colección");
