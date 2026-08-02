@@ -458,6 +458,12 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 0.4rem;
+        min-width: 0;        /* permite que el grid container se ajuste */
+    }
+
+     .nav-select {
+        min-width: 0;        /* clave: anula el min-width:auto por defecto */
+        width: 100%;         /* asegura que ocupe toda su columna */
     }
 
     .nav-price-filter {

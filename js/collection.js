@@ -141,8 +141,6 @@ function renderCollectionList(cards = allCards) {
         const card = item?.card;
         const price = getCurrentPrice(item);
         const profit = calcProfit(item);
-             console.log(item);
-
 
         const row = document.createElement("div");
         row.className = "collection-list-item";
