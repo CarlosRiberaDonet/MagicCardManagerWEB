@@ -4,16 +4,12 @@ import { getToken } from './auth.js';
 import { loadWatchlist, addToCollection, removeFromWatchlist } from './apiUser.js';
 import { getCondition, getFlag, showToast } from './utils.js';
 
-// ===========================
 // ESTADO GLOBAL
-// ===========================
 let allItems = [];
 let currentView = 'list';
 let pendingMoveItem = null; // ítem en proceso de moverse a la colección (mientras el modal está abierto)
 
-// ===========================
 // INIT
-// ===========================
 async function init() {
     try {
         allItems = await loadWatchlist(getToken());
@@ -86,9 +82,7 @@ function formatDate(dateStr) {
     }).format(date);
 }
 
-// ===========================
 // ESTADÍSTICAS
-// ===========================
 function renderStats() {
 
     const totalCards = allItems.length;
@@ -116,9 +110,7 @@ function renderStats() {
     }
 }
 
-// ===========================
 // EDICIONES (filtro)
-// ===========================
 function loadEditions() {
     const select = document.getElementById("wlFilterSet");
     select.innerHTML = '<option value="">Set</option>';
@@ -135,9 +127,7 @@ function loadEditions() {
     });
 }
 
-// ===========================
 // RENDER LIST
-// ===========================
 function renderList(items = allItems) {
 
     const container = document.getElementById("watchlistContainer");
@@ -399,9 +389,7 @@ function applyFilters() {
     return filtered;
 }
 
-// ===========================
 // VIEW SWITCH
-// ===========================
 function setupViewToggle() {
 
     document.getElementById("viewList")?.addEventListener("click", () => {
@@ -422,9 +410,7 @@ function updateViewButtons() {
     document.getElementById("viewList")?.classList.toggle("active", currentView === 'list');
 }
 
-// ===========================
 // MODAL — Mover a colección
-// ===========================
 function setupMoveModal() {
 
     document.getElementById("moveModalCancel")?.addEventListener("click", closeMoveModal);
@@ -466,9 +452,7 @@ function closeMoveModal() {
     document.body.style.overflow = "";
 }
 
-// ===========================
 // ACCIONES: mover / quitar
-// ===========================
 async function moveToCollection(item, purchasePrice, quantity) {
 
     const token = getToken();

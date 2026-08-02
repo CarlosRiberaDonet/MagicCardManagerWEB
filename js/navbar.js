@@ -167,19 +167,9 @@ function initSearch() {
             runSearch();
         }
     });
-
-    // NOTA: ya no hay listeners de "change" en los <select>.
-    // Antes, SOLO .filterSet disparaba "filtersChanged" al cambiar
-    // de valor (búsqueda en vivo), pero rareza/idioma/tipo/orden no
-    // tenían ningún listener — de ahí el comportamiento inconsistente.
-    // Ahora todos los filtros se comportan igual: no pasa nada hasta
-    // pulsar "Buscar" o Enter.
 }
 
 // Botón "Ocultar sin precio"
-// Se mantiene como acción instantánea (toggle de un clic), distinta
-// de los filtros de comparación de arriba. Si prefieres que también
-// espere al botón "Buscar", dímelo y lo unificamos.
 function initHideNA() {
     const btn = document.getElementById("hideNAButton");
     if (!btn) return;

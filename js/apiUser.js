@@ -1,8 +1,9 @@
-const BASE_URL = "http://localhost:8081/user";
+// const BASE_URL = "http://82.70.89.37:8080/user";
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:8080`;
 
 // Cargar la colección completa del usuario
 export async function loadCollection(token) {
-    const response = await fetch(`${BASE_URL}/mycollection`, {
+    const response = await fetch(`${BASE_URL}/user/mycollection`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` }
     });
@@ -14,7 +15,7 @@ export async function loadCollection(token) {
 
 // CARGAR WATCHLIST DEL USUARIO
 export async function loadWatchlist(token){
-    const response = await fetch(`${BASE_URL}/mywatchlist`, {
+    const response = await fetch(`${BASE_URL}/user/mywatchlist`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` }
     });
@@ -34,7 +35,7 @@ export async function isInCollection(card, token) {
     });
 
     const response = await fetch(
-        `${BASE_URL}/collection/contains?${params}`,
+        `${BASE_URL}/user/collection/contains?${params}`,
         {
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -47,7 +48,7 @@ export async function isInCollection(card, token) {
 
 // Comprobar si una carta está en la lista de seguimiento del usuario
 export async function isInWatchlist(card, token) {
-    const response = await fetch(`${BASE_URL}/watchlist/contains?cardId=${card.id}&condition=${card.condition}&lastPrice=${card.cardPrice?.low ?? 0}&isFoil=${card.foil}`, {
+    const response = await fetch(`${BASE_URL}/user/watchlist/contains?cardId=${card.id}&condition=${card.condition}&lastPrice=${card.cardPrice?.low ?? 0}&isFoil=${card.foil}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`
@@ -59,7 +60,7 @@ export async function isInWatchlist(card, token) {
 
 // INSERTAR CARTA EN COLECCIÓN
 export async function addToCollection(card, token) {
-    const response = await fetch(`${BASE_URL}/collection/add`, {
+    const response = await fetch(`${BASE_URL}/user/collection/add`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -82,7 +83,7 @@ export async function addToCollection(card, token) {
 export async function removeFromCollection(item, token) {
             console.log("quitando card", item);
 
-    const response = await fetch(`${BASE_URL}/collection/del`, {
+    const response = await fetch(`${BASE_URL}/user/collection/del`, {
         
         method: "DELETE",
         headers: {
@@ -104,7 +105,7 @@ export async function removeFromCollection(item, token) {
 
 // INSERTAR CARTA EN WATCHLIST (lista de seguimiento)
 export async function addToWatchlist(card, token) {
-    const response = await fetch(`${BASE_URL}/watchlist/add`, {
+    const response = await fetch(`${BASE_URL}/user/watchlist/add`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -124,7 +125,7 @@ export async function addToWatchlist(card, token) {
 
 // ELIMINAR CARTA DE WATCHLIST (lista de seguimiento)
 export async function removeFromWatchlist(card, token) {
-    const response = await fetch(`${BASE_URL}/watchlist/del`, {
+    const response = await fetch(`${BASE_URL}/user/watchlist/del`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",

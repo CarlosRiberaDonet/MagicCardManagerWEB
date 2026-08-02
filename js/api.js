@@ -1,7 +1,8 @@
 // api.js
 import { getToken } from "./auth.js";
 
-const BASE_URL = "http://localhost:8081";
+// const BASE_URL = "http://82.70.89.37:8080";
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:8080`;
 
 const FILTER_URL = ""; // Filtro de cartas
 
@@ -22,7 +23,7 @@ export async function fetchCards(name, set, rarity, lang, typeLine, orderBy, pag
 
 // Obtener ediciones para llenar el filtro de ediciones
 export async function fetchSets() {
-    const response = await fetch("http://localhost:8081/scryfall/sets");
+    const response = await fetch(`${BASE_URL}/scryfall/sets`);
     if (!response.ok) throw new Error("Error al obtener sets");
     return await response.json();
 }

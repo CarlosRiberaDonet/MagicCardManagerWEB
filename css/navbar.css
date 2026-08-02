@@ -36,18 +36,19 @@
 }
 
 .nav-logo {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
-    transition: color 0.2s;
-    white-space: nowrap;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
-.nav-logo:hover {
-    color: var(--gold-light);
+.nav-logo img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
 }
 
 .navbar-center {

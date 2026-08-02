@@ -20,12 +20,7 @@ const state = {
     lastSearch: null
 };
 
-// ===========================
 // LOADING VISUAL
-// Añade/quita una clase sobre el contenedor de cartas mientras
-// hay una petición en marcha, y deshabilita el botón "Buscar" del
-// navbar para evitar doble envío mientras carga.
-// ===========================
 function setLoading(isLoading) {
     if (dom.container) {
         dom.container.classList.toggle("is-loading", isLoading);
@@ -102,15 +97,7 @@ const updatePagination = setupPagination(
     }
 );
 
-// ===========================
 // CARGA INICIAL DESDE URL
-// Ahora lee TODOS los filtros de la query string (antes solo leía
-// "search" y "set"), y los aplica a los <select> correspondientes
-// para que la UI refleje exactamente lo que se buscó desde otra
-// página. Se hace dentro de "navbarReady" porque hasta ese punto
-// no hay garantía de que el <select> de ediciones ya tenga sus
-// opciones cargadas (ver fix de await en navbar.js).
-// ===========================
 document.addEventListener("navbarReady", () => {
 
     const params = new URLSearchParams(location.search);
@@ -122,13 +109,15 @@ document.addEventListener("navbarReady", () => {
     const type = params.get("type");
     const sort = params.get("sort");
 
-    // Si no hay ningún parámetro en la URL, no lanzamos ninguna
-    // búsqueda automática — el usuario verá la página limpia y
-    // decidirá qué buscar. Antes se cargaba siempre, lo que
-    // activaba el spinner y bloqueaba el botón desde el inicio.
     const hasParams = search || set || rarity || lang || type || sort;
 
-    if (!hasParams) return;
+    // Carga inicial por defecto, Limited Edition Alpha
+    if (!hasParams) {
+        setSelectValue("filterSet", "lea");
+        state.page = 1;
+        loadCards();
+        return;
+    }
 
     if (search) {
         state.lastSearch = search;
@@ -162,17 +151,13 @@ function setSelectValue(id, value) {
 // ===========================
 
 // Disparado por navbar.js al pulsar "Buscar"/Enter ESTANDO ya en
-// index.html (sin recargar la página). Lee los filtros directamente
-// del DOM, igual que loadCards() ya hace en getFilters().
 document.addEventListener("runSearch", (e) => {
     state.lastSearch = e.detail?.name || null;
     state.page = 1;
     loadCards();
 });
 
-// Disparado únicamente por el toggle "Ocultar sin precio" (acción
-// instantánea de un clic). El resto de filtros ya NO disparan este
-// evento — esperan a "runSearch".
+// Disparado únicamente por el toggle "Ocultar sin precio"
 document.addEventListener("filtersChanged", () => {
     state.page = 1;
     loadCards();

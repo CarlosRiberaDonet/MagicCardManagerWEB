@@ -1,4 +1,3 @@
-
 import { loginUser, registerUser } from './apiLogin.js';
 import { showToast } from './utils.js';
 
@@ -13,19 +12,18 @@ export function setupAuthListeners() {
             const userMenu = document.getElementById('userMenu');
             userMenu.classList.toggle('active');
             usersMenuListeners();
-            
-        }else {
+
+        } else {
             // Usuario no logueado — mostrar modal de login
-            const loginModal = document.getElementById('loginModal');
-            loginModal.classList.add('active');
+            openModal();
         }
     });
- 
+
     // Listener para cerrar el modal del login
     document.addEventListener('click', (event) => {
         const loginModal = document.getElementById('loginModal');
         if (event.target === loginModal || event.target.classList.contains('close-btn')) {
-            loginModal.classList.remove('active');
+            closeModal();
         }
     });
 
@@ -36,42 +34,39 @@ export function setupAuthListeners() {
         login();
     });
 
-
     // Botón de registro dentro del modal de login
     const registerForm = document.getElementById("openRegisterModal");
-    const registerModal = document.getElementById("registerModal");
     registerForm.addEventListener("click", (event) => {
         event.preventDefault();
         register();
     });
 
-
     // Comprobar si ya hay un token al cargar la página
     const token = localStorage.getItem('authToken');
     if (token) {
         // Usuario logueado — mostrar menú de usuario
-        const loginButton = document.getElementById('loginButton');
         loginButton.textContent = 'Menú';
     }
 }
 
 export function register() {
+    const loginModal = document.getElementById("loginModal");
     const registerModal = document.getElementById("registerModal");
     const registerButton = document.getElementById("registerBtn");
     const closeRegisterButton = document.getElementById("closeRegisterModal");
+
     loginModal.classList.remove("active");
     registerModal.classList.add("active");
 
     registerButton.addEventListener("click", async (event) => {
         event.preventDefault();
-        console.log(registerButton);
         const email = document.getElementById("registerEmail").value.trim();
         const password = document.getElementById("registerPassword").value.trim();
 
-        // Compruebo fotmato de email
+        // Compruebo formato de email
         if (!checkEmailField(email)) return;
         // Compruebo que la contraseña tenga al menos 9 caracteres
-        if (password.length < 9){
+        if (password.length < 9) {
             showToast("La contraseña debe tener mínimo 9 caracteres");
             return;
         }
@@ -104,12 +99,11 @@ export function register() {
 export function login() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    
+
     loginUser(email, password)
         .then(token => {
-            localStorage.setItem('authToken', token);
-            const loginModal = document.getElementById('loginModal');
-            loginModal.classList.remove('active');
+            setToken(token);
+            closeModal();
 
             // Cambiar el botón
             const loginButton = document.getElementById('loginButton');
@@ -122,12 +116,14 @@ export function login() {
 
 // Cerrar sesión
 export function logout() {
-    localStorage.removeItem('authToken');
+    removeToken();
     window.location.href = '/index.html';
-    
+
     const loginButton = document.getElementById('loginButton');
-    loginButton.textContent = 'Iniciar sesión';
-    document.getElementById('userMenu').classList.remove('active');
+    if (loginButton) loginButton.textContent = 'Iniciar sesión';
+
+    const userMenu = document.getElementById('userMenu');
+    if (userMenu) userMenu.classList.remove('active');
 }
 
 // Menú de usuario logueado
@@ -135,18 +131,17 @@ export function usersMenuListeners() {
 
     const goProfile = document.getElementById('goProfile');
     const goCollection = document.getElementById('goCollection');
-    const goInvestor = document.getElementById('goInvestor');
     const goWatchlist = document.getElementById('goWatchlist');
     const logOut = document.getElementById('logOut');
 
     goProfile.addEventListener('click', () => {
-        window.open('profile.html', '_blank'); // Redirige a la página de perfil
+        window.open('profile.html', '_blank');
     });
     goCollection.addEventListener('click', () => {
-        window.open('collection.html', '_blank'); // Redirige a la página de colección
+        window.open('collection.html', '_blank');
     });
     goWatchlist.addEventListener('click', () => {
-        window.open('watchlist.html', '_blank'); // Redirige a la página de watchlist
+        window.open('watchlist.html', '_blank');
     });
     logOut.addEventListener('click', () => {
         logout();
@@ -167,13 +162,19 @@ export function closeModal() {
     document.body.style.overflow = '';
 }
 
+// ===========================
 // TOKEN
+// ===========================
 export function getToken() {
     return localStorage.getItem('authToken');
 }
 
 export function setToken(token) {
     localStorage.setItem('authToken', token);
+}
+
+export function removeToken() {
+    localStorage.removeItem('authToken');
 }
 
 // JWT EXPIRATION CHECK

@@ -1,10 +1,11 @@
-const BASE_URL = "http://localhost:8081/auth";
+// const BASE_URL = "http://82.70.89.37:8080/auth";
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:8080`;
 
 import { getToken } from "./auth.js";
 
 // Método para registrar un nuevo usuario
 export async function registerUser(email, password) {
-    const response = await fetch(`${BASE_URL}/register`, {
+    const response = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -23,7 +24,7 @@ export async function registerUser(email, password) {
 
 // LOGIN
 export async function loginUser(email, password) {
-    const response = await fetch(`${BASE_URL}/login`, {
+    const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
