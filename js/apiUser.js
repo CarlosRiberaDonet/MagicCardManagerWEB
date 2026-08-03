@@ -1,5 +1,4 @@
-// const BASE_URL = "http://82.70.89.37:8080/user";
-const BASE_URL = `${window.location.protocol}//${window.location.hostname}:8080`;
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;
 
 // Cargar la colección completa del usuario
 export async function loadCollection(token) {
