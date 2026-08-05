@@ -1,7 +1,14 @@
 // api.js
 import { getToken } from "./auth.js";
+import { showToast } from "./utils.js";
 
-const BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;
+const isLocal =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+
+const BASE_URL = isLocal
+    ? "http://localhost:8080"
+    : `${window.location.origin}/api`;
 
 const FILTER_URL = ""; // Filtro de cartas
 
@@ -29,39 +36,13 @@ export async function fetchSets() {
 
 //Obtener detelles de una carta mediante su ID
 export async function fetchCardDetails(cardId) {
-     const token = getToken();
-
-     if (!token) {
-        showToast("Debe de estar logueado.", "error");
-        return;
-    }
-
-    const res = await fetch(`${BASE_URL}/scryfall/${cardId}`, {
-        headers: token
-            ? { Authorization: `Bearer ${token}` }
-            : {}
-    });
-
+    const res = await fetch(`${BASE_URL}/scryfall/${cardId}`);
     return await res.json();
 }
 
 // Obtener precios desde cardmarket
 export async function fetchCardMarketPrices(cardId) {
-    const token = getToken();
-    if (!token) {
-        showToast("Debe de estar logueado para actualizar precios", "error");
-        return;
-    }
-
-    const res = await fetch(
-        `${BASE_URL}/cardmarket/${cardId}`,
-        {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }    
-        }
-    );
+    const res = await fetch(`${BASE_URL}/cardmarket/${cardId}`);
 
     if (res.status === 204) {
         return null;
@@ -75,14 +56,8 @@ export async function fetchCardMarketPrices(cardId) {
     return await res.json();
 }
 
-// Actualizar precios desde Cardtrader
+// Actualizar precios desde Cardtrader_price
 export async function updatePricesFromCardtrader(card) {
-
-    const token = getToken();
-    if (!token) {
-        showToast("Debe de estar logueado para actualizar precios", "error");
-        return;
-    }
 
     const params = new URLSearchParams({
         cardId: card.id,
@@ -92,17 +67,10 @@ export async function updatePricesFromCardtrader(card) {
         isFoil: card.foil ?? false
     });
 
-    const response = await fetch(
-        `${BASE_URL}/cardtrader/lastPrices?${params}`,
-        {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        }
-    );
+    const response = await fetch(`${BASE_URL}/cardtrader/lastPrices?${params}`);
 
     if (response.status === 204) {
+        showToast("No hay registro de precios para para " + card.name );
         return null;
     }
 
@@ -111,5 +79,23 @@ export async function updatePricesFromCardtrader(card) {
         throw new Error(error.message);
     }
 
+    return await response.json();
+}
+
+// Obtener precios desde la API de cardtrader
+export async function fetchCardTraderPrices(card) {
+    const params = new URLSearchParams({
+        cardId: card.id,
+        scryfallId: card.scryfallId,
+        lang: card.lang,
+        condition: card.condition,
+        isFoil: card.foil 
+    });
+    const response = await fetch(`${BASE_URL}/pricecache/getPrices?${params}`);
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+        showToast("No se encontraron precios para " + card.name);
+    }
     return await response.json();
 }

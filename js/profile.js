@@ -2,7 +2,13 @@ import { fetchCards } from "./api.js";
 import { getToken } from "./auth.js";
 import { showToast } from "./utils.js";
 
-const BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;
+const isLocal =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+
+const BASE_URL = isLocal
+    ? "http://localhost:8080"
+    : `${window.location.origin}/api`;
 
 // Cargar el perfil
 async function loadProfile() {

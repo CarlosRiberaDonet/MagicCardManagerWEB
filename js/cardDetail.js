@@ -1,6 +1,6 @@
 // cardDetail.js
 
-import { fetchCardDetails, fetchCardMarketPrices, updatePricesFromCardtrader } from "./api.js";
+import { fetchCardDetails, fetchCardMarketPrices, updatePricesFromCardtrader, fetchCardTraderPrices } from "./api.js";
 import { addCardToCollection } from "./userActions.js";
 import { openModal, isAuthenticated } from './auth.js';
 import { showToast, getCondition } from "./utils.js";
@@ -14,24 +14,43 @@ init();
 
 async function init() {
 
-    try{
-        if (!isAuthenticated()) {
-        openModal();
-        showToast("Debe de estar logueado.", "error");
-        return;
-        }  
-    } catch (err) {
-        console.error("Error en init():", err);
-    }
-
     // Llamo a la API para obtener los detalles de la carta
     card = await fetchCardDetails(cardId);
 
     await render(card);
     await renderPrices(card);
+
     await buttonListeners(card);
     await updateCardCounts(card);
     await updateWatchlistButtons(card);
+
+    await checkButtons();
+}
+
+async function checkButtons() {
+
+    if (!isAuthenticated()) {
+
+        document.getElementById("addToCollection").style.display = "none";
+        document.getElementById("addToWatchlist").style.display = "none";
+        document.getElementById("removeFromWatchlist").style.display = "none";
+        document.getElementById("cardQuantity").style.display = "none";
+
+        document.getElementById("cardCondition").disabled = true;
+        document.getElementById("cardFoil").disabled = true;
+
+        const updateBtn = document.getElementById("updatePrices");
+        const marketBtn = document.getElementById("cardMarketURL");
+
+        const loginRequired = (e) => {
+            e.preventDefault();
+            showToast("Debes iniciar sesión para utilizar esta función.", "warning");
+        };
+
+        updateBtn.addEventListener("click", loginRequired);
+
+        marketBtn.addEventListener("click", loginRequired);
+    }
 }
 
 async function render(card) {
@@ -80,42 +99,51 @@ async function renderPrices(card) {
 
 async function buttonListeners(card) {
 
-    // Listener para añadir carta de la colección, abre modal para introducir precio y cantidad
-    document.getElementById("addToCollection").addEventListener("click", () => {
-        openPriceModal(card);
-    });
+    if(isAuthenticated()) {
 
-    // Añadir carta a la watchlist
-    document.getElementById("addToWatchlist").addEventListener("click", async () => {
-        await userActions.addCardToWatchlist(card);
-        document.getElementById("addToWatchlist").style.display = "none";
-        document.getElementById("removeFromWatchlist").style.display = "inline-block";
-        showToast(card.name + " añadida a la watchlist.");
-    });
+        // Listener para añadir carta de la colección, abre modal para introducir precio y cantidad
+        document.getElementById("addToCollection").addEventListener("click", () => {
+            openPriceModal(card);
+        });
 
-    // Eliminar carta de la watchlist
-    document.getElementById("removeFromWatchlist").addEventListener("click", async () => {
-        await userActions.removeCardFromWatchlist(card);
-        document.getElementById("addToWatchlist").style.display = "inline-block";
-        document.getElementById("removeFromWatchlist").style.display = "none";
-        showToast(card.name + " eliminada de la watchlist.");
-    });
+        // Añadir carta a la watchlist
+        document.getElementById("addToWatchlist").addEventListener("click", async () => {
+            await userActions.addCardToWatchlist(card);
+            document.getElementById("addToWatchlist").style.display = "none";
+            document.getElementById("removeFromWatchlist").style.display = "inline-block";
+            showToast(card.name + " añadida a la watchlist.");
+        });
 
-    // Checkbox foil
-    document.getElementById("cardFoil").addEventListener("change", async (e) => {
-        card.foil = e.target.checked;
-        await updateWatchlistButtons(card);
-        await updateCardCounts(card);
-        await renderPrices(card);
-    });
+        // Eliminar carta de la watchlist
+        document.getElementById("removeFromWatchlist").addEventListener("click", async () => {
+            await userActions.removeCardFromWatchlist(card);
+            document.getElementById("addToWatchlist").style.display = "inline-block";
+            document.getElementById("removeFromWatchlist").style.display = "none";
+            showToast(card.name + " eliminada de la watchlist.");
+        });
 
-    // Selector estado de la carta
-    document.getElementById("cardCondition").addEventListener("change", async (e) => {
-        card.condition = e.target.value;
-        await updateWatchlistButtons(card);
-        await updateCardCounts(card);
-        await renderPrices(card);
-    });
+        // Checkbox foil
+        document.getElementById("cardFoil").addEventListener("change", async (e) => {
+            card.foil = e.target.checked;
+            await updateWatchlistButtons(card);
+            await updateCardCounts(card);
+            await renderPrices(card);
+        });
+
+        // Selector estado de la carta
+        document.getElementById("cardCondition").addEventListener("change", async (e) => {
+            card.condition = e.target.value;
+            await updateWatchlistButtons(card);
+            await updateCardCounts(card);
+            await renderPrices(card);
+        });
+
+        // Botón actualizar precios
+        document.getElementById("updatePrices").addEventListener("click", async () => {
+           await fetchCardTraderPrices(card);
+           await renderPrices(card);
+        });
+    } 
 }
 
 
@@ -127,7 +155,6 @@ export async function chekPrices(card) {
 
         // Si carmarket no devuelve precios, obtener de cardtrader
         if (card.cardPrice === null) {
-            showToast("No se han podido obtener los precios de la carta desde Cardmarket, obteniendo desde Cardtrader", "error");
             card.cardPrice = await updatePricesFromCardtrader(card);
         }
     }
