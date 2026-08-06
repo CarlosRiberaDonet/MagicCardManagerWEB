@@ -58,6 +58,7 @@ export async function fetchCardMarketPrices(cardId) {
 
 // Actualizar precios desde Cardtrader_price
 export async function updatePricesFromCardtrader(card) {
+    console.log("Card recibida para actualizar precios:", card);
 
     const params = new URLSearchParams({
         cardId: card.id,
@@ -89,13 +90,15 @@ export async function fetchCardTraderPrices(card) {
         scryfallId: card.scryfallId,
         lang: card.lang,
         condition: card.condition,
-        isFoil: card.foil 
+        isFoil: card.foil
     });
+
     const response = await fetch(`${BASE_URL}/pricecache/getPrices?${params}`);
+
     if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message);
-        showToast("No se encontraron precios para " + card.name);
     }
+
     return await response.json();
 }

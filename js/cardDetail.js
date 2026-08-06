@@ -140,8 +140,17 @@ async function buttonListeners(card) {
 
         // Botón actualizar precios
         document.getElementById("updatePrices").addEventListener("click", async () => {
-           await fetchCardTraderPrices(card);
-           await renderPrices(card);
+            try {
+                const prices = await fetchCardTraderPrices(card);
+
+                if (prices) {
+                    // Actualizar la interfaz
+                    await renderPrices(card);
+                }
+
+            } catch (e) {
+                showToast(e.message);
+            }
         });
     } 
 }
@@ -161,7 +170,6 @@ export async function chekPrices(card) {
 
     // Si la carta no está en "NM" o card.foil === true
     if (card.condition != "NM" || card.foil === true) {
-        showToast("Cambiada condición de la carta.");
 
         // Obtener precios de la carta desde cardtrader
         card.cardPrice = await updatePricesFromCardtrader(card);

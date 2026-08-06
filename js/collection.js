@@ -43,9 +43,15 @@ async function init() {
 function getCurrentPrice(item) {
     const price = item?.card?.cardPrice;
 
-    return price?.trend
-        ?? price?.low
-        ?? price?.avg
+    if(item?.foil === false){
+        return price?.low
+            ?? price?.trend
+            ?? price?.avg
+            ?? 0;
+    }
+     return price?.lowFoil
+        ?? price?.trendFoil
+        ?? price?.avgFoil
         ?? 0;
 }
 
@@ -206,7 +212,7 @@ function renderCollectionList(cards = allCards) {
     });
 }
 
-
+// RENDER GRID
 function renderCollectionGrid(cards = allCards) {
 
     const container = document.getElementById("collectionContainer");
