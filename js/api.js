@@ -53,12 +53,12 @@ export async function fetchCardMarketPrices(cardId) {
         throw new Error(error.message);
     }
 
+    res.priceSource = "CardMarket"; // Set the price source to CardMarket
     return await res.json();
 }
 
 // Actualizar precios desde Cardtrader_price
 export async function updatePricesFromCardtrader(card) {
-    console.log("Card recibida para actualizar precios:", card);
 
     const params = new URLSearchParams({
         cardId: card.id,
@@ -71,7 +71,6 @@ export async function updatePricesFromCardtrader(card) {
     const response = await fetch(`${BASE_URL}/cardtrader/lastPrices?${params}`);
 
     if (response.status === 204) {
-        showToast("No hay registro de precios para para " + card.name );
         return null;
     }
 
@@ -79,7 +78,7 @@ export async function updatePricesFromCardtrader(card) {
         const error = await response.json();
         throw new Error(error.message);
     }
-
+    card.priceSource = "CardTrader"; // Set the price source to CardTrader
     return await response.json();
 }
 

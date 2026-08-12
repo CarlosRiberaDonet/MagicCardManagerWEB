@@ -28,7 +28,7 @@ async function init() {
 }
 
 async function checkButtons() {
-
+    
     if (!isAuthenticated()) {
 
         document.getElementById("addToCollection").style.display = "none";
@@ -67,7 +67,9 @@ async function render(card) {
     document.getElementById("typeLine").textContent = card.typeLine;
     document.getElementById("released_at").textContent = card.releasedAt;
     document.getElementById("cardMarketURL").href = card.cardmarketURL;
-    document.getElementById("cardCondition").value = card.condition;
+    document.getElementById("cardCondition").value = card.condition; 
+
+    console.log("Carta renderizada:", card);
 }
 
 async function renderPrices(card) {
@@ -77,7 +79,6 @@ async function renderPrices(card) {
 
     // Si la carta tiene precio
     if (card.cardPrice != null) {
-        document.getElementById("updatePrices").style.display = "none"; // Desactivar botón de actualizar precios
 
         // Mostrar precios de la carta
         document.getElementById("cardLow").textContent = formatPrice(card?.cardPrice?.low);
@@ -85,6 +86,7 @@ async function renderPrices(card) {
         document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg30);
         document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.avg7);
         document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.avg1);
+        document.getElementById("priceSource").textContent = card.priceSource || "N/A";
 
         // Mostrar fecha de actualización de precios
         const updatedAt = new Date(card.cardPrice.updatedAt);
@@ -95,6 +97,10 @@ async function renderPrices(card) {
         document.getElementById("updatePrices").style.display = "block";
     }
 
+    // Comprobar si CardTrader puede volver a actualizarse
+    updatePrices.style.display = canUpdateCardTrader(card.cardPrice?.updatedAt)
+    ? "block"
+    : "none";
 }
 
 async function buttonListeners(card) {
@@ -145,16 +151,29 @@ async function buttonListeners(card) {
 
                 if (prices) {
                     // Actualizar la interfaz
+                    document.getElementById("priceSource").textContent = "CardTrader";
                     await renderPrices(card);
                 }
-
             } catch (e) {
                 showToast(e.message);
             }
         });
-    } 
+        
+    }    
 }
 
+function canUpdateCardTrader(lastUpdate) {
+    if (!lastUpdate) {
+        return true;
+    }
+
+    const now = new Date();
+    const lastUpdated = new Date(lastUpdate);
+
+    const diff = now - lastUpdated;
+
+    return diff >= 24 * 60 * 60 * 1000;
+}
 
 export async function chekPrices(card) {
 

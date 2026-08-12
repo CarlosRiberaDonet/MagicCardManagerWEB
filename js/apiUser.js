@@ -130,6 +130,7 @@ export async function addToWatchlist(card, token) {
 
 // ELIMINAR CARTA DE WATCHLIST (lista de seguimiento)
 export async function removeFromWatchlist(card, token) {
+    console.log("quitando card", card);
     const response = await fetch(`${BASE_URL}/user/watchlist/del`, {
         method: "DELETE",
         headers: {
