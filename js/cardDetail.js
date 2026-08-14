@@ -177,19 +177,6 @@ function canUpdateCardTrader(lastUpdate) {
 
 export async function chekPrices(card) {
 
-    // Obtener los precios desde Cardmarket
-    if (card.condition === "NM" && card.foil === false) {
-        card.cardPrice = await fetchCardMarketPrices(card.id);
-
-        // Si carmarket no devuelve precios, obtener de cardtrader
-        if (card.cardPrice === null) {
-            card.cardPrice = await updatePricesFromCardtrader(card);
-        }
-    }
-
-    // Si la carta no está en "NM" o card.foil === true
-    if (card.condition != "NM" || card.foil === true) {
-
         // Obtener precios de la carta desde cardtrader
         card.cardPrice = await updatePricesFromCardtrader(card);
 
@@ -208,7 +195,6 @@ export async function chekPrices(card) {
         if (card.cardPrice === null) {
             showToast("No se han podido obtener los precios de la carta", "error");
         }
-    }
 }
 
 // Abrir modal para añadir carta a la colección con precio

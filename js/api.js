@@ -78,7 +78,7 @@ export async function updatePricesFromCardtrader(card) {
         const error = await response.json();
         throw new Error(error.message);
     }
-    card.priceSource = "CardTrader"; // Set the price source to CardTrader
+
     return await response.json();
 }
 
