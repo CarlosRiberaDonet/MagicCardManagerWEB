@@ -146,10 +146,7 @@ function setSelectValue(id, value) {
     if (el) el.value = value;
 }
 
-// ===========================
 // EVENTOS
-// ===========================
-
 // Disparado por navbar.js al pulsar "Buscar"/Enter ESTANDO ya en
 document.addEventListener("runSearch", (e) => {
     state.lastSearch = e.detail?.name || null;

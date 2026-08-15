@@ -86,7 +86,7 @@ export async function addToCollection(card, token) {
 
 // ELIMINAR CARTA DE COLECCIÓN
 export async function removeFromCollection(item, token) {
-            console.log("quitando card", item);
+        console.log("quitando card", item);
 
     const response = await fetch(`${BASE_URL}/user/collection/del`, {
         

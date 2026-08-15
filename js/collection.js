@@ -1,7 +1,6 @@
 // collection.js
 
 import { getToken } from './auth.js';
-import { chekPrices } from './cardDetail.js';
 import { loadCollection  } from './apiUser.js';
 import { removeCardFromCollection  } from './userActions.js';
 import { getFlag, getCondition, showToast } from './utils.js';
@@ -33,7 +32,6 @@ async function init() {
             "<p>Error al cargar la colección.</p>";
     }
 }
-
 
 // ===========================
 // HELPERS

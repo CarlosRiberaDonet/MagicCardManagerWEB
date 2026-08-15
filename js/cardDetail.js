@@ -13,7 +13,6 @@ let condition;
 init();
 
 async function init() {
-
     // Llamo a la API para obtener los detalles de la carta
     card = await fetchCardDetails(cardId);
 
@@ -86,7 +85,7 @@ async function renderPrices(card) {
         document.getElementById("avg30").textContent = formatPrice(card?.cardPrice?.avg30);
         document.getElementById("avg7").textContent = formatPrice(card?.cardPrice?.avg7);
         document.getElementById("avg1").textContent = formatPrice(card?.cardPrice?.avg1);
-        document.getElementById("priceSource").textContent = card.priceSource || "N/A";
+        document.getElementById("priceSource").textContent = card?.cardPrice?.priceSource || "N/A";
 
         // Mostrar fecha de actualización de precios
         const updatedAt = new Date(card.cardPrice.updatedAt);
