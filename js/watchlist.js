@@ -59,7 +59,6 @@ function getCurrentPrice(item) {
 function calcDelta(item) {
     const current = getCurrentPrice(item);
     const last = item?.lastPrice ?? 0;
-    console.log(`calcDelta: current=${current}, last=${last}, delta=${current - last}`);
     return current - last;
 }
 

@@ -36,7 +36,7 @@ export async function isInCollection(card, token) {
         cardId: card.id,
         condition: card.condition,
         lang: card.lang,
-        foil: card.foil
+        foil: card.foil,
     });
 
     const response = await fetch(
@@ -53,7 +53,14 @@ export async function isInCollection(card, token) {
 
 // Comprobar si una carta está en la lista de seguimiento del usuario
 export async function isInWatchlist(card, token) {
-    const response = await fetch(`${BASE_URL}/user/watchlist/contains?cardId=${card.id}&condition=${card.condition}&lastPrice=${card.cardPrice?.low ?? 0}&isFoil=${card.foil}`, {
+    const params = new URLSearchParams({
+        cardId: card.id,
+        condition: card.condition,
+        isFoil: card.foil,
+        lang: card.lang
+    });
+
+    const response = await fetch(`${BASE_URL}/user/watchlist/contains?${params}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`
@@ -110,6 +117,7 @@ export async function removeFromCollection(item, token) {
 
 // INSERTAR CARTA EN WATCHLIST (lista de seguimiento)
 export async function addToWatchlist(card, token) {
+    console.log("añadiendo card", card);
     const response = await fetch(`${BASE_URL}/user/watchlist/add`, {
         method: "POST",
         headers: {
@@ -121,7 +129,8 @@ export async function addToWatchlist(card, token) {
                 cardId: card.id,
                 lastPrice: card.cardPrice?.low ?? null,
                 condition: card.condition,
-                isFoil: card.foil
+                isFoil: card.foil,
+                lang: card.lang
             })
     });
     if (!response.ok) throw new Error("Error al añadir carta a la lista de seguimiento");
@@ -130,19 +139,22 @@ export async function addToWatchlist(card, token) {
 
 // ELIMINAR CARTA DE WATCHLIST (lista de seguimiento)
 export async function removeFromWatchlist(card, token) {
-    console.log("quitando card", card);
+    const body = {
+    cardId: card.id,
+    lastPrice: card.cardPrice?.low ?? null,
+    condition: card.condition,
+    isFoil: card.foil,
+    lang: card.lang
+};
+
+console.log("DELETE WATCHLIST:", body);
     const response = await fetch(`${BASE_URL}/user/watchlist/del`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(
-            { 
-                cardId: card.id,
-                lastPrice: card.cardPrice.low,
-                condition: card.condition,
-                isFoil: card.foil })
+         body: JSON.stringify(body)
     });
     if (!response.ok) throw new Error("Error al eliminar carta de la lista de seguimiento");
     return await response.text();

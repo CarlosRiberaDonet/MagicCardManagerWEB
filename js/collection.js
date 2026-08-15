@@ -12,10 +12,7 @@ import { getFlag, getCondition, showToast } from './utils.js';
 let allCards = [];
 let currentView = 'list';
 
-
-// ===========================
 // INIT
-// ===========================
 async function init() {
     try {
         allCards = await loadCollection(getToken());
@@ -33,9 +30,7 @@ async function init() {
     }
 }
 
-// ===========================
 // HELPERS
-// ===========================
 
 // Precio actual normalizado (trend > low > avg > 0)
 function getCurrentPrice(item) {
@@ -191,8 +186,6 @@ function renderCollectionList(cards = allCards) {
                 </button>
             </div>
         `;
-
-       
 
         row.querySelector('.action-remove')?.addEventListener('click', (e) => {
             e.stopPropagation();
