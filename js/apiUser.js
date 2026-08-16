@@ -13,148 +13,125 @@ export async function loadCollection(token) {
         headers: { "Authorization": `Bearer ${token}` }
     });
     if (!response.ok) throw new Error("Error al cargar la colección");
-    else{
-        return await response.json();
-    }
+    return await response.json();
 }
 
-// CARGAR WATCHLIST DEL USUARIO
-export async function loadWatchlist(token){
+// Cargar la watchlist del usuario
+export async function loadWatchlist(token) {
     const response = await fetch(`${BASE_URL}/user/mywatchlist`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` }
     });
     if (!response.ok) throw new Error("Error al cargar la watchlist");
-    else{
-        return await response.json();
-    }
+    return await response.json();
 }
 
 // Comprobar si una carta está en la colección del usuario
 export async function isInCollection(card, token) {
-   const params = new URLSearchParams({
+    const params = new URLSearchParams({
         cardId: card.id,
         condition: card.condition,
         lang: card.lang,
         foil: card.foil,
     });
 
-    const response = await fetch(
-        `${BASE_URL}/user/collection/contains?${params}`,
-        {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        }
-    );
+    const response = await fetch(`${BASE_URL}/user/collection/contains?${params}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!response.ok) throw new Error("Error al comprobar si la carta está en la colección");
-    return await response.json(); // Devuelve 0 si la carta no está en la colección, >0 si está en la colección
+    return await response.json(); // 0 = no está, >0 = está
 }
 
-// Comprobar si una carta está en la lista de seguimiento del usuario
+// Comprobar si una carta está en la watchlist del usuario
 export async function isInWatchlist(card, token) {
     const params = new URLSearchParams({
         cardId: card.id,
-        condition: card.condition,
         isFoil: card.foil,
-        lang: card.lang
+        lang: card.lang,
+        condition: card.condition,
     });
 
     const response = await fetch(`${BASE_URL}/user/watchlist/contains?${params}`, {
         method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`
-        },
+        headers: { "Authorization": `Bearer ${token}` }
     });
     if (!response.ok) throw new Error("Error al comprobar si la carta está en la lista de seguimiento");
-    return await response.json(); // devuelve true o false directamente;
+    return await response.json(); // true / false
 }
 
-// INSERTAR CARTA EN COLECCIÓN
+// Insertar carta en la colección
 export async function addToCollection(card, token) {
-    const response = await fetch(`${BASE_URL}/user/collection/add`, {
+    const params = new URLSearchParams({
+        cardId: card.id,
+        condition: card.condition,
+        lang: card.lang,
+        foil: card.foil,
+    });
+
+    const response = await fetch(`${BASE_URL}/user/collection/add?${params}`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(
-            { cardId: card.id,
-                purchasePrice: card.purchasePrice,
-                quantity: card.quantity,
-                condition: card.condition,
-                lang: card.lang,
-                foil: card.foil
-            })
+        headers: { "Authorization": `Bearer ${token}` }
     });
     if (!response.ok) throw new Error("Error al añadir carta a la colección");
     return await response.text();
 }
 
-// ELIMINAR CARTA DE COLECCIÓN
+// Eliminar carta de la colección (backend espera body JSON)
 export async function removeFromCollection(item, token) {
-        console.log("quitando card", item);
-
     const response = await fetch(`${BASE_URL}/user/collection/del`, {
-        
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(
-            { cardId: item.cardId,
-                purchasePrice: item.purchasePrice,
-                condition: item.condition,
-                lang: item.lang,
-                foil: item.foil,
-                quantity: item.quantity
-            })
+        body: JSON.stringify({
+            cardId: item.cardId,
+            purchasePrice: item.purchasePrice,
+            condition: item.condition,
+            lang: item.lang,
+            foil: item.foil,
+            quantity: item.quantity
+        })
     });
     if (!response.ok) throw new Error("Error al eliminar carta de la colección");
     return await response.json();
 }
 
-// INSERTAR CARTA EN WATCHLIST (lista de seguimiento)
+// Insertar carta en la watchlist
 export async function addToWatchlist(card, token) {
-    console.log("añadiendo card", card);
-    const response = await fetch(`${BASE_URL}/user/watchlist/add`, {
+
+    console.log("addToWatchlist", card);
+    const params = new URLSearchParams({
+        cardId: card.id,
+        condition: card.condition,
+        isFoil: card.foil,
+        lang: card.lang,
+        lastPrice: card.cardPrice?.avg
+    });
+
+    const response = await fetch(`${BASE_URL}/user/watchlist/add?${params}`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(
-            {
-                cardId: card.id,
-                lastPrice: card.cardPrice?.low ?? null,
-                condition: card.condition,
-                isFoil: card.foil,
-                lang: card.lang
-            })
+        headers: { "Authorization": `Bearer ${token}` }
     });
     if (!response.ok) throw new Error("Error al añadir carta a la lista de seguimiento");
     return await response.text();
 }
 
-// ELIMINAR CARTA DE WATCHLIST (lista de seguimiento)
-export async function removeFromWatchlist(card, token) {
-    const body = {
-    cardId: card.id,
-    lastPrice: card.cardPrice?.low ?? null,
-    condition: card.condition,
-    isFoil: card.foil,
-    lang: card.lang
-};
+// Eliminar carta de la watchlist (backend espera query params, igual que add/contains)
+// FIX: antes no se enviaban los params en la URL y había un console.log con una
+// variable "body" que no existía (ReferenceError, rompía la función siempre).
+export async function removeFromWatchlist( cardId, condition, lang, foil, token) {
+    const params = new URLSearchParams({
+        cardId: cardId,
+        condition: condition,
+        lang: lang,
+        isFoil: foil
+    });
 
-console.log("DELETE WATCHLIST:", body);
-    const response = await fetch(`${BASE_URL}/user/watchlist/del`, {
+
+    const response = await fetch(`${BASE_URL}/user/watchlist/del?${params}`, {
         method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-         body: JSON.stringify(body)
+        headers: { "Authorization": `Bearer ${token}` }
     });
     if (!response.ok) throw new Error("Error al eliminar carta de la lista de seguimiento");
     return await response.text();

@@ -1,7 +1,8 @@
 // watchlist.js
 
 import { getToken } from './auth.js';
-import { loadWatchlist, addToCollection, removeFromWatchlist } from './apiUser.js';
+import { loadWatchlist } from './apiUser.js';
+import { addCardToWatchlist, removeCardFromWatchlist, addCardToCollection  } from './userActions.js';
 import { getCondition, getFlag, showToast } from './utils.js';
 
 // ESTADO GLOBAL
@@ -158,7 +159,6 @@ function renderList(items = allItems) {
     container.appendChild(header);
 
     items.forEach(item => {
-
         // "card" aquí es item.scryfallCardDTO (nombre, imagen, set, icono...)
         const card = item?.scryfallCardDTO;
         const current = getCurrentPrice(item);
@@ -235,9 +235,7 @@ function renderList(items = allItems) {
     });
 }
 
-// ===========================
 // RENDER GRID
-// ===========================
 function renderGrid(items = allItems) {
 
     const container = document.getElementById("watchlistContainer");
@@ -451,77 +449,31 @@ function closeMoveModal() {
     document.body.style.overflow = "";
 }
 
-// ACCIONES: mover / quitar
+// MOVER WATCHLIST → COLECCIÓN
 async function moveToCollection(item, purchasePrice, quantity) {
 
-    const token = getToken();
     const card = item?.scryfallCardDTO;
 
     try {
         // addToCollection (apiUser.js) espera card.id, card.purchasePrice,
         // card.quantity, card.condition, card.foil — usamos item.cardId
         // como id real, NO card.id (que siempre llega null del backend).
-        await addToCollection({
-            id: item.cardId,
-            purchasePrice,
-            quantity,
-            condition: item.condition,
-            foil: item.foil
-        }, token);
+        await addCardToCollection(card);
     } catch (error) {
         console.error("Error al añadir la carta a la colección:", error);
         showToast("No se pudo añadir la carta a tu colección.");
         return;
     }
-
-    try {
-        // removeFromWatchlist (apiUser.js) espera card.cardPrice.low.
-        // Como scryfallCardDTO.cardPrice puede llegar null (precio aún
-        // no calculado), usamos item.lastPrice como respaldo para que
-        // no explote al intentar leer ".low" de null.
-        await removeFromWatchlist({
-            id: item.cardId,
-            cardPrice: card?.cardPrice ?? { low: item.lastPrice ?? 0 },
-            condition: item.condition,
-            foil: item.foil
-        }, token);
-    } catch (error) {
-        // Caso límite: se añadió a la colección, pero no se pudo quitar de la watchlist.
-        // Avisamos del estado real en vez de fingir que todo fue bien.
-        console.error("La carta se añadió a la colección pero no se pudo quitar de la watchlist:", error);
-        showToast("Carta añadida a tu colección, pero no se pudo quitar de la watchlist.");
-        closeMoveModal();
-        return;
-    }
-
-    allItems = allItems.filter(i => i !== item);
-    renderStats();
-    loadEditions();
-
-    currentView === 'list'
-        ? renderList(applyFilters())
-        : renderGrid(applyFilters());
-
-    closeMoveModal();
-    showToast("Carta movida a tu colección correctamente.");
 }
+
 
 async function removeItemFromWatchlist(item) {
 
-    const card = item?.scryfallCardDTO;
-
-    const confirmed = confirm(`¿Quitar "${card?.name ?? 'esta carta'}" de tu watchlist?`);
+    const confirmed = confirm(`¿Quitar "${item?.name ?? 'esta carta'}" de tu watchlist?`);
     if (!confirmed) return;
-
-    const token = getToken();
-
+    console.log(item);
     try {
-        await removeFromWatchlist({
-            id: item.cardId,
-            cardPrice: card?.cardPrice ?? { low: item.lastPrice ?? 0 },
-            condition: item.condition,
-            foil: item.foil
-        }, token);
+        await removeCardFromWatchlist(item.cardId, item.condition, item.lang, item.foil);
 
         allItems = allItems.filter(i => i !== item);
         renderStats();

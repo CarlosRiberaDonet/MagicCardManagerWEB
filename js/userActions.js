@@ -29,10 +29,10 @@ import * as auth from "./auth.js";
     }
 
     // Llamada a la api para eliminar carta de la lista de seguimiento (watchlist)
-    export function removeCardFromWatchlist(card) {
+    export function removeCardFromWatchlist(cardId, condition, lang, foil) {
         const token = auth.getToken();
         if(token){
-            return apiUser.removeFromWatchlist(card, token);
+            return apiUser.removeFromWatchlist(cardId, condition, lang, foil, token);
         }
     }
 
@@ -44,6 +44,7 @@ import * as auth from "./auth.js";
         }
     }
 
+    // Llamada a la api para comprobar si una carta está en la watchlist del usuario
     export function isCardInWatchlist(card) {
         const token = auth.getToken();
         if(token){

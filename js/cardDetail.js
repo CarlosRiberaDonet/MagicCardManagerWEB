@@ -67,8 +67,6 @@ async function render(card) {
     document.getElementById("released_at").textContent = card.releasedAt;
     document.getElementById("cardMarketURL").href = card.cardmarketURL;
     document.getElementById("cardCondition").value = card.condition; 
-
-    console.log("Carta renderizada:", card);
 }
 
 async function renderPrices(card) {
@@ -121,7 +119,7 @@ async function buttonListeners(card) {
 
         // Eliminar carta de la watchlist
         document.getElementById("removeFromWatchlist").addEventListener("click", async () => {
-            await userActions.removeCardFromWatchlist(card);
+            await userActions.removeCardFromWatchlist(card.id, card.condition, card.lang, card.foil);
             document.getElementById("addToWatchlist").style.display = "inline-block";
             document.getElementById("removeFromWatchlist").style.display = "none";
             showToast(card.name + " eliminada de la watchlist.");
